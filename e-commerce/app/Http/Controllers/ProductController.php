@@ -16,6 +16,7 @@ class ProductController extends Controller
     {
         $userid = Auth::guard('shop-api')->user()->id;
         $products = Product::where('shop_id', $userid)->get()->values();
+        // asdfsadf
         return response()->json($products);
     }
 
