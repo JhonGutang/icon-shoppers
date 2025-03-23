@@ -27,7 +27,7 @@ export const registerShop = async (shopDetails: Register) => {
 export const login = async (shopCredentials: Login) => {
   const formattedData = formatData(shopCredentials, "login");
   const response = await axiosInstance.post("/login", formattedData);
-  return response.data.token;
+  return response.data;
 };
 
 export const logout = async (token: string) => {

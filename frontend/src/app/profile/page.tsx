@@ -37,6 +37,7 @@ const Profile = () => {
             <div key={product.id}>
               <ProductCard
               product={product}
+              location="profile"
               />
             </div>
           ))}

@@ -14,6 +14,8 @@ import { Label } from "@/components/ui/label";
 import useProductAction from "@/hooks/useProductActions";
 import { Product, productFields, ProductToUpdate } from "@/types/product";
 import { useEffect, use, useState, ReactNode } from "react";
+import useAuth from "@/stores/useToken";
+
 const ProductPage = ({ params }: { params: Promise<{ id: number }> }) => {
   const { handleFetchSpecificProduct, product } = useProductAction();
   const { id } = use(params);
@@ -37,9 +39,10 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
   product,
   id,
 }) => {
+const role = useAuth((state) => state.userType);
   const { handleDeleteProduct } = useProductAction();
   const [localProduct, setLocalProduct] = useState(product);
-
+  
   useEffect(() => {
     setLocalProduct(product);
   }, [product]);
@@ -51,18 +54,20 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
       <h1>Product Price: {localProduct?.price}</h1>
       <h1>Product quantity: {localProduct?.quantity}</h1>
 
-      <div className="flex">
-        <Button>Featured </Button>
-        <Button>Discounted </Button>
-        <Button onClick={() => handleDeleteProduct(id)}>Delete </Button>
-        <EditProductDialog
-          id={id}
-          product={localProduct}
-          onLocalUpdate={setLocalProduct}
-        >
-          Update Product
-        </EditProductDialog>
-      </div>
+      {role === "seller" && (
+        <div className="flex">
+          <Button>Featured </Button>
+          <Button>Discounted </Button>
+          <Button onClick={() => handleDeleteProduct(id)}>Delete </Button>
+          <EditProductDialog
+            id={id}
+            product={localProduct}
+            onLocalUpdate={setLocalProduct}
+          >
+            Update Product
+          </EditProductDialog>
+        </div>
+      )}
     </div>
   );
 };
@@ -138,6 +143,8 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
     </Dialog>
   );
 };
+
+
 
 const FeedbackContainer = () => {
   return (

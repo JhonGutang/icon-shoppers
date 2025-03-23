@@ -27,7 +27,6 @@ const useProductAction = () => {
   
   const handleFetchAllProducts = async() => {
     const products = await fetchAllProducts()
-    console.log(products);
     return products
   }
 
