@@ -40,9 +40,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
         </div>
 
         <div>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Temporibus
-          similique doloribus enim vitae dolore nostrum eveniet laboriosam sed
-          nulla beatae?
+          {user?.description||"No description provided."}
         </div>
 
         {role === "seller" && (
