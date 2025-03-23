@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('shop_id')->nullable();
             $table->string('name')->nullable();
             $table->decimal('price', 10, 2)->nullable();
             $table->integer('quantity')->nullable();
             $table->string('image')->nullable();
+            $table->boolean('is_visible')->default(true);
             $table->timestamps();
         });
     }

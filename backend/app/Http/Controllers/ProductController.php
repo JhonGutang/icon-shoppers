@@ -32,6 +32,7 @@ class ProductController extends Controller
                 'quantity' => $product->quantity,
                 'image' => $product->image,
                 'is_visible' => $product->is_visible,
+                'is_featured' => $product->is_featured,
                 'shop_name' => $product->shop->name ?? null,
             ];
         });
@@ -59,6 +60,7 @@ class ProductController extends Controller
             'price' => number_format($validatedData['price'], 2, '.', ''),
             'quantity' => $validatedData['quantity'],
             'is_visible' => true,
+            'is_featured' => false,
             'image' => null
         ]);
 
@@ -95,24 +97,27 @@ class ProductController extends Controller
     public function update(ProductRequest $request, $id)
     {
         $validatedData = $request->validated();
-
-        $product = Product::findOrFail($id);
-        
+    
         if (isset($validatedData['image'])) {
-            // Handle image upload if necessary
             // $validatedData['image'] = $this->uploadImage($validatedData['image']);
         }
-
-        $product->update([
-            'name' => $validatedData['name'] ?? $product->name,
-            'price' => isset($validatedData['price']) ? number_format($validatedData['price'], 2, '.', '') : $product->price,
-            'quantity' => $validatedData['quantity'] ?? $product->quantity,
-            'image' => $validatedData['image'] ?? $product->image,
-            'is_visible' => $validatedData['is_visible'] ?? $product->is_visible,
-        ]);
-
+    
+        $updateData = [
+            'name' => $validatedData['name'] ?? null,
+            'price' => isset($validatedData['price']) ? number_format($validatedData['price'], 2, '.', '') : null,
+            'quantity' => $validatedData['quantity'] ?? null,
+            'image' => $validatedData['image'] ?? null,
+            'is_visible' => $validatedData['is_visible'] ?? null,
+            'is_featured' => $validatedData['is_featured'] ?? null,
+        ];
+    
+        $updateData = array_filter($updateData, fn($value) => !is_null($value));
+        Product::where('id', $id)->update($updateData);
+        $product = Product::find($id);
+    
         return response()->json($product);
     }
+    
 
     /**
      * Remove the specified resource from storage.

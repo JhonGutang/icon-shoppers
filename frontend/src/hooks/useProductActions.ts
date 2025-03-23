@@ -64,10 +64,10 @@ const useProductAction = () => {
     if (!token) return;
     try {
       const updatedProduct = await updateProduct(updateData, token);
-      updateProductById(updatedProduct.id, updatedProduct);
       if (onLocalUpdate) {
         onLocalUpdate(updatedProduct);
       }
+      updateProductById(updatedProduct.id, updatedProduct);
       toast("Product updated successfully");
     } catch (error) {
       console.error(error);
@@ -104,14 +104,37 @@ const useProductAction = () => {
     };
 
     try {
-      await updateProduct(updatedProductVisibility, token);
       updateProductById(updatedProductVisibility.id, updatedProductVisibility);
       toast(`Product Visibilty is now ${updatedProductVisibility.is_visible}`)
+      await updateProduct(updatedProductVisibility, token);
     } catch (error) {
       console.error(error)
     }
-}
+
+
+  }
   
+  const handleFeatureToggle = async(product: Product, onLocalUpdate?: (product: Product) => void) => {
+    if (!token) return;
+    
+    const updatedProductFeature = {
+      ...product,
+      is_featured: !product.is_featured
+    };
+
+    try {
+      
+      if(onLocalUpdate) {
+        onLocalUpdate((updatedProductFeature))
+        toast(updatedProductFeature.is_featured ? 'Product Now Featured': 'Product removed from Featured')
+      }
+      await updateProduct(updatedProductFeature, token);
+    } catch (error) {
+      console.error(error)
+      toast('Feature toggle Failed: Reverting Back')
+    }
+    
+}
 
   return {
     products,
@@ -124,6 +147,7 @@ const useProductAction = () => {
     handleInputs,
     handleUpdateProduct,
     handleProductVisibility,
+    handleFeatureToggle,
   };
 };
 

@@ -39,10 +39,10 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
   product,
   id,
 }) => {
-const role = useAuth((state) => state.userType);
-  const { handleDeleteProduct } = useProductAction();
+  const role = useAuth((state) => state.userType);
+  const { handleDeleteProduct, handleFeatureToggle } = useProductAction();
   const [localProduct, setLocalProduct] = useState(product);
-  
+
   useEffect(() => {
     setLocalProduct(product);
   }, [product]);
@@ -53,10 +53,17 @@ const role = useAuth((state) => state.userType);
       <h1>Product Name: {localProduct?.name}</h1>
       <h1>Product Price: {localProduct?.price}</h1>
       <h1>Product quantity: {localProduct?.quantity}</h1>
+      <h1>Product featured: {localProduct?.is_featured ? "true" : "false"}</h1>
 
       {role === "seller" && (
         <div className="flex">
-          <Button>Featured </Button>
+          <Button
+            onClick={() =>
+              localProduct && handleFeatureToggle(localProduct, setLocalProduct)
+            }
+          >
+            Featured{" "}
+          </Button>
           <Button>Discounted </Button>
           <Button onClick={() => handleDeleteProduct(id)}>Delete </Button>
           <EditProductDialog
@@ -134,7 +141,9 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
           ))}
         </div>
         <DialogFooter>
+          <DialogClose asChild>
           <Button onClick={handleSubmitUpdate}>Update</Button>
+          </DialogClose>
           <DialogClose asChild>
             <Button>Cancel</Button>
           </DialogClose>
@@ -143,8 +152,6 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
     </Dialog>
   );
 };
-
-
 
 const FeedbackContainer = () => {
   return (
