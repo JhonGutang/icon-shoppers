@@ -10,6 +10,9 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+
+Route::get('/all-products', [ProductController::class, 'fetchAllProducts']);
+
 Route::middleware('auth:shop-api')->group(function () {
     Route::get('/products', [ProductController::class,'index']);
     Route::get('/product/{id}', [ProductController::class,'fetchSpecificProduct']);

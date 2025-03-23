@@ -16,8 +16,26 @@ class ProductController extends Controller
     {
         $userid = Auth::guard('shop-api')->user()->id;
         $products = Product::where('shop_id', $userid)->get()->values();
-        // asdfsadf
         return response()->json($products);
+    }
+
+    public function fetchAllProducts()
+    {
+        $products = Product::with('shop:id,name')->get()->filter(function($product) {
+            return $product->is_visible;
+        })->map(function($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $product->price,
+                'quantity' => $product->quantity,
+                'image' => $product->image,
+                'is_visible' => $product->is_visible,
+                'shop_name' => $product->shop->name ?? null,
+            ];
+        });
+    
+        return response()->json($products->values());
     }
 
 

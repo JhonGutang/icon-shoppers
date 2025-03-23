@@ -14,4 +14,9 @@ class Product extends Model
         'image',
         'is_visible'
     ];
+
+    public function shop()
+    {
+        return $this->belongsTo(Shop::class);
+    }
 }

@@ -1,6 +1,7 @@
 import {
   addProduct as addProductService,
   deleteProduct,
+  fetchAllProducts,
   fetchShopProducts,
   fetchSpecificProduct,
   updateProduct,
@@ -24,8 +25,13 @@ const useProductAction = () => {
   });
   const [product, setProduct] = useState<Product>()
   
+  const handleFetchAllProducts = async() => {
+    const products = await fetchAllProducts()
+    console.log(products);
+    return products
+  }
 
-  const handleFetchProducts = async () => {
+  const handleFetchShopProducts = async () => {
     if (!token) return;
     try {
       const fetchedProducts = await fetchShopProducts(token);
@@ -111,7 +117,8 @@ const useProductAction = () => {
   return {
     products,
     product,
-    handleFetchProducts,
+    handleFetchAllProducts,
+    handleFetchShopProducts,
     handleFetchSpecificProduct,
     handleAddProducts,
     handleDeleteProduct,

@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 use App\Http\Requests\AuthRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Cookie;
 
 class ShopController extends Controller
 {
@@ -65,7 +63,7 @@ class ShopController extends Controller
             'name' => $validatedData['name'],
             'owner' => $validatedData['owner'],
             'contact_number' => $validatedData['contact_number'],
-            'email' => 'johndoe12@gmail.com',
+            'email' => 'johndoe1231@gmail.com',
             'password' => bcrypt($validatedData['password']),
         ]);
         return $shop;
