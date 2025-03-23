@@ -23,9 +23,6 @@ const Profile = () => {
   }
 
   useEffect(() => {
-    console.log(products);
-  }, [products])
-  useEffect(() => {
     fetchUser();
     fetchProducts()
   }, []);
