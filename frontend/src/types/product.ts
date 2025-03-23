@@ -5,6 +5,7 @@ export interface Product {
   price: string;
   quantity?: string;
   shop_id?: number;
+  is_visible: boolean,
   created_at?: string;
   updated_at?: string;
 }
@@ -15,6 +16,7 @@ export interface ProductToUpdate {
   image?: string;
   price?: string;
   quantity?: string;
+  is_visible?: boolean,
   shop_id?: number;
   created_at?: string;
   updated_at?: string;
