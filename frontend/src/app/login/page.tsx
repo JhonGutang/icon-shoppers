@@ -38,7 +38,7 @@ const Login = () => {
         </Button>
         <div className="text-sm">
           {" "}
-          Don't have any account yet?{" "}
+          Don&apos;t have any account yet?{" "}
           <Button
             variant="link"
             className="cursor-pointer"

@@ -31,7 +31,7 @@ export const login = async (shopCredentials: Login) => {
 };
 
 export const logout = async (token: string) => {
-  const response = await axiosInstance.delete('/logout', {
+  await axiosInstance.delete('/logout', {
     headers: {
       Authorization: `Bearer ${token}`
     }

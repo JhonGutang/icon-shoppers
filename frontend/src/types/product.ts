@@ -29,9 +29,8 @@ export interface newProduct {
   quantity: number;
 }
 
-export const productFields = [
-  { id: "image", label: "Select an Image", type: "file" },
-  { id: "name", label: "Product Name", type: "text" },
+export const productFields: { id: keyof ProductToUpdate; label: string; type: string }[] = [
+  { id: "name", label: "Name", type: "text" },
   { id: "price", label: "Price", type: "number" },
   { id: "quantity", label: "Quantity", type: "number" },
 ];

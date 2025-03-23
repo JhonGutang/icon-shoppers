@@ -15,7 +15,7 @@ import useProductAction from "@/hooks/useProductActions";
 import { Product, productFields, ProductToUpdate } from "@/types/product";
 import { useEffect, use, useState, ReactNode } from "react";
 const ProductPage = ({ params }: { params: Promise<{ id: number }> }) => {
-  const { handleFetchSpecificProduct, product} = useProductAction();
+  const { handleFetchSpecificProduct, product } = useProductAction();
   const { id } = use(params);
   const fetchData = async () => {
     await handleFetchSpecificProduct(id);
@@ -55,7 +55,11 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
         <Button>Featured </Button>
         <Button>Discounted </Button>
         <Button onClick={() => handleDeleteProduct(id)}>Delete </Button>
-        <EditProductDialog id={id} product={localProduct} onLocalUpdate={setLocalProduct}>
+        <EditProductDialog
+          id={id}
+          product={localProduct}
+          onLocalUpdate={setLocalProduct}
+        >
           Update Product
         </EditProductDialog>
       </div>
@@ -73,7 +77,7 @@ interface EditProductDialogProps {
 const EditProductDialog: React.FC<EditProductDialogProps> = ({
   children,
   product,
-  onLocalUpdate
+  onLocalUpdate,
 }) => {
   const { handleUpdateProduct } = useProductAction();
   const [updatedProduct, setUpdatedProduct] = useState(product);
@@ -86,7 +90,10 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
 
   const handleUpdateInputs = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = event.target;
-    setUpdatedProduct((prev) => ({ ...prev, [id]: value }));
+    setUpdatedProduct((prev) => ({
+      ...prev,
+      [id as keyof ProductToUpdate]: value,
+    }));
   };
 
   const handleSubmitUpdate = async () => {
@@ -105,19 +112,19 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
         <div className="flex flex-col gap-3">
           {productFields.map((field) => (
             <div key={field.id}>
-              {field.id !== "description" && (
-                <>
-                  <Label htmlFor={field.id} className="mb-3">
-                    {field.label}
-                  </Label>
-                  <Input
-                    id={field.id}
-                    value={(updatedProduct as any)?.[field.id] ?? ""}
-                    onChange={handleUpdateInputs}
-                    type={field.type}
-                  />
-                </>
-              )}
+              <Label htmlFor={field.id} className="mb-3">
+                {field.label}
+              </Label>
+              <Input
+                id={field.id}
+                value={
+                  updatedProduct?.[field.id] != null
+                    ? `${updatedProduct?.[field.id]}`
+                    : ""
+                }
+                onChange={handleUpdateInputs}
+                type={field.type}
+              />
             </div>
           ))}
         </div>

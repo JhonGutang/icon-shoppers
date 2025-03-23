@@ -57,6 +57,7 @@ class ProductController extends Controller
             'name' => $validatedData['name'],
             'price' => number_format($validatedData['price'], 2, '.', ''),
             'quantity' => $validatedData['quantity'],
+            'is_visible' => true,
             'image' => null
         ]);
 

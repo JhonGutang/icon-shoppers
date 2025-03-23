@@ -30,13 +30,18 @@ const useAuth = () => {
     auth: "register" | "login"
   ) => {
     const { id, value } = e.target;
-    const setFormData =
-      auth === "register" ? setRegisterFormData : setLoginFormData;
 
-    setFormData((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
+    if (auth === "register") {
+      setRegisterFormData((prev: Register) => ({
+        ...prev,
+        [id]: value,
+      }));
+    } else {
+      setLoginFormData((prev: Login) => ({
+        ...prev,
+        [id]: value,
+      }));
+    }
   };
 
   const handleRegister = () => {
@@ -46,7 +51,7 @@ const useAuth = () => {
   const handleLogin = async () => {
     const token = await login(loginFormData);
     toast("Login successful!");
-    store.setAuth(token, );
+    store.setAuth(token, 'seller');
     redirectLink("/");
   };
 

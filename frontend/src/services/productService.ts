@@ -1,5 +1,5 @@
 import axiosInstance from "@/hooks/useAxios";
-import { newProduct, Product, ProductToUpdate } from "@/types/product";
+import { newProduct, ProductToUpdate } from "@/types/product";
 
 
 export const fetchShopProducts = async(token: string) => {

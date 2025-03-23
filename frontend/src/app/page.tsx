@@ -19,6 +19,8 @@ export default function Home() {
     setUser(data)
     setAllProducts(products)
   }
+
+
   useEffect(() => {
     fetchData()
   }, [])

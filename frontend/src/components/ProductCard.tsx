@@ -6,31 +6,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Eye, EyeClosed, Menu, Star } from "lucide-react";
+import { Eye, EyeClosed } from "lucide-react";
 import React from "react";
 import { Product } from "@/types/product";
 import useProductAction from "@/hooks/useProductActions";
 import useRedirectLink from "@/hooks/useRedirectLink";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Option } from "@/types/option";
-
 interface ProductCardProps  {
   product: Product
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const {redirectLink } = useRedirectLink()
-  const { handleDeleteProduct } = useProductAction();
-  const type = "seller";
-  const menuOptions: Option[] = [
-    { label: "Edit", link: "", onClick: () => console.log("Edit clicked")   },
-    { label: "Delete", link: "" , onClick: () => handleDeleteProduct(product.id) },
-  ];
+  // const menuOptions: Option[] = [
+  //   { label: "Edit", link: "", onClick: () => console.log("Edit clicked")   },
+  //   { label: "Delete", link: "" , onClick: () => handleDeleteProduct(product.id) },
+  // ];
   return (
     <Card className=" w-[40vw] py-3 lg:w-[20vw] lg:h-[40vh] lg:gap-3 gap-2 cursor-pointer" onClick={() => redirectLink(`profile/${product.id}`)}>
       <CardHeader>
@@ -51,41 +41,41 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         />
       </CardContent>
       <CardFooter className="h-[20%] flex justify-between">
-        <div>{product.price}</div>
-        <Visibility type={type} product={product} />
+        <div>₱{product.price}</div>
+        <Visibility product={product} />
       </CardFooter>
     </Card>
   );
 };
 
-const Edit: React.FC<{ options: Option[]; id: number }> = ({ options, id }) => {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="cursor-pointer">
-        <Menu size={20} />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        {options.map((option) => (
-          <div key={option.label}>
-            <DropdownMenuItem className="cursor-pointer">
-              <Button variant='ghost' onClick={ () => option.onClick?.(id)}>{option.label}</Button>
-            </DropdownMenuItem>
-          </div>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-};
+// const Edit: React.FC<{ options: Option[]; id: number }> = ({ options, id }) => {
+//   return (
+//     <DropdownMenu>
+//       <DropdownMenuTrigger className="cursor-pointer">
+//         <Menu size={20} />
+//       </DropdownMenuTrigger>
+//       <DropdownMenuContent>
+//         {options.map((option) => (
+//           <div key={option.label}>
+//             <DropdownMenuItem className="cursor-pointer">
+//               <Button variant='ghost' onClick={ () => option.onClick?.(id)}>{option.label}</Button>
+//             </DropdownMenuItem>
+//           </div>
+//         ))}
+//       </DropdownMenuContent>
+//     </DropdownMenu>
+//   );
+// };
 
-const Rate = () => {
-  return (
-    <Button variant="outline" size="icon">
-      <Star />
-    </Button>
-  );
-};
+// const Rate = () => {
+//   return (
+//     <Button variant="outline" size="icon">
+//       <Star />
+//     </Button>
+//   );
+// };
 
-const Visibility: React.FC<{ type: string, product: Product }> = ({ type, product }) => {
+const Visibility: React.FC<{ product: Product }> = ({  product }) => {
   const { handleProductVisibility } = useProductAction()
   return (
     <Button variant="outline" size="icon" onClick={(event) => handleProductVisibility(event, product)}>
