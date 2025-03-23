@@ -111,12 +111,8 @@ class ProductController extends Controller
             'is_featured' => $validatedData['is_featured'] ?? null,
         ];
     
-        // Filter out nulls
         $updateData = array_filter($updateData, fn($value) => !is_null($value));
-    
         Product::where('id', $id)->update($updateData);
-    
-        // Return the updated product if needed
         $product = Product::find($id);
     
         return response()->json($product);
