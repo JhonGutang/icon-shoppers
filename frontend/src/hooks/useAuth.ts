@@ -16,6 +16,7 @@ const useAuth = () => {
   const [registerFormData, setRegisterFormData] = useState<Register>({
     shopName: "",
     shopOwner: "",
+    email: "",
     contactNumber: "",
     password: "",
   });

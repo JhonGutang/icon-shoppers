@@ -6,6 +6,7 @@ export interface Login {
 export interface Register {
     shopName: string;
     shopOwner: string;
+    email: string;
     contactNumber: string;
     password: string;
 }
