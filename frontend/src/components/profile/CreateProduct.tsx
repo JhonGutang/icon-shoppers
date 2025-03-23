@@ -12,16 +12,10 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import useProductAction from "@/hooks/useProductActions";
-
-
+import { productFields } from "@/types/product";
 const CreateProduct = () => {
-  const { handleInputs, handleAddProducts } = useProductAction()
-  const productFields = [
-    { id: "image", label: "Select an Image", type: "file" },
-    { id: "name", label: "Product Name", type: "text" },
-    { id: "price", label: "Price", type: "number" },
-    { id: "quantity", label: "Quantity", type: "number" },
-  ];
+  const { handleInputs, handleAddProducts } = useProductAction();
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -44,15 +38,21 @@ const CreateProduct = () => {
           {productFields.map((field) => (
             <div key={field.id}>
               <Label htmlFor={field.id} className="mb-2">
-                {" "}
                 {field.label}
               </Label>
-              <Input id={field.id} type={field.type} onChange={handleInputs} />
+              <Input
+                id={field.id}
+                type={field.type}
+                accept={field.type === "file" ? "image/*" : undefined}
+                onChange={handleInputs}
+              />
             </div>
           ))}
         </div>
         <DialogFooter>
-          <Button onClick={handleAddProducts}>Create</Button>
+          <DialogClose asChild>
+            <Button onClick={handleAddProducts}>Create</Button>
+          </DialogClose>
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
