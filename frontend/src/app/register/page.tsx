@@ -14,6 +14,7 @@ const Register = () => {
   const registerFields = [
     { id: "shopName", label: "Business Name", type: "text" },
     { id: "shopOwner", label: "Business Owner", type: "text" },
+    { id: "email", label: "Email", type: "text" },
     { id: "contactNumber", label: "Contact No.", type: "text" },
     { id: "password", label: "Password", type: "password" },
   ];

@@ -7,6 +7,7 @@ const formatData = (data: Register | Login, auth: string) => {
     return {
       name: registerData.shopName,
       owner: registerData.shopOwner,
+      email: registerData.email,
       contact_number: registerData.contactNumber,
       password: registerData.password,
     };

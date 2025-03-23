@@ -63,7 +63,7 @@ class ShopController extends Controller
             'name' => $validatedData['name'],
             'owner' => $validatedData['owner'],
             'contact_number' => $validatedData['contact_number'],
-            'email' => 'johndoe1231@gmail.com',
+            'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
         ]);
         return $shop;
