@@ -62,8 +62,8 @@ class ShopController extends Controller
         $shop = Shop::create([
             'name' => $validatedData['name'],
             'owner' => $validatedData['owner'],
-            'contact_number' => $validatedData['contact_number'],
             'email' => $validatedData['email'],
+            'contact_number' => $validatedData['contact_number'],
             'password' => bcrypt($validatedData['password']),
         ]);
         return $shop;
@@ -85,20 +85,23 @@ class ShopController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Shop $shop)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Shop $shop)
     {
-        //
+        $validatedData = $request->validate([
+            'name'=>'required|string|maxx:255',
+            'contact_number'=>'required|string|unique:shops,contact_number'.$shop->$id,
+            'description'=>'nullable|string',
+        ]);
+
+        $shop->update($validatedData);
+        return response()->json([
+            'message'=>'Edited successfully',
+            'shop'=>$shop,
+        ]);
     }
 
     /**

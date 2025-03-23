@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import useRedirectLink from "@/hooks/useRedirectLink";
 import useAuth from "@/hooks/useAuth";
 
-
 const Register = () => {
   const {redirectLink} = useRedirectLink()
   const {registerFormData, handleInputs, handleRegister } = useAuth()
