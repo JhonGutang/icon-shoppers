@@ -12,6 +12,11 @@ export const fetchShopProducts = async(token: string) => {
     return response.data
 }
 
+export const fetchAllProducts = async () => {
+    const response = await axiosInstance.get('all-products');
+    return response.data
+}
+
 export const fetchSpecificProduct = async (id: number, token: string) => {
     const response = await axiosInstance.get(`product/${id}`, {
         headers: {

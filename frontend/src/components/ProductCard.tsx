@@ -35,7 +35,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     <Card className=" w-[40vw] py-3 lg:w-[20vw] lg:h-[40vh] lg:gap-3 gap-2 cursor-pointer" onClick={() => redirectLink(`profile/${product.id}`)}>
       <CardHeader>
         <div className="flex justify-between items-center">
-          <CardTitle>{product.name}</CardTitle>
+          <CardTitle>{product.name} {product.shop_name && product.shop_name}</CardTitle>
           {/* {type === "seller" ? (
             <Edit options={menuOptions} id={id} />
           ) : (

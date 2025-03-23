@@ -10,7 +10,7 @@ import useProductAction from "@/hooks/useProductActions";
 
 const Profile = () => {
   const { handleGetProfile } = useAuth();
-  const {products, handleFetchProducts} = useProductAction()
+  const {products, handleFetchShopProducts} = useProductAction()
   const [user, setUser] = useState<ProfileType>();
  
   const fetchUser = async () => {
@@ -19,7 +19,7 @@ const Profile = () => {
   };
 
   const fetchProducts = async () => {
-    await handleFetchProducts()
+    await handleFetchShopProducts()
   }
 
   useEffect(() => {
