@@ -36,10 +36,7 @@ const Profile = () => {
           {products?.map((product) => (
             <div key={product.id}>
               <ProductCard
-              id={product.id}
-                name={product.name}
-                image={product.image ?? 'https://i.pinimg.com/736x/c5/a0/03/c5a00375d647591a14dd36e31151acb1.jpg' }
-                price={product.price}
+              product={product}
               />
             </div>
           ))}

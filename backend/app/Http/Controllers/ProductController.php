@@ -72,14 +72,9 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(ProductRequest $request, $id)
     {
-        $validatedData = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'price' => 'sometimes|required|numeric',
-            'quantity' => 'sometimes|required|integer',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $validatedData = $request->validated();
 
         $product = Product::findOrFail($id);
         
@@ -93,6 +88,7 @@ class ProductController extends Controller
             'price' => isset($validatedData['price']) ? number_format($validatedData['price'], 2, '.', '') : $product->price,
             'quantity' => $validatedData['quantity'] ?? $product->quantity,
             'image' => $validatedData['image'] ?? $product->image,
+            'is_visible' => $validatedData['is_visible'] ?? $product->is_visible,
         ]);
 
         return response()->json($product);

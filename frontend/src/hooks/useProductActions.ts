@@ -88,6 +88,24 @@ const useProductAction = () => {
       [id]: value,
     }));
   };
+
+
+  const handleProductVisibility = async(event: React.MouseEvent<HTMLButtonElement>, product: Product) => {
+    event.stopPropagation();
+    if(!token) return
+    const updatedProductVisibility = {
+      ...product,
+      is_visible: !product.is_visible
+    };
+
+    try {
+      await updateProduct(updatedProductVisibility, token);
+      updateProductById(updatedProductVisibility.id, updatedProductVisibility);
+      toast(`Product Visibilty is now ${updatedProductVisibility.is_visible}`)
+    } catch (error) {
+      console.error(error)
+    }
+}
   
 
   return {
@@ -99,6 +117,7 @@ const useProductAction = () => {
     handleDeleteProduct,
     handleInputs,
     handleUpdateProduct,
+    handleProductVisibility,
   };
 };
 
