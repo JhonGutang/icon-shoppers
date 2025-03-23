@@ -20,6 +20,12 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
+
+    public function fetchSpecificProduct($id){
+        $product = Product:: find($id);
+        return $product;
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -31,14 +37,12 @@ class ProductController extends Controller
         $product = Product::create([
             'shop_id' => $userId,
             'name' => $validatedData['name'],
-            'price' => $validatedData['price'],
+            'price' => number_format($validatedData['price'], 2, '.', ''),
             'quantity' => $validatedData['quantity'],
             'image' => null
         ]);
 
-        return response()->json(
-            [ 'product' => $product]
-        );
+        return response()->json($product);
     }
 
     /**
@@ -68,9 +72,30 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'price' => 'sometimes|required|numeric',
+            'quantity' => 'sometimes|required|integer',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $product = Product::findOrFail($id);
+        
+        if (isset($validatedData['image'])) {
+            // Handle image upload if necessary
+            // $validatedData['image'] = $this->uploadImage($validatedData['image']);
+        }
+
+        $product->update([
+            'name' => $validatedData['name'] ?? $product->name,
+            'price' => isset($validatedData['price']) ? number_format($validatedData['price'], 2, '.', '') : $product->price,
+            'quantity' => $validatedData['quantity'] ?? $product->quantity,
+            'image' => $validatedData['image'] ?? $product->image,
+        ]);
+
+        return response()->json($product);
     }
 
     /**
@@ -78,6 +103,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+
+        return response()->json(['message' => 'Product deleted successfully']);
     }
 }

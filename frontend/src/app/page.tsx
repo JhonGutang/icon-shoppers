@@ -22,17 +22,17 @@ export default function Home() {
   const products: Product[] = [
     {
       name: "Pencil",
-      img: "https://i.pinimg.com/236x/0d/2c/46/0d2c463deeb7c0b29483efe40dde438a.jpg",
+      image: "https://i.pinimg.com/236x/0d/2c/46/0d2c463deeb7c0b29483efe40dde438a.jpg",
       price: "$500",
     },
     {
       name: "Ballpen",
-      img: "https://i.pinimg.com/236x/6a/4c/03/6a4c03bb76abde4fbe5f4f306b009085.jpg",
+      image: "https://i.pinimg.com/236x/6a/4c/03/6a4c03bb76abde4fbe5f4f306b009085.jpg",
       price: "$300",
     },
     {
       name: "T shirt",
-      img: "https://i.pinimg.com/236x/0c/23/56/0c2356d9f738f780286bf0fdff4e82c1.jpg",
+      image: "https://i.pinimg.com/236x/0c/23/56/0c2356d9f738f780286bf0fdff4e82c1.jpg",
       price: "$300",
     },
   ];
@@ -44,7 +44,7 @@ export default function Home() {
           <div key={product.name}>
             <ProductCard
               name={product.name}
-              img={product.img}
+              image={product.image}
               price={product.price}
             />
           </div>

@@ -11,7 +11,10 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::middleware('auth:shop-api')->group(function () {
-    Route::post('/product', [ProductController::class, 'create']);
     Route::get('/products', [ProductController::class,'index']);
+    Route::get('/product/{id}', [ProductController::class,'fetchSpecificProduct']);
+    Route::post('/product', [ProductController::class, 'create']);
+    Route::patch('/product/{id}', [ProductController::class,'update']);
+    Route::delete('/products/{product}', [ProductController::class, 'destroy']);
 });
 ?>

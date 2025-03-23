@@ -4,7 +4,6 @@ import ProductCard from "@/components/ProductCard";
 import Header from "@/components/profile/Header";
 import useAuth from "@/hooks/useAuth";
 import { Profile as ProfileType } from "@/types/auth";
-import { Product } from "@/types/product";
 import { ShoppingBag } from "lucide-react";
 import { useEffect, useState } from "react";
 import useProductAction from "@/hooks/useProductActions";
@@ -22,6 +21,10 @@ const Profile = () => {
   const fetchProducts = async () => {
     await handleFetchProducts()
   }
+
+  useEffect(() => {
+    console.log(products);
+  }, [products])
   useEffect(() => {
     fetchUser();
     fetchProducts()
@@ -36,6 +39,7 @@ const Profile = () => {
           {products?.map((product) => (
             <div key={product.id}>
               <ProductCard
+              id={product.id}
                 name={product.name}
                 image={product.image ?? 'https://i.pinimg.com/736x/c5/a0/03/c5a00375d647591a14dd36e31151acb1.jpg' }
                 price={product.price}

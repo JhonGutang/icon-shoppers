@@ -1,5 +1,5 @@
 import axiosInstance from "@/hooks/useAxios";
-import { Product } from "@/types/product";
+import { newProduct, Product, ProductToUpdate } from "@/types/product";
 
 
 export const fetchShopProducts = async(token: string) => {
@@ -12,8 +12,17 @@ export const fetchShopProducts = async(token: string) => {
     return response.data
 }
 
+export const fetchSpecificProduct = async (id: number, token: string) => {
+    const response = await axiosInstance.get(`product/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+    return response.data
+}
 
-export const addProduct = async(data: Product, token: string) => {
+
+export const addProduct = async(data: newProduct, token: string) => {
     const response = await axiosInstance.post('product', data, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -21,3 +30,22 @@ export const addProduct = async(data: Product, token: string) => {
     })
     return response.data
 }
+
+export const updateProduct = async(data: ProductToUpdate, token: string) => {
+
+    const response = await axiosInstance.patch(`product/${data.id}`, data, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+    return response.data
+}
+
+
+export const deleteProduct = async (id: number, token: string) => {
+    await axiosInstance.delete(`/products/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}` 
+        }
+    })
+} 
