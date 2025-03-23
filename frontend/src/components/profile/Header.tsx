@@ -3,13 +3,15 @@ import { Button } from "../ui/button";
 import StarRating from "../Rating";
 import CreateProduct from "./CreateProduct";
 import useRedirectLink from "@/hooks/useRedirectLink";
-
+import useAuth from "@/stores/useToken";
 interface HeaderProps {
   user: Profile | undefined;
 }
 
 const Header: React.FC<HeaderProps> = ({ user }) => {
-  const {redirectLink} = useRedirectLink()
+  const role = useAuth((state) => state.userType);
+
+  const { redirectLink } = useRedirectLink();
   return (
     <div className="lg:w-[50%] flex flex-col items-center p-6">
       <div className="w-full h-[45%] lg:h-[40%] border-black border-3 rounded-xl">
@@ -43,10 +45,18 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
           nulla beatae?
         </div>
 
-        <div className="w-full flex gap-3 mt-5">
-          <CreateProduct />
-          <Button onClick={() => {redirectLink('orders')}}>Check Orders</Button>
-        </div>
+        {role === "seller" && (
+          <div className="w-full flex gap-3 mt-5">
+            <CreateProduct />
+            <Button
+              onClick={() => {
+                redirectLink("orders");
+              }}
+            >
+              Check Orders
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

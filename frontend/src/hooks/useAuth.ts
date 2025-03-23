@@ -50,9 +50,10 @@ const useAuth = () => {
   };
 
   const handleLogin = async () => {
-    const token = await login(loginFormData);
+    const profile = await login(loginFormData);
+    console.log(profile);
     toast("Login successful!");
-    store.setAuth(token, 'seller');
+    store.setAuth(profile.token, profile.user.role , profile.user.id);
     redirectLink("/");
   };
 
@@ -70,7 +71,6 @@ const useAuth = () => {
     const accessToken = useToken.getState().accessToken;
     if (accessToken) {
       const data = await getProfile(accessToken);
-      console.log(data);
       return data.user;
     }
   }, []);
