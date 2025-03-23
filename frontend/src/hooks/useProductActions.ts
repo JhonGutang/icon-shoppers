@@ -60,7 +60,6 @@ const useProductAction = () => {
     try {
       const updatedProduct = await updateProduct(updateData, token);
       updateProductById(updatedProduct.id, updatedProduct);
-      // Also update local state if callback is provided
       if (onLocalUpdate) {
         onLocalUpdate(updatedProduct);
       }
