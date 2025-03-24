@@ -77,8 +77,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
       <DialogTrigger asChild>
         <Button variant="outline">Edit Profile</Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogTitle>Edit Profile</DialogTitle>
+      <DialogContent className="max-w-xs sm:max-w-sm md:max-w-md w-full p-4 sm:p-6">
+        <DialogTitle className="text-lg sm:text-xl">Edit Profile</DialogTitle>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="name">Business Name</Label>
@@ -88,6 +88,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
               onChange={handleInputChange}
               required
               disabled={isLoading}
+              className="w-full"
             />
           </div>
           
@@ -100,6 +101,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
               onChange={handleInputChange}
               required
               disabled={isLoading}
+              className="w-full"
             />
           </div>
 
@@ -111,6 +113,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
               onChange={handleInputChange}
               required
               disabled={isLoading}
+              className="w-full"
             />
           </div>
 
@@ -120,17 +123,17 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
               id="description"
               value={formData.description}
               onChange={handleInputChange}
-              className="h-20"
+              className="h-20 w-full"
               disabled={isLoading}
             />
           </div>
 
-          <DialogFooter>
-            <Button type="submit" disabled={isLoading}>
+          <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+            <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
               {isLoading ? "Saving..." : "Save Changes"}
             </Button>
             <DialogClose asChild>
-              <Button type="button" variant="outline">
+              <Button type="button" variant="outline" className="w-full sm:w-auto">
                 Cancel
               </Button>
             </DialogClose>
