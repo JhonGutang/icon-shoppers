@@ -18,8 +18,8 @@ export interface ProductToUpdate {
   image?: string;
   price?: string;
   quantity?: string;
-  is_visible?: boolean,
-  is_featured?: boolean,
+  is_visible?: boolean | number,
+  is_featured?: boolean | number,
   shop_id?: number;
   created_at?: string;
   updated_at?: string;
