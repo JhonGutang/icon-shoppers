@@ -11,7 +11,7 @@ interface TokenState {
   setHasHydrated: (hydrated: boolean) => void
 }
 
-const useAuth = create<TokenState>()(
+const useAuthStore = create<TokenState>()(
   persist(
     (set) => ({
       accessToken: null,
@@ -31,4 +31,4 @@ const useAuth = create<TokenState>()(
   )
 )
 
-export default useAuth
+export default useAuthStore

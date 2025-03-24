@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import useToken from "@/stores/useToken";
+import useToken from "@/stores/useAuthStore";
 import axiosInstance from "@/hooks/useAxios";
 import axios from "axios";
 

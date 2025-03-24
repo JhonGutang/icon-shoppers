@@ -6,8 +6,11 @@ import useAuth from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import { Profile } from "@/types/auth";
 import useProductAction from "@/hooks/useProductActions";
+import useCustomerActions from "@/hooks/useCustomerActions";
+
 
 export default function Home() {
+  const { handleOrdersInCart } = useCustomerActions()
   const { handleGetProfile } = useAuth();
   const { handleFetchAllProducts } = useProductAction()
   const [user, setUser] = useState<Profile>();
@@ -23,6 +26,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchData()
+    handleOrdersInCart()
   }, [])
 
 

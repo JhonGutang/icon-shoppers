@@ -6,21 +6,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Eye, EyeClosed } from "lucide-react";
+import { Eye, EyeClosed, ShoppingCart } from "lucide-react";
 import React from "react";
 import { Product } from "@/types/product";
 import useProductAction from "@/hooks/useProductActions";
 import useRedirectLink from "@/hooks/useRedirectLink";
-import useAuth from "@/stores/useToken";
+import useAuthStore from "@/stores/useAuthStore";
+import { useCartStore } from "@/stores/useCartStore";
+import useCustomerActions from "@/hooks/useCustomerActions";
+import { toast } from "sonner";
 interface ProductCardProps {
   product: Product;
   location?: string;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, location }) => {
-  const shopId = useAuth((state) => state.id);
-  const role = useAuth((state) => state.userType);
+  const shopId = useAuthStore((state) => state.id);
+  const role = useAuthStore((state) => state.userType);
   const { redirectLink } = useRedirectLink();
+  const isProductOwner =
+    shopId === product.shop_id && location === "profile" && role === "seller";
+
   return (
     <Card
       className=" w-[40vw] py-3 lg:w-[20vw] lg:h-[40vh] lg:gap-3 gap-2 cursor-pointer"
@@ -46,9 +52,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, location }) => {
       <CardFooter className="h-[20%] block ">
         <div className="flex justify-between w-full items-center">
           <div>₱{product.price}</div>
-          {shopId === product.shop_id &&
-            location === "profile" &&
-            role === "seller" && <Visibility product={product} />}
+          {isProductOwner && <Visibility product={product} />}
+          {role !== "seller" && <AddToCart product={product} />}
         </div>
         {Boolean(product.is_featured) && <div>Featured</div>}
       </CardFooter>
@@ -66,6 +71,18 @@ const Visibility: React.FC<{ product: Product }> = ({ product }) => {
     >
       {product.is_visible ? <Eye /> : <EyeClosed />}
     </Button>
+  );
+};
+
+const AddToCart:React.FC<{product: Product}> = ({product}) => {
+  const { handleAddToCart} = useCustomerActions()
+  
+  return (
+    <div>
+      <Button variant="outline" size="icon" onClick={(event) => handleAddToCart(event, product)}>
+        <ShoppingCart />
+      </Button>
+    </div>
   );
 };
 

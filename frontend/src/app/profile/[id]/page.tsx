@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import useProductAction from "@/hooks/useProductActions";
 import { Product, productFields, ProductToUpdate } from "@/types/product";
 import { useEffect, use, useState, ReactNode } from "react";
-import useAuth from "@/stores/useToken";
+import useAuthStore from "@/stores/useAuthStore";
 
 const ProductPage = ({ params }: { params: Promise<{ id: number }> }) => {
   const { handleFetchSpecificProduct, product } = useProductAction();
@@ -39,7 +39,7 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
   product,
   id,
 }) => {
-  const role = useAuth((state) => state.userType);
+  const role = useAuthStore((state) => state.userType);
   const { handleDeleteProduct, handleFeatureToggle } = useProductAction();
   const [localProduct, setLocalProduct] = useState(product);
 

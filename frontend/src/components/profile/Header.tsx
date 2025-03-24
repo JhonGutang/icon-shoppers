@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import StarRating from "../Rating";
 import CreateProduct from "./CreateProduct";
 import useRedirectLink from "@/hooks/useRedirectLink";
-import useAuth from "@/stores/useToken";
+import useAuthStore from "@/stores/useAuthStore";
 import EditProfile from "../EditProfile";
 
 interface HeaderProps {
@@ -11,7 +11,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ user }) => {
-  const role = useAuth((state) => state.userType);
+  const role = useAuthStore((state) => state.userType);
   const { redirectLink } = useRedirectLink();
 
   return (
