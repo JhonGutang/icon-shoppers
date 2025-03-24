@@ -64,7 +64,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
       
       const closeButton = document.querySelector('[aria-label="Close"]') as HTMLButtonElement;
       closeButton?.click();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error updating profile:", err.response?.data || err.message);
       toast.error(err.response?.data?.message || "Failed to update profile");
     } finally {
