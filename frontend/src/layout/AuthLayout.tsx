@@ -1,6 +1,5 @@
 import React, { ReactNode } from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 interface LayoutProps {
   trigger: ReactNode;
   children: ReactNode;
