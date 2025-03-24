@@ -5,7 +5,6 @@ import CreateProduct from "./CreateProduct";
 import useRedirectLink from "@/hooks/useRedirectLink";
 import useAuth from "@/stores/useToken";
 import EditProfile from "../EditProfile";
-import { useState } from "react";
 
 interface HeaderProps {
   user: Profile | undefined;
@@ -14,12 +13,6 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ user }) => {
   const role = useAuth((state) => state.userType);
   const { redirectLink } = useRedirectLink();
-  const [isEditing, setIsEditing] = useState(false);
-  const [userData] = useState(user);
-
-  const handleSave = () => {
-    setIsEditing(false);
-  };
 
   return (
     <div className="lg:w-[50%] flex flex-col items-center p-6">
@@ -52,31 +45,17 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
           {user?.description || "No description provided."}
         </div>
 
-        {role === "seller" && (
-          <div className="w-full flex gap-3 mt-5">
-            <CreateProduct />
-            <Button
-              onClick={() => {
-                redirectLink("orders");
-              }}
-            >
-              Check Orders
-            </Button>
-          </div>
-        )}
-
-        <div className="mt-4">
-          <Button onClick={() => setIsEditing(true)}>Edit Profile</Button>
+        <div className="w-full flex gap-3 mt-5">
+          {role === "seller" && (
+            <>
+              <CreateProduct />
+              <Button onClick={() => redirectLink("orders")}>
+                Check Orders
+              </Button>
+            </>
+          )}
+          <EditProfile user={user} />
         </div>
-
-        {isEditing && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-5 rounded-lg shadow-lg">
-              <EditProfile user={userData as Profile} onSave={handleSave} />
-              <Button onClick={() => setIsEditing(false)}>Cancel</Button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
