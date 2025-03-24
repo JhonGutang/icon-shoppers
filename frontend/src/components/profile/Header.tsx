@@ -54,7 +54,10 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
               </Button>
             </>
           )}
-          <EditProfile user={user} />
+          <EditProfile 
+            user={user} 
+            onSave={() => window.location.reload()}
+          />
         </div>
       </div>
     </div>

@@ -11,7 +11,7 @@ import axiosInstance from "@/hooks/useAxios";
 
 interface EditProfileProps {
   user: Profile | undefined;
-  onSave?: () => void;
+  onSave?: (updatedProfile: Profile) => void;
 }
 
 const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
@@ -60,7 +60,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
       });
 
       toast.success("Profile updated successfully");
-      onSave?.();
+      onSave?.(response.data.data);
+      
+      const closeButton = document.querySelector('[aria-label="Close"]') as HTMLButtonElement;
+      closeButton?.click();
     } catch (err: any) {
       console.error("Error updating profile:", err.response?.data || err.message);
       toast.error(err.response?.data?.message || "Failed to update profile");
@@ -123,11 +126,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
           </div>
 
           <DialogFooter>
-            <DialogClose asChild>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Saving..." : "Save Changes"}
-              </Button>
-            </DialogClose>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save Changes"}
+            </Button>
             <DialogClose asChild>
               <Button type="button" variant="outline">
                 Cancel
