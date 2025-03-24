@@ -4,8 +4,8 @@ import { persist } from 'zustand/middleware'
 interface TokenState {
   accessToken: string | null
   userType: string | null
-  shopId: number | null
-  setAuth: (token: string | null, userType: string | null, shopId: number | null) => void
+  id: number | null
+  setAuth: (token: string | null, userType: string | null, id: number | null) => void
   clearAuth: () => void
   hasHydrated: boolean
   setHasHydrated: (hydrated: boolean) => void
@@ -16,9 +16,9 @@ const useAuth = create<TokenState>()(
     (set) => ({
       accessToken: null,
       userType: null,
-      shopId: null,
-      setAuth: (token, userType, shopId) => set({ accessToken: token, userType: userType, shopId: shopId }),
-      clearAuth: () => set({ accessToken: null, userType: null, shopId: null }),
+      id: null,
+      setAuth: (token, userType, id) => set({ accessToken: token, userType: userType, id: id }),
+      clearAuth: () => set({ accessToken: null, userType: null, id: null }),
       hasHydrated: false,
       setHasHydrated: (hydrated) => set({ hasHydrated: hydrated }),
     }),

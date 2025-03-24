@@ -45,13 +45,22 @@ return [
             'driver' => 'session',
             'provider' => 'shops',
         ],
-        
+
+
         'shop-api' => [
             'driver' => 'sanctum',
             'provider' => 'shops',
-        ]
-    ],
+        ],
+        'customer' => [
+            'driver' => 'session',
+            'provider' => 'customer',
+        ],
+        'customer-api' => [
+            'driver' => 'sanctum',
+            'provider' => 'customer',
+        ],
 
+    ],
     /*
     |--------------------------------------------------------------------------
     | User Providers
@@ -78,6 +87,11 @@ return [
         'shops' => [
             'driver' => 'eloquent',
             'model' => App\Models\Shop::class
+        ],
+
+        'customer' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Customer::class
         ]
 
         // 'users' => [
