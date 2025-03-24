@@ -5,9 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { toast } from "sonner";
 import useToken from "@/stores/useToken";
+import axiosInstance from "@/hooks/useAxios";
 
 interface EditProfileProps {
   user: Profile | undefined;
@@ -52,7 +52,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
     setIsLoading(true);
 
     try {
-      const response = await axios.put(`/shop/${user.id}`, formData, {
+      const response = await axiosInstance.put(`shop/${user.id}`, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json"
