@@ -10,7 +10,7 @@ Route::post('/customer-login', [CustomerController::class, 'login']);
 Route::post('/customer-register', [CustomerController::class, 'create']);
 
 Route::middleware('auth:shop-api')->group(function () {
-    Route::post('shop/{shop}',[ShopController::class, 'update']);
+    Route::put('shop/{shop}',[ShopController::class, 'update']);
     Route::delete('/logout', [ShopController::class,'logout']);
 });
 
