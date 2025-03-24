@@ -18,7 +18,7 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, location }) => {
-  const shopId = useAuth((state) => state.shopId);
+  const shopId = useAuth((state) => state.id);
   const role = useAuth((state) => state.userType);
   const { redirectLink } = useRedirectLink();
   return (

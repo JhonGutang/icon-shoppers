@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,4 +17,8 @@ Route::get('/user', function (Request $request) {
 
 Route::middleware('auth:shop-api')->group(function () {
     Route::get('/profile', [ShopController::class, 'index']);
+});
+
+Route::middleware('auth:customer-api')->group(function () {
+    Route::get('/customer-profile', [CustomerController::class, 'index']);
 });

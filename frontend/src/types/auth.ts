@@ -1,12 +1,14 @@
 export interface Login {
-    shopName: string;
+    name: string;
     password: string;
 }
 
 export interface Register {
-    shopName: string;
-    shopOwner: string;
+    name: string;
+    middleName?: string;
+    shopOwner?: string;
     email: string;
+    address?: string,
     contactNumber: string;
     password: string;
 }

@@ -1,11 +1,6 @@
 import { useCallback, useState } from "react";
 import { Register, Login } from "@/types/auth";
-import {
-  login,
-  registerShop,
-  getProfile,
-  logout,
-} from "@/services/authService";
+import { login, register, getProfile, logout } from "@/services/authService";
 import { toast } from "sonner";
 import useToken from "@/stores/useToken";
 import useRedirectLink from "./useRedirectLink";
@@ -14,15 +9,17 @@ const useAuth = () => {
   const store = useToken();
   const { redirectLink } = useRedirectLink();
   const [registerFormData, setRegisterFormData] = useState<Register>({
-    shopName: "",
+    name: "",
     shopOwner: "",
+    address: "",
+    middleName: "",
     email: "",
     contactNumber: "",
     password: "",
   });
 
   const [loginFormData, setLoginFormData] = useState<Login>({
-    shopName: "",
+    name: "",
     password: "",
   });
 
@@ -45,15 +42,20 @@ const useAuth = () => {
     }
   };
 
-  const handleRegister = () => {
-    registerShop(registerFormData);
+  const handleRegister = (role: string) => {
+    try {
+      register(registerFormData, role);
+      toast("Registered Successfully");
+    } catch (error) {
+      console.error(error);
+      toast("Registration Failed");
+    }
   };
 
-  const handleLogin = async () => {
-    const profile = await login(loginFormData);
-    console.log(profile);
+  const handleLogin = async (role: string) => {
+    const profile = await login(loginFormData, role);
     toast("Login successful!");
-    store.setAuth(profile.token, profile.user.role , profile.user.id);
+    store.setAuth(profile.token, profile.user.role, profile.user.id);
     redirectLink("/");
   };
 
@@ -69,8 +71,10 @@ const useAuth = () => {
 
   const handleGetProfile = useCallback(async () => {
     const accessToken = useToken.getState().accessToken;
-    if (accessToken) {
-      const data = await getProfile(accessToken);
+    const role = useToken.getState().userType
+
+    if (accessToken && role) {
+      const data = await getProfile(accessToken, role);
       return data.user;
     }
   }, []);
