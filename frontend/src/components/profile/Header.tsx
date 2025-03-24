@@ -4,14 +4,23 @@ import StarRating from "../Rating";
 import CreateProduct from "./CreateProduct";
 import useRedirectLink from "@/hooks/useRedirectLink";
 import useAuth from "@/stores/useToken";
+import EditProfile from "../EditProfile";
+import { useState } from "react";
+
 interface HeaderProps {
   user: Profile | undefined;
 }
 
 const Header: React.FC<HeaderProps> = ({ user }) => {
   const role = useAuth((state) => state.userType);
-
   const { redirectLink } = useRedirectLink();
+  const [isEditing, setIsEditing] = useState(false);
+  const [userData] = useState(user);
+
+  const handleSave = () => {
+    setIsEditing(false);
+  };
+
   return (
     <div className="lg:w-[50%] flex flex-col items-center p-6">
       <div className="w-full h-[45%] lg:h-[40%] border-black border-3 rounded-xl">
@@ -40,7 +49,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
         </div>
 
         <div>
-          {user?.description||"No description provided."}
+          {user?.description || "No description provided."}
         </div>
 
         {role === "seller" && (
@@ -53,6 +62,19 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
             >
               Check Orders
             </Button>
+          </div>
+        )}
+
+        <div className="mt-4">
+          <Button onClick={() => setIsEditing(true)}>Edit Profile</Button>
+        </div>
+
+        {isEditing && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-5 rounded-lg shadow-lg">
+              <EditProfile user={userData as Profile} onSave={handleSave} />
+              <Button onClick={() => setIsEditing(false)}>Cancel</Button>
+            </div>
           </div>
         )}
       </div>
