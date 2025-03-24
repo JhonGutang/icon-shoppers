@@ -43,9 +43,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, location }) => {
           className="w-full h-auto max-h-[140px] lg:max-h-[170px] object-cover rounded-xl"
         />
       </CardContent>
-      <CardFooter className="h-[20%] flex justify-between">
-        <div>₱{product.price}</div>
-        {(shopId === product.shop_id && location === 'profile' && role === 'seller') && <Visibility product={product} />}
+      <CardFooter className="h-[20%] block ">
+        <div className="flex justify-between w-full items-center">
+          <div>₱{product.price}</div>
+          {shopId === product.shop_id &&
+            location === "profile" &&
+            role === "seller" && <Visibility product={product} />}
+        </div>
+        {Boolean(product.is_featured) && <div>Featured</div>}
       </CardFooter>
     </Card>
   );

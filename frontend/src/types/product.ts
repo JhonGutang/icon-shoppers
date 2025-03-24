@@ -6,8 +6,8 @@ export interface Product {
   price: string;
   quantity?: string;
   shop_id?: number;
-  is_visible: boolean,
-  is_featured: boolean,
+  is_visible: boolean | number,
+  is_featured: boolean | number,
   created_at?: string;
   updated_at?: string;
 }
