@@ -7,7 +7,7 @@ Route::post('/login', [ShopController::class, 'login']);
 Route::post('/register', [ShopController::class, 'create' ]);
 
 Route::middleware('auth:shop-api')->group(function () {
-    Route::post('shop/{shop}',[ShopController::class, 'update']);
+    Route::put('shop/{shop}',[ShopController::class, 'update']);
     Route::delete('/logout', [ShopController::class,'logout']);
 });
 

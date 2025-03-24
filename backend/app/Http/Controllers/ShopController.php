@@ -92,8 +92,9 @@ class ShopController extends Controller
     public function update(Request $request, Shop $shop)
     {
         $validatedData = $request->validate([
-            'name'=>'required|string|maxx:255',
-            'contact_number'=>'required|string|unique:shops,contact_number'.$shop->$id,
+            'name'=>'required|string|max:255',
+            'email' => 'required|email|unique:shops,email,'.$shop->id,
+            'contact_number' => 'required|string|unique:shops,contact_number,' . $shop->id,
             'description'=>'nullable|string',
         ]);
 
