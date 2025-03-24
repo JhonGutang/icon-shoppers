@@ -4,7 +4,7 @@ export interface Product {
   name: string;
   image?: string;
   price: string;
-  quantity?: string;
+  quantity?: number;
   shop_id?: number;
   is_visible: boolean | number,
   is_featured: boolean | number,
@@ -17,7 +17,7 @@ export interface ProductToUpdate {
   name?: string;
   image?: string;
   price?: string;
-  quantity?: string;
+  quantity?: number;
   is_visible?: boolean | number,
   is_featured?: boolean | number,
   shop_id?: number;
@@ -36,3 +36,9 @@ export const productFields: { id: keyof ProductToUpdate; label: string; type: st
   { id: "price", label: "Price", type: "number" },
   { id: "quantity", label: "Quantity", type: "number" },
 ];
+
+export interface Order {
+  id: number,
+  quantity: number
+
+}

@@ -7,7 +7,7 @@ import {
   updateProduct,
 } from "@/services/productService";
 import { toast } from "sonner";
-import useToken from "@/stores/useToken";
+import useToken from "@/stores/useAuthStore";
 import useProducts from "@/stores/useProducts";
 import { newProduct, Product, ProductToUpdate } from "@/types/product";
 import { useState } from "react";

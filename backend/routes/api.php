@@ -3,10 +3,10 @@
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 require __DIR__.'/api/product.php';
 require __DIR__.'/api/auth.php';
+require __DIR__.'/api/customer.php';
 
 
 Route::get('/user', function (Request $request) {

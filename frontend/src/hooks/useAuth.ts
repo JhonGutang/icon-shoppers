@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { Register, Login } from "@/types/auth";
 import { login, register, getProfile, logout } from "@/services/authService";
 import { toast } from "sonner";
-import useToken from "@/stores/useToken";
+import useToken from "@/stores/useAuthStore";
 import useRedirectLink from "./useRedirectLink";
 
 const useAuth = () => {
