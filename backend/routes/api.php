@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 require __DIR__.'/api/product.php';
 require __DIR__.'/api/auth.php';
 require __DIR__.'/api/customer.php';
-
+require __DIR__.'/api/order.php';
 
 Route::get('/user', function (Request $request) {
     return $request->user();

@@ -8,10 +8,10 @@ use App\Models\Order;
 class OrderController extends Controller
 {
     public function index(Request $request){
-        $quesry=Order::query;
+        $query=Order::query;
 
         if($request->has('status')){
-            $quesry->where('status', $request->status);
+            $query->where('status', $request->status);
         }
         return response()->json($query->get());
     }
@@ -34,36 +34,39 @@ class OrderController extends Controller
     }
 
     public function show($id){
-        $order=Order::find($id);
+        $order = Order::find($id);
 
         if(!$order){
             return response()->json(['message'=>'Order not found'], 404);
         }
-        return response()->jsonn($order);
+        return response()->json($order);
     }
 
-    public function update(Request $request){
-        $order=Order::find($id);
+    public function update(Request $request, $id){
+        $order = Order::find($id);
 
         if(!$order){
-            return response()->json(['message'=>'Order not foound.'], 404);
+            return response()->json(['message'=>'Order not found.'], 404);
         }
 
-        $request->valdiate([
+        $request->validate([
             'quantity'=>'integer|min:1',
             'total_amount'=>'numeric|min:0',
             'location'=>'string|max:255',
             'status'=>'in:pending,to_be_delivered,delivered,not_delivered,done',
         ]);
+
+        $order->update($request->all());
+        return response()->json($order);
     }
 
     public function delete($id){
-        $order=Order::find($id);
+        $order = Order::find($id);
 
-        if(!order){
+        if(!$order){
             return response()->json(['message'=>'Order not found.'], 404);
         }
-        $order=delete();
+        $order->delete();
         return response()->json([
             'message'=>'Order deleted.'
         ]);
