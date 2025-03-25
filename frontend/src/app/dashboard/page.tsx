@@ -62,11 +62,9 @@ const Dashboard = () => {
 
   const [activeTab, setActiveTab] = useState("All");
 
-  // Filter orders based on the active tab
   const filteredOrders = activeTab === "All" ? orders : orders.filter(order => order.status === activeTab);
 
   const handleStatusUpdate = (orderId: number) => {
-    // Temporary function to demonstrate status update
     alert(`Update status for order ${orderId}`);
   };
 
@@ -74,7 +72,6 @@ const Dashboard = () => {
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-5">Order Dashboard</h1>
 
-      {/* Tabs for filtering */}
       <div className="flex justify-center gap-3 mb-4">
         {["All", "Pending", "To Be Delivered", "Delivered", "Not Delivered", "Done"].map((status) => (
           <button
@@ -89,7 +86,6 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Orders Table */}
       <div className="bg-white p-4 shadow-lg rounded-lg overflow-x-auto">
         <table className="w-full border-collapse min-w-[800px]">
           <thead>
@@ -141,7 +137,6 @@ const Dashboard = () => {
   );
 };
 
-// Function to color-code status labels
 const getStatusColor = (status) => {
   switch (status) {
     case "Pending":
