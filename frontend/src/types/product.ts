@@ -10,6 +10,7 @@ export interface Product {
   is_featured: boolean | number,
   created_at?: string;
   updated_at?: string;
+  order_id?: number;
 }
 
 export interface ProductToUpdate {
@@ -24,6 +25,21 @@ export interface ProductToUpdate {
   created_at?: string;
   updated_at?: string;
 }
+
+export interface Shop {
+  id: number,
+  name: string,
+  contact_number: number
+  email: string,
+  description: string,
+}
+
+export interface ProductWithShop {
+  products: ProductInCart[],
+  shop: Shop,
+}
+
+export type ProductInCart = Product & { quantity: number };
 
 export interface newProduct {
   name: string;

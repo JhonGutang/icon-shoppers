@@ -101,7 +101,41 @@ class CustomerController extends Controller
             return response()->json(['message' => 'Order not found.'], 404);
         }
     }
+
+
+    public function checkoutOrder(Request $request)
+    {
+        $customerId = Auth::guard('customer-api')->id();
     
+        foreach ($request->products as $productItem) {
+            $order = Order::find($productItem['order_id']);
+            
+            if (!$order) {
+                return response()->json(['message' => 'Order not found'], 404);
+            }
+    
+            if ($order->customer_id !== $customerId) {
+                return response()->json(['message' => 'Unauthorized access to this order'], 403);
+            }
+    
+            $product = Product::find($productItem['id']);
+            if (!$product) {
+                return response()->json(['message' => 'Product not found'], 404);
+            }
+    
+            $totalAmount = $product->price * $productItem['quantity'];
+    
+            $order->product_id   = $productItem['id'];
+            $order->quantity     = $productItem['quantity'];
+            $order->total_amount = $totalAmount;
+            $order->status       = 'ordered';
+            $order->updated_at   = now();
+    
+            $order->save();
+        }
+    
+        return response()->json(['message' => 'Order updated and checked out successfully']);
+    }
     
 
     public function fetchAllPendings() 
@@ -124,6 +158,53 @@ class CustomerController extends Controller
     
         return response()->json($pendings);
     }
+
+
+    public function fetchPendingProductForCheckout()  
+    {
+        $userId = Auth::guard('customer-api')->user()->id;
+        
+        $pendings = Order::where('status', 'pending')
+            ->where('customer_id', $userId)
+            ->with([
+                'product:id,name,price,shop_id',
+                'product.shop:id,name,email,description,contact_number'
+            ])
+            ->get();
+    
+        // Group products by shop
+        $grouped = $pendings->groupBy(function ($order) {
+            return $order->product->shop->id;
+        })->map(function ($orders) {
+            $shop = $orders->first()->product->shop;
+            $products = $orders->map(function ($order) {
+                return [
+                    'id' => $order->product->id,
+                    'order_id' => $order->id,
+                    'name' => $order->product->name,
+                    'price' => $order->product->price,
+                    'quantity' => $order->quantity,
+                ];
+            });
+    
+            return [
+                'shop' => [
+                    'id' => $shop->id,
+                    'name' => $shop->name,
+                    'email' => $shop->email,
+                    'description' => $shop->description,
+                    'contact_number' => $shop->contact_number,
+                ],
+                'products' => $products->values(),
+            ];
+        })->values();
+    
+        return response()->json($grouped);
+    }
+    
+
+
+    
     
     
     
