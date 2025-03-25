@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -17,6 +18,8 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Button } from "./ui/button";
+import { Checkbox } from "./ui/checkbox";
+import { ProductInCart } from "@/types/product";
 
 interface CartProps {
   isOpen?: boolean;
@@ -24,9 +27,23 @@ interface CartProps {
 }
 
 const Cart: React.FC<CartProps> = ({ isOpen, onOpenChange }) => {
-  const { productsInCart, addQuantity, minusQuantity } =
-    useCartStore();
-  const { handleSubmitOrder, handleRemoveToCart } = useCustomerActions()
+  const { productsInCart, addQuantity, minusQuantity } = useCartStore();
+  const { handleCheckout,  handleRemoveToCart } = useCustomerActions();
+
+  const [selectedProducts, setSelectedProducts] = useState<ProductInCart[]>([]);
+
+  const handleCheckboxChange = (product: ProductInCart, checked: boolean) => {
+    if (checked) {
+      setSelectedProducts((prev) => [...prev, product]);
+    } else {
+      setSelectedProducts((prev) =>
+        prev.filter((item) => item.id !== product.id)
+      );
+    }
+  };
+
+  useEffect(() => console.log(selectedProducts), [selectedProducts]);
+
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent>
@@ -79,14 +96,26 @@ const Cart: React.FC<CartProps> = ({ isOpen, onOpenChange }) => {
                       </Button>
                     </div>
 
-                    <Button>Order</Button>
+                    <Checkbox
+                      checked={selectedProducts.some(
+                        (item) => item.id === product.id
+                      )}
+                      onCheckedChange={(checked) =>
+                        handleCheckboxChange(product, Boolean(checked))
+                      }
+                    />
                   </CardFooter>
                 </Card>
               </div>
             ))}
           </div>
           <div className="mt-5 w-full">
-            <Button className="w-full h-[60px]" onClick={handleSubmitOrder}>Checkout</Button>
+            <Button
+              className="w-full h-[60px]"
+              onClick={() => handleCheckout('cart', selectedProducts)}
+            >
+              Checkout
+            </Button>
           </div>
         </SheetHeader>
       </SheetContent>
