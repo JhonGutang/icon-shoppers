@@ -54,10 +54,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
               </Button>
             </>
           )}
-          <EditProfile 
-            user={user} 
-            onSave={() => window.location.reload()}
-          />
+      {user && role !=="customer" && <EditProfile user={user} onSave={()=>window.location.reload()}/>}
         </div>
       </div>
     </div>
