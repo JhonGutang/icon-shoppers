@@ -40,6 +40,29 @@ class ProductController extends Controller
         return response()->json($products->values());
     }
 
+    public function fetchFeaturedProducts() {
+        $products = Product::with('shop:id,name')
+            ->where('is_featured', true)
+            ->where('is_visible', true)
+            ->get()
+            ->map(function($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'shop_id' => $product->shop_id,
+                    'price' => $product->price,
+                    'quantity' => $product->quantity,
+                    'image' => $product->image,
+                    'is_visible' => $product->is_visible,
+                    'is_featured' => $product->is_featured,
+                    'shop_name' => $product->shop->name ?? null,
+                ];
+            });
+    
+        return response()->json($products->values());
+    }
+    
+
 
     public function fetchSpecificProduct($id){
         $product = Product:: find($id);

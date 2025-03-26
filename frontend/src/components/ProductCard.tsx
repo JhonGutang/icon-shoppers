@@ -27,20 +27,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, location }) => {
 
   return (
     <Card
-      className=" w-[40vw] py-3 lg:w-[20vw] lg:h-[40vh] lg:gap-3 gap-2 cursor-pointer"
+      className=" w-[40vw] py-3 lg:w-[20vw]  lg:gap-3 gap-2 cursor-pointer"
       onClick={() => redirectLink(`profile/${product.id}`)}
     >
-      <CardHeader>
+      <CardHeader className="mt-3">
         <div className="flex justify-between items-center">
           <CardTitle>
-            {product.name} {product.shop_name && product.shop_name}
+            <div className="mb-2">{product.name}</div>
+            <div className="text-xs">{product.shop_name}</div>
           </CardTitle>
         </div>
       </CardHeader>
       <CardContent className="flex items-center justify-center">
         <img
           src={
-           
             "https://i.pinimg.com/736x/c5/a0/03/c5a00375d647591a14dd36e31151acb1.jpg"
           }
           alt={product.name}
@@ -72,12 +72,16 @@ const Visibility: React.FC<{ product: Product }> = ({ product }) => {
   );
 };
 
-const AddToCart:React.FC<{product: Product}> = ({product}) => {
-  const { handleAddToCart} = useCustomerActions()
-  
+const AddToCart: React.FC<{ product: Product }> = ({ product }) => {
+  const { handleAddToCart } = useCustomerActions();
+
   return (
     <div>
-      <Button variant="outline" size="icon" onClick={(event) => handleAddToCart(event, product)}>
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={(event) => handleAddToCart(event, product)}
+      >
         <ShoppingCart />
       </Button>
     </div>

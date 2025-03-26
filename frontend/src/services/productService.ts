@@ -25,6 +25,11 @@ export const fetchAllProducts = async () => {
   return response.data;
 };
 
+export const fetchFeaturedProducts = async () => {
+  const response = await axiosInstance.get("featured-products")
+  return response.data
+}
+
 export const fetchSpecificProduct = async (id: number) => {
   const response = await axiosInstance.get(`product/${id}`);
   return response.data;

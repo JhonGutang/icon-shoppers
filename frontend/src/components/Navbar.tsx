@@ -33,7 +33,7 @@ const Navbar: React.FC<NavbarProps> = ({ name }) => {
 
   const customerLinks = [
     { label: name ?? "Login", link: name ? "profile" : "login" },
-    { label: "View Cart", link: "cart" },
+    { label: "View Cart", link: "checkout" },
     { label: "Orders", link: "orders" },
     { label: "Sign Out", link: "" },
   ];
@@ -56,14 +56,7 @@ const Navbar: React.FC<NavbarProps> = ({ name }) => {
         <DropdownMenuContent className="w-56">
           {links.map((link) => (
             <div key={link.label}>
-              {link.label === "View Cart" && name ? (
-                <DropdownMenuItem
-                  className="cursor-pointer capitalize"
-                  onSelect={() => setCartOpen(true)} // `onSelect` prevents the dropdown closing before this fires
-                >
-                  {link.label}
-                </DropdownMenuItem>
-              ) : link.label === "Login" && !name ? (
+           { link.label === "Login" && !name ? (
                 <DropdownMenuItem
                   className="cursor-pointer capitalize"
                   onClick={() => redirectLink(link.link)}
@@ -92,10 +85,6 @@ const Navbar: React.FC<NavbarProps> = ({ name }) => {
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
-      <Cart
-        isOpen={cartOpen}
-        onOpenChange={setCartOpen}
-      />
     </div>
   );
 };
