@@ -25,12 +25,8 @@ export const fetchAllProducts = async () => {
   return response.data;
 };
 
-export const fetchSpecificProduct = async (id: number, token: string) => {
-  const response = await axiosInstance.get(`product/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+export const fetchSpecificProduct = async (id: number) => {
+  const response = await axiosInstance.get(`product/${id}`);
   return response.data;
 };
 

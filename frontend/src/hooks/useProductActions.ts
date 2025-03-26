@@ -41,8 +41,8 @@ const useProductAction = () => {
   };
 
   const handleFetchSpecificProduct = async (id: number) => {
-    if (!token) return;
-    const fetchedData = await fetchSpecificProduct(id, token);
+    // if (!token) return;
+    const fetchedData = await fetchSpecificProduct(id);
     setProduct(fetchedData)
   }
 

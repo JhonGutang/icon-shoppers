@@ -19,7 +19,7 @@ const Profile = () => {
   };
 
   const fetchProducts = async () => {
-    await handleFetchShopProducts()
+  await handleFetchShopProducts()
   }
 
   useEffect(() => {

@@ -76,7 +76,7 @@ const useAuth = () => {
     if (accessToken && role) {
       const data = await getProfile(accessToken, role);
       return data.user;
-    }
+    } 
   }, []);
 
   return {
