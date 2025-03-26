@@ -24,14 +24,14 @@ const Navbar: React.FC<NavbarProps> = ({ name }) => {
 
   // Define flexible links based on role:
   const sellerLinks = [
-    { label: name ?? "Login", link: name ? "profile" : "login" },
+    { label: name ?? "Login", link: name ? "profile" : "shop-auth" },
     { label: "Dashboard", link: "dashboard" },
     { label: "Orders", link: "seller-orders" },
     { label: "Sign Out", link: "" },
   ];
 
   const customerLinks = [
-    { label: name ?? "Login", link: name ? "profile" : "login" },
+    { label: name ?? "Login", link: name ? "profile" : "customer-auth" },
     { label: "View Cart", link: "checkout" },
     { label: "Orders", link: "orders" },
     { label: "Sign Out", link: "" },

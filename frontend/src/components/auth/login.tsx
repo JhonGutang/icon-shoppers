@@ -1,42 +1,17 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import AuthLayout from "@/layout/AuthLayout";
+import { Button } from "../ui/button";
 import useRedirectLink from "@/hooks/useRedirectLink";
 import useAuth from "@/hooks/useAuth";
-import React, { useState } from "react";
-
-const Login = () => {
-  const [isSeller, setIsSeller] = useState<boolean>(false);
-
-  const sellerFields = [
-    { id: "name", label: "Business Name", type: "text" },
-    { id: "password", label: "Password", type: "password" },
-  ];
-
-  const customerFields = [
-    { id: "name", label: "Customer Name", type: "text" },
-    { id: "password", label: "Password", type: "password" },
-  ];
-
-  return (
-    <AuthLayout 
-      trigger={
-        <Button onClick={() => setIsSeller((prev) => !prev)}> {isSeller ? 'Login as Customer' : 'Login as Seller'}</Button>
-      }
-    >
-      <LoginForm fields={isSeller ? sellerFields : customerFields} role={isSeller ? 'seller': 'customer'} />
-    </AuthLayout>
-  );
-};
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 type LoginFormProps = {
-  fields: { id: string; label: string; type: string }[];
-  role: string;
-};
+    fields: { id: string; label: string; type: string }[];
+    role: string;
+    setAuth: (auth: string) => void
+  };
 
-const LoginForm:React.FC<LoginFormProps> = ({fields, role}) => {
+const Login:React.FC<LoginFormProps> = ({ fields, role, setAuth }) => {
   const { redirectLink } = useRedirectLink();
   const { loginFormData, handleInputs, handleLogin } = useAuth();
 
@@ -66,7 +41,7 @@ const LoginForm:React.FC<LoginFormProps> = ({fields, role}) => {
           <Button
             variant="link"
             className="cursor-pointer"
-            onClick={() => redirectLink("register")}
+            onClick={() => setAuth('register')}
           >
             Register Now
           </Button>
