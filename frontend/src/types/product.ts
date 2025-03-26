@@ -2,7 +2,7 @@ export interface Product {
   id: number;
   shop_name?: string,
   name: string;
-  image?: string;
+  image?: string | null;
   price: string;
   quantity?: number;
   shop_id?: number;
@@ -16,7 +16,7 @@ export interface Product {
 export interface ProductToUpdate {
   id?: number;
   name?: string;
-  image?: string;
+  image?: string | null;
   price?: string;
   quantity?: number;
   is_visible?: boolean | number,
@@ -45,9 +45,11 @@ export interface newProduct {
   name: string;
   price: number;
   quantity: number;
+  image?: File | undefined;
 }
 
 export const productFields: { id: keyof ProductToUpdate; label: string; type: string }[] = [
+  { id: 'image', label: 'Image', type: 'file'},
   { id: "name", label: "Name", type: "text" },
   { id: "price", label: "Price", type: "number" },
   { id: "quantity", label: "Quantity", type: "number" },

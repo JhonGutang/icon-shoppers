@@ -40,7 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, location }) => {
       </CardHeader>
       <CardContent className="flex items-center justify-center">
         <img
-          src={
+          src={ product.image ? `http://localhost:8000/storage/${product.image}` :
             "https://i.pinimg.com/736x/c5/a0/03/c5a00375d647591a14dd36e31151acb1.jpg"
           }
           alt={product.name}

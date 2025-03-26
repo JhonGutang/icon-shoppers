@@ -23,6 +23,7 @@ const useProductAction = () => {
     name: "",
     price: 0,
     quantity: 0,
+    image: undefined,
   });
   const [product, setProduct] = useState<Product>()
   
@@ -55,6 +56,7 @@ const useProductAction = () => {
   const handleAddProducts = async () => {
     if (!token) return;
 
+  
     try {
       const newProductData = await addProductService(newProduct, token);
       addProduct(newProductData);
@@ -93,32 +95,51 @@ const useProductAction = () => {
   };
 
   const handleInputs = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setNewProduct((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
-  };
-
-
-  const handleProductVisibility = async(event: React.MouseEvent<HTMLButtonElement>, product: Product) => {
-    event.stopPropagation();
-    if(!token) return
-    const updatedProductVisibility = {
-      ...product,
-      is_visible: !product.is_visible
-    };
-
-    try {
-      updateProductById(updatedProductVisibility.id, updatedProductVisibility);
-      toast(`Product Visibilty is now ${updatedProductVisibility.is_visible}`)
-      await updateProduct(updatedProductVisibility, token);
-    } catch (error) {
-      console.error(error)
+    const { id, type, value, files } = e.target;
+  
+    if (type === "file" && files && files[0]) {
+      setNewProduct((prev) => ({
+        ...prev,
+        [id]: files[0], // ✅ Store the actual File object
+      }));
+    } else {
+      setNewProduct((prev) => ({
+        ...prev,
+        [id]: value, // ✅ For regular text/number inputs
+      }));
     }
+  };
+  
 
 
-  }
+  const handleProductVisibility = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+    product: Product
+  ) => {
+    event.stopPropagation();
+    if (!token) return;
+  
+    const updatedVisibility = !product.is_visible;
+    const updatedProduct = {
+      ...product,
+      is_visible: updatedVisibility,
+    };
+  
+    try {
+      await updateProductById(updatedProduct.id, updatedProduct);
+      toast(`Product visibility is now ${updatedVisibility ? 'visible' : 'hidden'}`);
+      const productWithoutImage = {
+        ...updatedProduct,
+        image: null,
+      };
+  
+      await updateProduct(productWithoutImage, token);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to update product visibility');
+    }
+  };
+  
   
   const handleFeatureToggle = async(product: Product, onLocalUpdate?: (product: Product) => void) => {
     if (!token) return;
@@ -134,7 +155,13 @@ const useProductAction = () => {
         onLocalUpdate((updatedProductFeature))
         toast(updatedProductFeature.is_featured ? 'Product Now Featured': 'Product removed from Featured')
       }
-      await updateProduct(updatedProductFeature, token);
+
+      const productWithoutImage = {
+        ...updatedProductFeature,
+        image: null,
+      };
+
+      await updateProduct(productWithoutImage, token);
     } catch (error) {
       console.error(error)
       toast('Feature toggle Failed: Reverting Back')
@@ -145,6 +172,7 @@ const useProductAction = () => {
   return {
     products,
     product,
+    newProduct,
     handleFetchAllProducts,
     handleFetchShopProducts,
     handleFetchFeaturedProducts,
