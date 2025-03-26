@@ -13,7 +13,7 @@ const Register = () => {
   const [isSeller, setIsSeller] = useState<boolean>(false);
 
   const sellerFields = [
-    { id: "shopName", label: "Business Name", type: "text" },
+    { id: "name", label: "Business Name", type: "text" },
     { id: "shopOwner", label: "Business Owner", type: "text" },
     { id: "email", label: "Email", type: "text" },
     { id: "contactNumber", label: "Contact No.", type: "text" },
@@ -33,7 +33,7 @@ const Register = () => {
     <AuthLayout
       trigger={
         <Button onClick={() => setIsSeller((prev) => !prev)}>
-          Register as {isSeller ? "Customer" : "Seller"}
+          Register as {isSeller ? "seller" : "customer"}
         </Button>
       }
     >
@@ -58,7 +58,7 @@ const Register = () => {
       <div>
         <Button
           className="w-full h-[45px] cursor-pointer"
-          onClick={() => handleRegister(isSeller ? "Customer" : "Seller")}
+          onClick={() => handleRegister(isSeller ? "seller" : "customer")}
         >
           Register
         </Button>

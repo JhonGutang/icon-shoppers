@@ -33,6 +33,7 @@ const formatCustomerData = (data: Register) => {
 }
 
 export const register = async (details: Register, role: string) => {
+  console.log(role);
   if (role === "seller") {
     const formattedData = formatData(details, "register");
     axiosInstance.post("/register", formattedData);

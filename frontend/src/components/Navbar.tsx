@@ -11,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import React from "react";
-import Cart from "./Cart";
 
 interface NavbarProps {
   name: string | undefined;
@@ -38,7 +37,6 @@ const Navbar: React.FC<NavbarProps> = ({ name }) => {
     { label: "Sign Out", link: "" },
   ];
 
-  // Select which set of links to use:
   const links = role === "seller" ? sellerLinks : customerLinks;
 
   return (
