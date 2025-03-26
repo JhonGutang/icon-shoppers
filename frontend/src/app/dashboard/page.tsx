@@ -29,7 +29,10 @@ const Dashboard = () => {
   const fetchOrders = async (status?: string) => {
     try {
       setLoading(true);
-      const url = status && status !== "All" ? `/orders?status=${status.toLowerCase().replace(/ /g, '_')}` : '/orders';
+      let queryStatus = status === "All" ? "" : status.toLowerCase().replace(/ /g, "_");
+      if (queryStatus === "approved") queryStatus = "active"; // Map approved to active
+  
+      const url = queryStatus ? `/orders?status=${queryStatus}` : "/orders";
       const response = await axiosInstance.get(url);
       setOrders(response.data);
       setError(null);
@@ -40,6 +43,7 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchOrders(activeTab);
@@ -47,9 +51,7 @@ const Dashboard = () => {
 
   const handleStatusUpdate = async (orderId: number, newStatus: string) => {
     try {
-      await axiosInstance.put(`/orders/${orderId}`, {
-        status: newStatus
-      });
+      await axiosInstance.put(`/orders/${orderId}`, { status: newStatus });
       fetchOrders(activeTab);
     } catch (err) {
       setError("Failed to update order status");
@@ -57,24 +59,17 @@ const Dashboard = () => {
     }
   };
 
-  const statusOptions = ["All", "pending", "to_be_delivered", "delivered", "not_delivered", "done"];
+  const statusOptions = ["All", "approved", "rejected", "to_be_delivered", "recieved", "not_recieved", "completed"];
 
   const formatStatus = (status: string) => {
-    if (status === "All") return status;
-    
+    if (status === "All") return "All";
+    if (status === "active") return "Approved";
     return status
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   };
-
-  if (loading) {
-    return (
-      <div className="p-6 flex justify-center items-center min-h-screen">
-        <div className="text-xl">Loading orders...</div>
-      </div>
-    );
-  }
+  
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -92,9 +87,7 @@ const Dashboard = () => {
             <button
               key={status}
               className={`px-4 py-2 rounded flex-1 max-w-[200px] ${
-                activeTab === status 
-                  ? "bg-blue-500 text-white" 
-                  : "bg-gray-300 hover:bg-gray-400"
+                activeTab === status ? "bg-blue-500 text-white" : "bg-gray-300 hover:bg-gray-400"
               }`}
               onClick={() => setActiveTab(status)}
             >
@@ -109,8 +102,8 @@ const Dashboard = () => {
           <thead>
             <tr className="bg-gray-200">
               <th className="p-2 border">ID</th>
-              <th className="p-2 border">Customer ID</th>
-              <th className="p-2 border">Product ID</th>
+              <th className="p-2 border">Customer Name</th>
+              <th className="p-2 border">Product Name</th>
               <th className="p-2 border">Quantity</th>
               <th className="p-2 border">Total Amount</th>
               <th className="p-2 border">Location</th>
@@ -123,8 +116,8 @@ const Dashboard = () => {
               orders.map((order) => (
                 <tr key={order.id} className="border text-center">
                   <td className="p-2 border">{order.id}</td>
-                  <td className="p-2 border">{order.customer_id}</td>
-                  <td className="p-2 border">{order.product_id}</td>
+                  <td className="p-2 border">{order.customer?.name}</td>
+                  <td className="p-2 border">{order.product?.name}</td>
                   <td className="p-2 border">{order.quantity}</td>
                   <td className="p-2 border">${Number(order.total_amount).toFixed(2)}</td>
                   <td className="p-2 border">{order.location}</td>
@@ -139,11 +132,13 @@ const Dashboard = () => {
                       value={order.status}
                       onChange={(e) => handleStatusUpdate(order.id, e.target.value)}
                     >
-                      {statusOptions.filter(status => status !== 'All').map(status => (
-                        <option key={status} value={status}>
-                          {formatStatus(status)}
-                        </option>
-                      ))}
+                      {statusOptions
+                        .filter((status) => status !== "All")
+                        .map((status) => (
+                          <option key={status} value={status}>
+                            {formatStatus(status)}
+                          </option>
+                        ))}
                     </select>
                   </td>
                 </tr>
@@ -163,20 +158,24 @@ const Dashboard = () => {
 };
 
 const getStatusColor = (status: string) => {
-  switch (status) {
-    case "pending":
-      return "bg-yellow-500";
+  switch (status.toLowerCase().replace(/ /g, "_")) {
+    case "active":
+    case "approved":
+      return "bg-green-600";
+    case "rejected":
+      return "bg-red-600";
     case "to_be_delivered":
       return "bg-blue-500";
-    case "delivered":
+    case "recieved":
       return "bg-green-500";
-    case "not_delivered":
+    case "not_recieved":
       return "bg-red-500";
-    case "done":
+    case "completed":
       return "bg-gray-500";
     default:
       return "bg-gray-300";
   }
 };
+
 
 export default Dashboard;
