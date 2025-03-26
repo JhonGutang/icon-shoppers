@@ -12,9 +12,7 @@ import { Product } from "@/types/product";
 import useProductAction from "@/hooks/useProductActions";
 import useRedirectLink from "@/hooks/useRedirectLink";
 import useAuthStore from "@/stores/useAuthStore";
-import { useCartStore } from "@/stores/useCartStore";
 import useCustomerActions from "@/hooks/useCustomerActions";
-import { toast } from "sonner";
 interface ProductCardProps {
   product: Product;
   location?: string;
