@@ -89,7 +89,7 @@ class ProductController extends Controller
             'quantity' => $validatedData['quantity'],
             'is_visible' => true,
             'is_featured' => false,
-            'image' => $imagePath, // ✅ Save relative path, not the tmp file name
+            'image' => $imagePath, 
         ]);
     
         return response()->json($product);
