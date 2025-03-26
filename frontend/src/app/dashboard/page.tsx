@@ -30,11 +30,19 @@ const Dashboard = () => {
     try {
       setLoading(true);
       let queryStatus = status === "All" ? "" : status.toLowerCase().replace(/ /g, "_");
-      if (queryStatus === "approved") queryStatus = "active"; // Map approved to active
+      if (queryStatus === "approved") queryStatus = "active";
   
       const url = queryStatus ? `/orders?status=${queryStatus}` : "/orders";
       const response = await axiosInstance.get(url);
-      setOrders(response.data);
+      
+      let filteredOrders = response.data;
+      if (status !== "All") {
+        filteredOrders = response.data.filter((order: Order) => 
+          (status === "approved" ? order.status.toLowerCase() === "active" : order.status.toLowerCase() === queryStatus)
+        );
+      }
+  
+      setOrders(filteredOrders);
       setError(null);
     } catch (err) {
       setError("Failed to fetch orders");
@@ -44,7 +52,6 @@ const Dashboard = () => {
     }
   };
   
-
   useEffect(() => {
     fetchOrders(activeTab);
   }, [activeTab]);
@@ -69,7 +76,6 @@ const Dashboard = () => {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   };
-  
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -81,7 +87,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {orders.length > 0 && (
+      {statusOptions.length > 0 && (
         <div className="flex justify-center gap-3 mb-4">
           {statusOptions.map((status) => (
             <button
@@ -176,6 +182,5 @@ const getStatusColor = (status: string) => {
       return "bg-gray-300";
   }
 };
-
 
 export default Dashboard;
