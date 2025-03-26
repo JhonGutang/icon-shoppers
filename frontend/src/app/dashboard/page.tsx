@@ -1,98 +1,117 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axiosInstance from "@/hooks/useAxios";
+
+interface Order {
+  id: number;
+  customer_id: number;
+  product_id: number;
+  quantity: number;
+  total_amount: number;
+  location: string;
+  status: string;
+  created_at: string;
+  customer?: {
+    name: string;
+  };
+  product?: {
+    name: string;
+  };
+}
 
 const Dashboard = () => {
-  const [orders] = useState([
-    {
-      id: 1,
-      productName: "iPhone 15 Pro",
-      customer: "John Doe",
-      totalAmount: 999.99,
-      location: "New York, NY",
-      status: "Pending",
-      date: "2024-03-18"
-    },
-    {
-      id: 2,
-      productName: "MacBook Air",
-      customer: "Jane Smith",
-      totalAmount: 1299.99,
-      location: "Los Angeles, CA",
-      status: "To Be Delivered",
-      date: "2024-03-17"
-    },
-    {
-      id: 3,
-      productName: "AirPods Pro",
-      customer: "Alice Brown",
-      totalAmount: 249.99,
-      location: "Chicago, IL",
-      status: "Delivered",
-      date: "2024-03-16"
-    },
-    {
-      id: 4,
-      productName: "iPad Air",
-      customer: "Bob Johnson",
-      totalAmount: 599.99,
-      location: "Houston, TX",
-      status: "Not Delivered",
-      date: "2024-03-15"
-    },
-    {
-      id: 5,
-      productName: "Apple Watch",
-      customer: "Charlie White",
-      totalAmount: 399.99,
-      location: "Miami, FL",
-      status: "Done",
-      date: "2024-03-14"
-    },
-    {
-      id: 6,
-      productName: "Magic Keyboard",
-      customer: "Diana Green",
-      totalAmount: 299.99,
-      location: "Seattle, WA",
-      status: "Pending",
-      date: "2024-03-13"
-    },
-  ]);
-
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("All");
 
-  const filteredOrders = activeTab === "All" ? orders : orders.filter(order => order.status === activeTab);
-
-  const handleStatusUpdate = (orderId: number) => {
-    alert(`Update status for order ${orderId}`);
+  const fetchOrders = async (status?: string) => {
+    try {
+      setLoading(true);
+      const url = status && status !== "All" ? `/orders?status=${status.toLowerCase().replace(/ /g, '_')}` : '/orders';
+      const response = await axiosInstance.get(url);
+      setOrders(response.data);
+      setError(null);
+    } catch (err) {
+      setError("Failed to fetch orders");
+      console.error("Error fetching orders:", err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchOrders(activeTab);
+  }, [activeTab]);
+
+  const handleStatusUpdate = async (orderId: number, newStatus: string) => {
+    try {
+      await axiosInstance.put(`/orders/${orderId}`, {
+        status: newStatus
+      });
+      fetchOrders(activeTab);
+    } catch (err) {
+      setError("Failed to update order status");
+      console.error("Error updating order status:", err);
+    }
+  };
+
+  const statusOptions = ["All", "pending", "to_be_delivered", "delivered", "not_delivered", "done"];
+
+  const formatStatus = (status: string) => {
+    if (status === "All") return status;
+    
+    return status
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  if (loading) {
+    return (
+      <div className="p-6 flex justify-center items-center min-h-screen">
+        <div className="text-xl">Loading orders...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-5">Order Dashboard</h1>
 
-      <div className="flex justify-center gap-3 mb-4">
-        {["All", "Pending", "To Be Delivered", "Delivered", "Not Delivered", "Done"].map((status) => (
-          <button
-            key={status}
-            className={`px-4 py-2 rounded flex-1 max-w-[200px] ${
-              activeTab === status ? "bg-blue-500 text-white" : "bg-gray-300"
-            }`}
-            onClick={() => setActiveTab(status)}
-          >
-            {status}
-          </button>
-        ))}
-      </div>
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
+
+      {orders.length > 0 && (
+        <div className="flex justify-center gap-3 mb-4">
+          {statusOptions.map((status) => (
+            <button
+              key={status}
+              className={`px-4 py-2 rounded flex-1 max-w-[200px] ${
+                activeTab === status 
+                  ? "bg-blue-500 text-white" 
+                  : "bg-gray-300 hover:bg-gray-400"
+              }`}
+              onClick={() => setActiveTab(status)}
+            >
+              {formatStatus(status)}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="bg-white p-4 shadow-lg rounded-lg overflow-x-auto">
         <table className="w-full border-collapse min-w-[800px]">
           <thead>
             <tr className="bg-gray-200">
               <th className="p-2 border">ID</th>
-              <th className="p-2 border">Product Name</th>
-              <th className="p-2 border">Customer</th>
+              <th className="p-2 border">Customer ID</th>
+              <th className="p-2 border">Product ID</th>
+              <th className="p-2 border">Quantity</th>
               <th className="p-2 border">Total Amount</th>
               <th className="p-2 border">Location</th>
               <th className="p-2 border">Status</th>
@@ -100,32 +119,38 @@ const Dashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredOrders.length > 0 ? (
-              filteredOrders.map((order) => (
+            {orders.length > 0 ? (
+              orders.map((order) => (
                 <tr key={order.id} className="border text-center">
                   <td className="p-2 border">{order.id}</td>
-                  <td className="p-2 border">{order.productName || 'N/A'}</td>
-                  <td className="p-2 border">{order.customer}</td>
-                  <td className="p-2 border">{order.totalAmount ? `$${order.totalAmount.toFixed(2)}` : 'N/A'}</td>
-                  <td className="p-2 border">{order.location || 'N/A'}</td>
+                  <td className="p-2 border">{order.customer_id}</td>
+                  <td className="p-2 border">{order.product_id}</td>
+                  <td className="p-2 border">{order.quantity}</td>
+                  <td className="p-2 border">${Number(order.total_amount).toFixed(2)}</td>
+                  <td className="p-2 border">{order.location}</td>
                   <td className="p-2 border">
                     <span className={`px-2 py-1 rounded text-white ${getStatusColor(order.status)}`}>
-                      {order.status}
+                      {formatStatus(order.status)}
                     </span>
                   </td>
                   <td className="p-2 border">
-                    <button
-                      onClick={() => handleStatusUpdate(order.id)}
-                      className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                    <select
+                      className="mr-2 p-1 border rounded"
+                      value={order.status}
+                      onChange={(e) => handleStatusUpdate(order.id, e.target.value)}
                     >
-                      Update Status
-                    </button>
+                      {statusOptions.filter(status => status !== 'All').map(status => (
+                        <option key={status} value={status}>
+                          {formatStatus(status)}
+                        </option>
+                      ))}
+                    </select>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="7" className="p-2 border text-gray-500 text-center">
+                <td colSpan={8} className="p-2 border text-gray-500 text-center">
                   No orders found
                 </td>
               </tr>
@@ -137,17 +162,17 @@ const Dashboard = () => {
   );
 };
 
-const getStatusColor = (status) => {
+const getStatusColor = (status: string) => {
   switch (status) {
-    case "Pending":
+    case "pending":
       return "bg-yellow-500";
-    case "To Be Delivered":
+    case "to_be_delivered":
       return "bg-blue-500";
-    case "Delivered":
+    case "delivered":
       return "bg-green-500";
-    case "Not Delivered":
+    case "not_delivered":
       return "bg-red-500";
-    case "Done":
+    case "done":
       return "bg-gray-500";
     default:
       return "bg-gray-300";
