@@ -8,31 +8,13 @@ use App\Models\Order;
 class OrderController extends Controller
 {
     public function index(Request $request){
-        $query=Order::query;
+        $orders = Order::with(['customer', 'product'])->get();
 
         if($request->has('status')){
-            $query->where('status', $request->status);
+            $orders->where('status', $request->status);
         }
-        return response()->json($query->get());
+        return response()->json($orders);
     }
-
-    public function store(Request $request){
-        $request->validate([
-            'customer_id'=>'required|exists:users,id',
-            'product_id'=>'required|exists:products,id',
-            'total_amount'=>'required|numeric|min:0',
-            'location'=>'required|string|max:255',
-            'status'=>'required|in:pending,to_be_delivered,delivered,not_delivered,done',
-        ]);
-
-        $order=Order::create($request->all());
-
-        return response()->json([
-            'message'=>'Order created.',
-            'order'=>$order
-        ], 201);
-    }
-
     public function show($id){
         $order = Order::find($id);
 
@@ -53,7 +35,7 @@ class OrderController extends Controller
             'quantity'=>'integer|min:1',
             'total_amount'=>'numeric|min:0',
             'location'=>'string|max:255',
-            'status'=>'in:pending,to_be_delivered,delivered,not_delivered,done',
+            'status'=>'in:cart,ordered,approved,rejected,to_be_delivered,recieved,not_recieved,completed',
         ]);
 
         $order->update($request->all());
