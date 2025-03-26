@@ -26,9 +26,9 @@ export const fetchAllProducts = async () => {
 };
 
 export const fetchFeaturedProducts = async () => {
-  const response = await axiosInstance.get("featured-products")
-  return response.data
-}
+  const response = await axiosInstance.get("featured-products");
+  return response.data;
+};
 
 export const fetchSpecificProduct = async (id: number) => {
   const response = await axiosInstance.get(`product/${id}`);
@@ -36,11 +36,22 @@ export const fetchSpecificProduct = async (id: number) => {
 };
 
 export const addProduct = async (data: newProduct, token: string) => {
-  const response = await axiosInstance.post("product", data, {
+  const formData = new FormData();
+  formData.append("name", data.name);
+  formData.append("price", `${data.price}`);
+  formData.append("quantity", `${data.quantity}`);
+  if (data.image) {
+    formData.append("image", data.image); 
+  }
+
+
+  const response = await axiosInstance.post("product", formData, {
     headers: {
       Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
     },
   });
+
   return response.data;
 };
 

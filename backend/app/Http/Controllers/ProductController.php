@@ -76,7 +76,12 @@ class ProductController extends Controller
     {
         $userId = Auth::guard('shop-api')->user()->id;
         $validatedData = $request->validated();
-
+    
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+        }
+    
         $product = Product::create([
             'shop_id' => $userId,
             'name' => $validatedData['name'],
@@ -84,11 +89,12 @@ class ProductController extends Controller
             'quantity' => $validatedData['quantity'],
             'is_visible' => true,
             'is_featured' => false,
-            'image' => null
+            'image' => $imagePath, 
         ]);
-
+    
         return response()->json($product);
     }
+    
 
     /**
      * Store a newly created resource in storage.

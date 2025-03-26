@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -13,8 +14,20 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import useProductAction from "@/hooks/useProductActions";
 import { productFields } from "@/types/product";
+
 const CreateProduct = () => {
-  const { handleInputs, handleAddProducts } = useProductAction();
+  const { handleInputs, handleAddProducts, newProduct } = useProductAction();
+  const [imagePreview, setImagePreview] = useState<string>("");
+
+  useEffect(() => {
+    if (newProduct.image) {
+      const previewUrl = URL.createObjectURL(newProduct.image);
+      setImagePreview(previewUrl);
+      return () => URL.revokeObjectURL(previewUrl);
+    } else {
+      setImagePreview("");
+    }
+  }, [newProduct.image]);
 
   return (
     <Dialog>
@@ -25,15 +38,17 @@ const CreateProduct = () => {
         <DialogHeader>
           <DialogTitle>Add New Product</DialogTitle>
           <DialogDescription>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-            Voluptatem, magnam!
+            Upload a product image and fill out product details.
           </DialogDescription>
         </DialogHeader>
         <div className="w-full flex flex-col gap-5">
           <img
-            src="https://i.pinimg.com/736x/c5/a0/03/c5a00375d647591a14dd36e31151acb1.jpg"
-            className="w-[40%] rounded-xl"
-            alt=""
+            src={
+              imagePreview ||
+              "https://i.pinimg.com/736x/c5/a0/03/c5a00375d647591a14dd36e31151acb1.jpg"
+            }
+            className="w-[40%] rounded-xl object-cover"
+            alt="Product Preview"
           />
           {productFields.map((field) => (
             <div key={field.id}>
