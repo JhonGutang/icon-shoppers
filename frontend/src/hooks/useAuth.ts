@@ -65,7 +65,7 @@ const useAuth = () => {
       logout(accessToken);
       toast("Logout successful!");
       store.clearAuth();
-      redirectLink("login");
+      redirectLink("customer-auth");
     }
   };
 

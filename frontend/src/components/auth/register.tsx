@@ -1,0 +1,85 @@
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import useAuth from "@/hooks/useAuth";
+
+const sellerFields = [
+  { id: "name", label: "Business Name", type: "text" },
+  { id: "shopOwner", label: "Business Owner", type: "text" },
+  { id: "email", label: "Email", type: "text" },
+  { id: "contactNumber", label: "Contact No.", type: "text" },
+  { id: "password", label: "Password", type: "password" },
+];
+
+const customerFields = [
+  { id: "name", label: "Name", type: "text" },
+  { id: "middleName", label: "Middle Name", type: "text" },
+  { id: "email", label: "Email", type: "text" },
+  { id: "contactNumber", label: "Contact No.", type: "text" },
+  { id: "address", label: "Address", type: "text" },
+  { id: "password", label: "Password", type: "password" },
+];
+
+interface RegisterFormProps {
+  fields: { id: string; label: string; type: string }[];
+  role: string;
+  setAuth: (auth: string) => void;
+}
+
+const Register: React.FC<RegisterFormProps> = ({ fields, role, setAuth }) => {
+  const { handleRegister, registerFormData, handleInputs } = useAuth();
+
+  const redirectIfSuccessful = async () => {
+    try {
+        await handleRegister(role)
+        setTimeout(() => {
+            setAuth('login')
+        }, 500);
+    } catch (error) {
+        console.error(error)
+    }
+  }
+
+  return (
+    <div>
+      <div className="flex flex-col gap-3 h-[20vw] overflow-y-auto mb-5">
+        {fields.map((field) => (
+          <div key={field.id}>
+            <Label htmlFor={field.id} className="mb-2">
+              {field.label}
+            </Label>
+            <Input
+              id={field.id}
+              type={field.type}
+              value={
+                registerFormData[field.id as keyof typeof registerFormData] ||
+                ""
+              }
+              onChange={(event) => handleInputs(event, "register")}
+            />
+          </div>
+        ))}
+      </div>
+      <div>
+        <Button
+          className="w-full h-[45px] cursor-pointer"
+          onClick={redirectIfSuccessful}
+        >
+          Register
+        </Button>
+        <div className="text-sm mt-2">
+          Already have an account?
+          <Button
+            variant="link"
+            className="cursor-pointer"
+            onClick={() => setAuth("login")}
+          >
+            Login Now
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Register;
