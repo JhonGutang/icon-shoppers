@@ -100,12 +100,12 @@ const useProductAction = () => {
     if (type === "file" && files && files[0]) {
       setNewProduct((prev) => ({
         ...prev,
-        [id]: files[0], // ✅ Store the actual File object
+        [id]: files[0], 
       }));
     } else {
       setNewProduct((prev) => ({
         ...prev,
-        [id]: value, // ✅ For regular text/number inputs
+        [id]: value,
       }));
     }
   };
