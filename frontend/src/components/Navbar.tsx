@@ -11,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import React from "react";
-import Cart from "./Cart";
 
 interface NavbarProps {
   name: string | undefined;
@@ -33,12 +32,11 @@ const Navbar: React.FC<NavbarProps> = ({ name }) => {
 
   const customerLinks = [
     { label: name ?? "Login", link: name ? "profile" : "login" },
-    { label: "View Cart", link: "cart" },
+    { label: "View Cart", link: "checkout" },
     { label: "Orders", link: "orders" },
     { label: "Sign Out", link: "" },
   ];
 
-  // Select which set of links to use:
   const links = role === "seller" ? sellerLinks : customerLinks;
 
   return (
@@ -56,14 +54,7 @@ const Navbar: React.FC<NavbarProps> = ({ name }) => {
         <DropdownMenuContent className="w-56">
           {links.map((link) => (
             <div key={link.label}>
-              {link.label === "View Cart" && name ? (
-                <DropdownMenuItem
-                  className="cursor-pointer capitalize"
-                  onSelect={() => setCartOpen(true)} // `onSelect` prevents the dropdown closing before this fires
-                >
-                  {link.label}
-                </DropdownMenuItem>
-              ) : link.label === "Login" && !name ? (
+           { link.label === "Login" && !name ? (
                 <DropdownMenuItem
                   className="cursor-pointer capitalize"
                   onClick={() => redirectLink(link.link)}
@@ -92,10 +83,6 @@ const Navbar: React.FC<NavbarProps> = ({ name }) => {
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
-      <Cart
-        isOpen={cartOpen}
-        onOpenChange={setCartOpen}
-      />
     </div>
   );
 };

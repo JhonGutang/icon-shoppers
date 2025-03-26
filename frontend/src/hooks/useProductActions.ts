@@ -2,6 +2,7 @@ import {
   addProduct as addProductService,
   deleteProduct,
   fetchAllProducts,
+  fetchFeaturedProducts,
   fetchShopProducts,
   fetchSpecificProduct,
   updateProduct,
@@ -28,6 +29,11 @@ const useProductAction = () => {
   const handleFetchAllProducts = async() => {
     const products = await fetchAllProducts()
     return products
+  }
+
+  const handleFetchFeaturedProducts = async() => {
+    const featured = await fetchFeaturedProducts()
+    return featured
   }
 
   const handleFetchShopProducts = async () => {
@@ -141,6 +147,7 @@ const useProductAction = () => {
     product,
     handleFetchAllProducts,
     handleFetchShopProducts,
+    handleFetchFeaturedProducts,
     handleFetchSpecificProduct,
     handleAddProducts,
     handleDeleteProduct,
