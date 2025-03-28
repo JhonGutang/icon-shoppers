@@ -38,7 +38,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="h-screen flex flex-col gap-4 w-full px-5">
+    <div className="flex flex-col gap-4 w-full px-5">
       <Navbar name={user?.name} />
       <Promotional />
       <FeaturedCategory products={featuredProducts} />
@@ -77,22 +77,25 @@ interface ProductCategoryProps {
 
 const FeaturedCategory = ({ products }: ProductCategoryProps) => {
   const { redirectLink } = useRedirectLink();
+
   return (
     <div className="lg:px-10">
       <div className="w-full">
         <div className="flex items-center justify-between gap-2">
           <div className="flex gap-2">
-            <Flame /> 
+            <Flame />
             <div className="text-xl font-bold">Featured Products</div>
           </div>
-          <Button variant='ghost' className="text-sm" onClick={() => redirectLink('products')}>
+          <Button variant="ghost" className="text-sm" onClick={() => redirectLink('products')}>
             View All
           </Button>
         </div>
       </div>
-      <div className="flex gap-4 lg:gap-5 flex-wrap lg:justify-start justify-center lg:p-5 pt-5">
+
+      {/* Responsive Masonry Layout */}
+      <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 gap-4 p-3 space-y-4">
         {products.map((product) => (
-          <div key={`${product.id}-${product.name}`}>
+          <div key={`${product.id}-${product.name}`} className="break-inside-avoid w-full">
             <ProductCard product={product} />
           </div>
         ))}
@@ -100,6 +103,7 @@ const FeaturedCategory = ({ products }: ProductCategoryProps) => {
     </div>
   );
 };
+
 
 const ShopCategory = () => {
   return (
@@ -117,22 +121,24 @@ const ShopCategory = () => {
 
 const AllProducts = ({ products }: ProductCategoryProps) => {
   const { redirectLink } = useRedirectLink();
+
   return (
     <div className="lg:px-10">
       <div className="w-full">
         <div className="flex items-center justify-between gap-2">
           <div className="flex gap-2">
-            <ShoppingBag /> 
+            <ShoppingBag />
             <div className="text-xl font-bold">All Products</div>
           </div>
-          <Button variant='ghost' className="text-sm" onClick={() => redirectLink('products')}>
+          <Button variant="ghost" className="text-sm" onClick={() => redirectLink('products')}>
             View All
           </Button>
         </div>
       </div>
-      <div className="flex gap-4 flex-wrap lg:justify-start lg:p-5 justify-center pt-5">
+
+      <div className="columns-2 gap-5 p-3 space-y-3 lg:columns-4">
         {products.map((product) => (
-          <div key={`${product.id}-${product.name}`}>
+          <div key={`${product.id}-${product.name}`} className="break-inside-avoid w-full">
             <ProductCard product={product} />
           </div>
         ))}
@@ -140,5 +146,6 @@ const AllProducts = ({ products }: ProductCategoryProps) => {
     </div>
   );
 };
+
 
 export default Home;
