@@ -63,16 +63,16 @@ class CustomerController extends Controller
     }
 
 
-    public function addToCart($id) 
+    public function addToCart($id)
     {
         $user = Auth::guard('customer-api')->user();
         $product = Product::findOrFail($id);
-    
+
         $existingOrder = Order::where('customer_id', $user->id)
             ->where('product_id', $id)
-            ->where('status', 'pending')
+            ->where('status', '')
             ->first();
-    
+
         if ($existingOrder) {
             $existingOrder->quantity += 1;
             $existingOrder->total_amount = $existingOrder->quantity * $product->price;
@@ -84,10 +84,10 @@ class CustomerController extends Controller
                 'product_id' => $id,
                 'quantity' => 1,
                 'total_amount' => $product->price,
-                'status' => 'pending',
+                'status' => 'ordered',
             ]);
         }
-    
+
         return response()->json(['message' => 'Product added to cart successfully']);
     }
 
@@ -106,42 +106,42 @@ class CustomerController extends Controller
     public function checkoutOrder(Request $request)
     {
         $customerId = Auth::guard('customer-api')->id();
-    
+
         foreach ($request->products as $productItem) {
             $order = Order::find($productItem['order_id']);
-            
+
             if (!$order) {
                 return response()->json(['message' => 'Order not found'], 404);
             }
-    
+
             if ($order->customer_id !== $customerId) {
                 return response()->json(['message' => 'Unauthorized access to this order'], 403);
             }
-    
+
             $product = Product::find($productItem['id']);
             if (!$product) {
                 return response()->json(['message' => 'Product not found'], 404);
             }
-    
+
             $totalAmount = $product->price * $productItem['quantity'];
-    
+
             $order->product_id   = $productItem['id'];
             $order->quantity     = $productItem['quantity'];
             $order->total_amount = $totalAmount;
             $order->status       = 'ordered';
             $order->updated_at   = now();
-    
+
             $order->save();
         }
-    
+
         return response()->json(['message' => 'Order updated and checked out successfully']);
     }
-    
 
-    public function fetchAllPendings() 
+
+    public function fetchAllPendings()
     {
         $userId = Auth::guard('customer-api')->user()->id;
-        $pendings = Order::where('status', 'pending')
+        $pendings = Order::where('status', 'ordered')
             ->where('customer_id', $userId)
             ->with(['product:id,name,price'])
             ->get()
@@ -155,23 +155,23 @@ class CustomerController extends Controller
                     'id' => $order->product->id,
                 ];
             });
-    
+
         return response()->json($pendings);
     }
 
 
-    public function fetchPendingProductForCheckout()  
+    public function fetchPendingProductForCheckout()
     {
         $userId = Auth::guard('customer-api')->user()->id;
-        
-        $pendings = Order::where('status', 'pending')
+
+        $pendings = Order::where('status', 'ordered')
             ->where('customer_id', $userId)
             ->with([
                 'product:id,name,price,shop_id,image',
                 'product.shop:id,name,email,description,contact_number'
             ])
             ->get();
-    
+
         // Group products by shop
         $grouped = $pendings->groupBy(function ($order) {
             return $order->product->shop->id;
@@ -187,7 +187,7 @@ class CustomerController extends Controller
                     'quantity' => $order->quantity,
                 ];
             });
-    
+
             return [
                 'shop' => [
                     'id' => $shop->id,
@@ -199,17 +199,17 @@ class CustomerController extends Controller
                 'products' => $products->values(),
             ];
         })->values();
-    
+
         return response()->json($grouped);
     }
-    
 
 
-    
-    
-    
-    
-    
+
+
+
+
+
+
 
     /**
      * Store a newly created resource in storage.

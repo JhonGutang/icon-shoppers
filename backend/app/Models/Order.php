@@ -24,7 +24,7 @@ class Order extends Model
     ];
 
     protected $attributes = [
-        'status' => 'pending',
+        'status' => 'ordered',
     ];
 
 
