@@ -44,8 +44,8 @@ const CreateProduct = () => {
         <div className="w-full flex flex-col gap-5">
           <img
             src={
-              imagePreview ||
-              "https://i.pinimg.com/736x/c5/a0/03/c5a00375d647591a14dd36e31151acb1.jpg"
+              !imagePreview ?
+              "https://i.pinimg.com/736x/c5/a0/03/c5a00375d647591a14dd36e31151acb1.jpg" : imagePreview
             }
             className="w-[40%] rounded-xl object-cover"
             alt="Product Preview"
