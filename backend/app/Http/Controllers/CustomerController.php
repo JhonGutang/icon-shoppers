@@ -167,7 +167,7 @@ class CustomerController extends Controller
         $pendings = Order::where('status', 'pending')
             ->where('customer_id', $userId)
             ->with([
-                'product:id,name,price,shop_id',
+                'product:id,name,price,shop_id,image',
                 'product.shop:id,name,email,description,contact_number'
             ])
             ->get();
@@ -183,6 +183,7 @@ class CustomerController extends Controller
                     'order_id' => $order->id,
                     'name' => $order->product->name,
                     'price' => $order->product->price,
+                    'image' => $order->product->image,
                     'quantity' => $order->quantity,
                 ];
             });
