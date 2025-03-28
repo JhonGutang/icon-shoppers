@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Eye, EyeClosed, ShoppingCart } from "lucide-react";
+import { Eye, EyeClosed, ShoppingCart, Store } from "lucide-react";
 import React from "react";
 import { Product } from "@/types/product";
 import useProductAction from "@/hooks/useProductActions";
@@ -36,7 +36,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, location }) => {
             <div>
 
             <div className="font-bold">{product.name}</div>
-            <div className="text-xs">{product.shop_name}</div>
+            <div className="text-xs flex items-center gap-1 mt-2">
+              <div>
+                <Store size={15}/>
+              </div>
+              {product.shop_name}</div>
             </div>
             <div>
 
