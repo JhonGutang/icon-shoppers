@@ -40,12 +40,12 @@ const Navbar: React.FC<NavbarProps> = ({ name }) => {
   const links = role === "seller" ? sellerLinks : customerLinks;
 
   return (
-    <div className="lg:px-10 px-4 py-3 flex justify-center items-center lg:gap-10 gap-4">
-      <div className="font-semibold">Icon Shoppers</div>
+    <div className="lg:px-10 px-4 py-3 flex justify-center items-center lg:gap-10 gap-5">
+      <img src="/logo.png" alt="" className="w-[45px] lg:w-[80px]" />
       <Input
         type="text"
         placeholder="search"
-        className="lg:h-[50px] w-[50vw] lg:w-[50vw] text-xs lg:text-md"
+        className="lg:h-[50px] w-[60vw] lg:w-[50vw] text-xs lg:text-md"
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild className="cursor-pointer">

@@ -9,7 +9,7 @@ const CartNavbar = () => {
         <ChevronLeft />
         <div>Back</div>
       </Button>
-      <div>Icon Shopper</div>
+      <img src="/logo.png" alt="" className="w-[60px]" />
       <div>
         <UserRound />
       </div>

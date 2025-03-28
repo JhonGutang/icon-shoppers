@@ -1,8 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Eye, EyeClosed, ShoppingCart } from "lucide-react";
 import React from "react";
 import { Product } from "@/types/product";
@@ -21,8 +18,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, location }) => {
     shopId === product.shop_id && location === "profile" && role === "seller";
 
   return (
-    <Card className="relative max-w-[42vw] pt-0 pb-3 lg:w-[20vw] lg:gap-3 rounded-xl cursor-pointer shadow-2xl border-2 border-gray-300">
-      { role === 'customer' && <AddToCart product={product}/> }
+    <Card className="relative w-[42vw] pt-0 pb-3 lg:w-[20vw] lg:gap-3 rounded-xl cursor-pointer shadow-2xl border-2 border-gray-300">
+      {role === "customer" && <AddToCart product={product} />}
 
       <CardContent className="flex flex-col gap-3 items-center justify-center px-0 w-full h-[80%]">
         <img
@@ -32,12 +29,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, location }) => {
               : "https://i.pinimg.com/736x/c5/a0/03/c5a00375d647591a14dd36e31151acb1.jpg"
           }
           alt={product.name}
-          className="w-full h-full object-cover lg:rounded-t-xl"
+          className="w-full h-full object-cover lg:rounded-t-xl rounded-t-xl"
         />
-        <div className="flex justify-between w-full items-center px-3 py-1">
-          <div className="text-xs lg:text-lg font-semibold">{product.name}</div>
-          <div className="text-md">₱{product.price}</div>
-          {isProductOwner && <Visibility product={product} />}
+        <div className="w-full px-3 py-1">
+          <div className="text-xs flex justify-between lg:text-lg font-semibold">
+            <div>
+
+            <div className="font-bold">{product.name}</div>
+            <div className="text-xs">{product.shop_name}</div>
+            </div>
+            <div>
+
+            {isProductOwner && <Visibility product={product} />}
+            </div>
+          </div>
+          <div className="text-md font-bold w-full text-end">
+            ₱{product.price}
+          </div>
           {role !== "seller" && <AddToCart product={product} />}
         </div>
       </CardContent>
@@ -51,7 +59,7 @@ const Visibility: React.FC<{ product: Product }> = ({ product }) => {
     <Button
       variant="outline"
       size="icon"
-      className="fixed"
+      
       onClick={(event) => handleProductVisibility(event, product)}
     >
       {product.is_visible ? <Eye /> : <EyeClosed />}
@@ -64,6 +72,7 @@ const AddToCart: React.FC<{ product: Product }> = ({ product }) => {
 
   return (
     <Button
+      variant="ghost"
       size="icon"
       onClick={(event) => handleAddToCart(event, product)}
       className="absolute top-2 right-2 z-10  shadow-lg"
@@ -72,6 +81,5 @@ const AddToCart: React.FC<{ product: Product }> = ({ product }) => {
     </Button>
   );
 };
-
 
 export default ProductCard;
