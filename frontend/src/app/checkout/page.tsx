@@ -2,10 +2,10 @@
 import FallBackMessage from "@/components/FallBackMessage";
 import { Checkbox } from "@/components/ui/checkbox";
 import useCustomerActions from "@/hooks/useCustomerActions";
-import {  ProductWithShop } from "@/types/product";
+import { ProductWithShop } from "@/types/product";
 import CheckoutContainer from "@/components/CheckoutContainer";
 import React, { useEffect, useState } from "react";
-
+import CheckoutPage from "@/components/mobile/CheckoutPage";
 const Checkout = () => {
   const { handleOrdersToCheckout } = useCustomerActions();
   const [productsWithShops, setProductsWithShops] = useState<
@@ -14,6 +14,18 @@ const Checkout = () => {
   const [checkedShops, setCheckedShops] = useState<{ [key: string]: boolean }>(
     {}
   );
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  useEffect(() => {
+    const checkViewport = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkViewport();
+    window.addEventListener("resize", checkViewport);
+
+    return () => window.removeEventListener("resize", checkViewport);
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -32,28 +44,39 @@ const Checkout = () => {
   if (!productsWithShops) return <div>Loading...</div>;
 
   return (
-    <div className="h-screen flex">
-      <Cart
-        productsWithShops={productsWithShops}
-        checkedShops={checkedShops}
-        setCheckedShops={setCheckedShops}
-      />
+    <div>
+      {isMobile ? (
+        <CheckoutPage
+          shopWithProducts={productsWithShops}
+          setProductsWithShops={setProductsWithShops}
+        />
+      ) : (
+        <div className="h-screen flex">
+          <Cart
+            productsWithShops={productsWithShops}
+            checkedShops={checkedShops}
+            setCheckedShops={setCheckedShops}
+          />
 
-      <div className="w-full h-screen overflow-y-auto">
-        {productsWithShops.length === 0 && <FallBackMessage />}
-        {productsWithShops
-          .filter((productsWithShop) => checkedShops[productsWithShop.shop.id])
-          .map((productsWithShop: ProductWithShop) => (
-            <div key={productsWithShop.shop.id}>
-              <CheckoutContainer
-                products={productsWithShop.products}
-                shop={productsWithShop.shop}
-                productsWithShops={productsWithShops}
-                setProductsWithShops={setProductsWithShops}
-              />
-            </div>
-          ))}
-      </div>
+          <div className="w-full h-screen overflow-y-auto">
+            {productsWithShops.length === 0 && <FallBackMessage />}
+            {productsWithShops
+              .filter(
+                (productsWithShop) => checkedShops[productsWithShop.shop.id]
+              )
+              .map((productsWithShop: ProductWithShop) => (
+                <div key={productsWithShop.shop.id}>
+                  <CheckoutContainer
+                    products={productsWithShop.products}
+                    shop={productsWithShop.shop}
+                    productsWithShops={productsWithShops}
+                    setProductsWithShops={setProductsWithShops}
+                  />
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -110,6 +133,5 @@ const Cart: React.FC<CartProps> = ({
     </div>
   );
 };
-
 
 export default Checkout;
