@@ -2,6 +2,14 @@
 
 import { useState, useEffect } from "react";
 import axiosInstance from "@/hooks/useAxios";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface Order {
   id: number;
@@ -104,35 +112,35 @@ const Dashboard = () => {
       )}
 
       <div className="bg-white p-4 shadow-lg rounded-lg overflow-x-auto">
-        <table className="w-full border-collapse min-w-[800px]">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="p-2 border">ID</th>
-              <th className="p-2 border">Customer Name</th>
-              <th className="p-2 border">Product Name</th>
-              <th className="p-2 border">Quantity</th>
-              <th className="p-2 border">Total Amount</th>
-              <th className="p-2 border">Location</th>
-              <th className="p-2 border">Status</th>
-              <th className="p-2 border">Action</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Customer Name</TableHead>
+              <TableHead>Product Name</TableHead>
+              <TableHead>Quantity</TableHead>
+              <TableHead>Total Amount</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {orders.length > 0 ? (
               orders.map((order) => (
-                <tr key={order.id} className="border text-center">
-                  <td className="p-2 border">{order.id}</td>
-                  <td className="p-2 border">{order.customer?.name}</td>
-                  <td className="p-2 border">{order.product?.name}</td>
-                  <td className="p-2 border">{order.quantity}</td>
-                  <td className="p-2 border">${Number(order.total_amount).toFixed(2)}</td>
-                  <td className="p-2 border">{order.location}</td>
-                  <td className="p-2 border">
+                <TableRow key={order.id}>
+                  <TableCell>{order.id}</TableCell>
+                  <TableCell>{order.customer?.name}</TableCell>
+                  <TableCell>{order.product?.name}</TableCell>
+                  <TableCell>{order.quantity}</TableCell>
+                  <TableCell>${Number(order.total_amount).toFixed(2)}</TableCell>
+                  <TableCell>{order.location}</TableCell>
+                  <TableCell>
                     <span className={`px-2 py-1 rounded text-white ${getStatusColor(order.status)}`}>
                       {formatStatus(order.status)}
                     </span>
-                  </td>
-                  <td className="p-2 border">
+                  </TableCell>
+                  <TableCell>
                     <select
                       className="mr-2 p-1 border rounded"
                       value={order.status}
@@ -146,18 +154,18 @@ const Dashboard = () => {
                           </option>
                         ))}
                     </select>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))
             ) : (
-              <tr>
-                <td colSpan={8} className="p-2 border text-gray-500 text-center">
+              <TableRow>
+                <TableCell colSpan={8} className="text-center text-gray-500">
                   No orders found
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
