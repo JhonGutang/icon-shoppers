@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
-use App\Http\Requests\UpdateOrderRequest;
+use App\Http\Requests\OrderRequest;
 
 class OrderController extends Controller
 {
@@ -25,7 +25,7 @@ class OrderController extends Controller
         return response()->json($order);
     }
 
-    public function update(UpdateOrderRequest $request, $id){
+    public function update(OrderRequest $request, $id){
         $order = Order::find($id);
 
         if(!$order){
