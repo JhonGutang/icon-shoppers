@@ -64,14 +64,17 @@ class CustomerController extends Controller
 
 
     public function addToCart($id)
+    public function addToCart($id)
     {
         $user = Auth::guard('customer-api')->user();
         $product = Product::findOrFail($id);
+
 
         $existingOrder = Order::where('customer_id', $user->id)
             ->where('product_id', $id)
             ->where('status', '')
             ->first();
+
 
         if ($existingOrder) {
             $existingOrder->quantity += 1;
@@ -82,11 +85,13 @@ class CustomerController extends Controller
             Order::create([
                 'customer_id' => $user->id,
                 'product_id' => $id,
+                'shop_id' => $product->shop_id,
                 'quantity' => 1,
                 'total_amount' => $product->price,
                 'status' => 'ordered',
             ]);
         }
+
 
         return response()->json(['message' => 'Product added to cart successfully']);
     }
@@ -107,23 +112,29 @@ class CustomerController extends Controller
     {
         $customerId = Auth::guard('customer-api')->id();
 
+
         foreach ($request->products as $productItem) {
             $order = Order::find($productItem['order_id']);
+
 
             if (!$order) {
                 return response()->json(['message' => 'Order not found'], 404);
             }
 
+
             if ($order->customer_id !== $customerId) {
                 return response()->json(['message' => 'Unauthorized access to this order'], 403);
             }
+
 
             $product = Product::find($productItem['id']);
             if (!$product) {
                 return response()->json(['message' => 'Product not found'], 404);
             }
 
+
             $totalAmount = $product->price * $productItem['quantity'];
+
 
             $order->product_id   = $productItem['id'];
             $order->quantity     = $productItem['quantity'];
@@ -131,13 +142,17 @@ class CustomerController extends Controller
             $order->status       = 'ordered';
             $order->updated_at   = now();
 
+
             $order->save();
         }
+
 
         return response()->json(['message' => 'Order updated and checked out successfully']);
     }
 
 
+
+    public function fetchAllPendings()
     public function fetchAllPendings()
     {
         $userId = Auth::guard('customer-api')->user()->id;
@@ -156,10 +171,12 @@ class CustomerController extends Controller
                 ];
             });
 
+
         return response()->json($pendings);
     }
 
 
+    public function fetchPendingProductForCheckout()
     public function fetchPendingProductForCheckout()
     {
         $userId = Auth::guard('customer-api')->user()->id;
@@ -171,6 +188,7 @@ class CustomerController extends Controller
                 'product.shop:id,name,email,description,contact_number'
             ])
             ->get();
+
 
         // Group products by shop
         $grouped = $pendings->groupBy(function ($order) {
@@ -188,6 +206,7 @@ class CustomerController extends Controller
                 ];
             });
 
+
             return [
                 'shop' => [
                     'id' => $shop->id,
@@ -200,8 +219,15 @@ class CustomerController extends Controller
             ];
         })->values();
 
+
         return response()->json($grouped);
     }
+
+
+
+
+
+
 
 
 

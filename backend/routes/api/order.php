@@ -9,3 +9,4 @@ Route::post('/orders', [OrderController::class, 'store']);
 Route::get('/orders/{id}', [OrderController::class, 'show']);
 Route::put('/orders/{id}', [OrderController::class, 'update']);
 Route::delete('/orders/{id}', [OrderController::class, 'delete']);
+Route::get('/seller/orders', [OrderController::class, 'getSellerOrders']);
