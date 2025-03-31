@@ -3,6 +3,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useOrders } from "@/hooks/useOrders";
 import { STATUS_OPTIONS, formatStatus, getStatusColor } from "@/lib/orderUtils";
+import { StatusButtons } from "@/components/StatusButton";
 
 const Dashboard = () => {
   const { orders, error, activeTab, setActiveTab, handleStatusUpdate } = useOrders();
@@ -63,19 +64,13 @@ const Dashboard = () => {
                     </span>
                   </TableCell>
                   <TableCell>
-                    <select
-                      className="mr-2 p-1 border rounded"
-                      value={order.status}
-                      onChange={(e) => handleStatusUpdate(order.id, e.target.value)}
-                    >
-                      {STATUS_OPTIONS
-                        .filter((status) => status !== "All")
-                        .map((status) => (
-                          <option key={status} value={status}>
-                            {formatStatus(status)}
-                          </option>
-                        ))}
-                    </select>
+                    <StatusButtons
+                      status={order.status}
+                      onApprove={() => handleStatusUpdate(order.id, 
+                        order.status === 'to_be_delivered' ? 'delivering' : 'to_be_delivered'
+                      )}
+                      onReject={() => handleStatusUpdate(order.id, 'rejected')}
+                    />  
                   </TableCell>
                 </TableRow>
               ))
