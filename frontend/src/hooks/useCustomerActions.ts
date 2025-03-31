@@ -10,7 +10,7 @@ import {
 import useRedirectLink from "./useRedirectLink";
 import useAuthStore from "@/stores/useAuthStore";
 import { useSnackbar } from "@/components/context/SnackbarContext";
-
+import { orderService } from "@/services/orderService";
 const useCustomerActions = () => {
   const token = useAuthStore.getState().accessToken;
   const role = useAuthStore.getState().userType;
@@ -21,7 +21,7 @@ const useCustomerActions = () => {
   } = useCartStore();
   const setProducts = useCartStore((state) => state.setProducts);
   const { redirectLink } = useRedirectLink();
-  const { openSnackbar } = useSnackbar(); // Use Snackbar context
+  const { openSnackbar } = useSnackbar(); 
 
   const handleOrdersInCart = async () => {
     if (role === "seller") return;
@@ -36,6 +36,12 @@ const useCustomerActions = () => {
     return products;
   };
 
+  const handleOrdersStatus = async () => {
+    if(!token) return
+    const products = await orderService.fetchCustomerOrders(token)
+    return products
+  }
+
   const handleAddToCart = (
     e: React.MouseEvent<HTMLButtonElement>,
     product: Product
@@ -47,14 +53,14 @@ const useCustomerActions = () => {
     }
     addProduct(product);
     addToCart(product.id, token);
-    openSnackbar("Product Added to Cart", "success"); // Replaced toast
+    openSnackbar("Product Added to Cart", "success"); 
   };
 
   const handleRemoveToCart = (id: number) => {
     if (!token) return;
     deleteProduct(id);
     removeToCart(id, token);
-    openSnackbar("Product Removed from Cart", "warning"); // Replaced toast
+    openSnackbar("Product Removed from Cart", "warning"); 
   };
 
   const handleCheckout = (location: string, products?: ProductInCart[]) => {
@@ -72,7 +78,7 @@ const useCustomerActions = () => {
         quantity: product.quantity,
       }));
       checkoutOrder(filteredProducts, token);
-      openSnackbar("Your Order is Now Being Processed", "info"); // Replaced toast
+      openSnackbar("Your Order is Now Being Processed", "info"); 
       setTimeout(() => {
         window.location.reload();
       }, 1500);
@@ -85,6 +91,7 @@ const useCustomerActions = () => {
     handleOrdersInCart,
     handleCheckout,
     handleOrdersToCheckout,
+    handleOrdersStatus
   };
 };
 
