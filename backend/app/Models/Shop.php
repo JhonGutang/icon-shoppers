@@ -104,4 +104,9 @@ class Shop extends Authenticatable
     {
         return 'remember_token';
     }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }
