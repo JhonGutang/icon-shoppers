@@ -47,4 +47,28 @@ class OrderController extends Controller
             'message'=>'Order deleted.'
         ]);
     }
+
+    public function getSellerOrders(Request $request)
+    {
+        $shopId = auth('shop-api')->id();
+
+        $orders = Order::whereHas('product', function($query) use ($shopId) {
+            $query->where('shop_id', $shopId);
+        })
+        ->with(['product:id,name,price,image', 'customer:id,name,contact_number,address'])
+        ->when($request->has('status'), function($query) use ($request) {
+            return $query->where('status', $request->status);
+        })
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+        $groupedOrders = $orders->groupBy('status');
+
+        return response()->json([
+            'orders' => $groupedOrders,
+            'total_orders' => $orders->count(),
+            'pending_orders' => $orders->where('status', 'ordered')->count(),
+            'completed_orders' => $orders->where('status', 'completed')->count(),
+        ]);
+    }
 }

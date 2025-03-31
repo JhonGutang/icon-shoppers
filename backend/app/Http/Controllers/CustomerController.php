@@ -78,7 +78,6 @@ class CustomerController extends Controller
             $existingOrder->total_amount = $existingOrder->quantity * $product->price;
             $existingOrder->save();
         } else {
-            // Create a new order if not found
             Order::create([
                 'customer_id' => $user->id,
                 'product_id' => $id,
@@ -172,7 +171,7 @@ class CustomerController extends Controller
             ])
             ->get();
 
-        // Group products by shop
+
         $grouped = $pendings->groupBy(function ($order) {
             return $order->product->shop->id;
         })->map(function ($orders) {
