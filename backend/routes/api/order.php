@@ -10,3 +10,13 @@ Route::get('/orders/{id}', [OrderController::class, 'show']);
 Route::put('/orders/{id}', [OrderController::class, 'update']);
 Route::delete('/orders/{id}', [OrderController::class, 'delete']);
 Route::get('/seller/orders', [OrderController::class, 'getSellerOrders']);
+
+
+Route::middleware('auth:customer-api')->group(function () {
+    Route::post('order/{id}',[OrderController::class, 'addToCart']);
+    Route::patch('checkout', [OrderController::class, 'checkoutOrder']);
+    Route::get('from-cart',[OrderController::class, 'fetchAllPendings']);
+    Route::get('to-checkout',[OrderController::class, 'fetchPendingProductForCheckout']);
+    Route::delete('order/{id}',[OrderController::class, 'removeToCart']);
+    Route::get('/customer/orders', [OrderController::class, 'getCustomersOrders']);
+});
