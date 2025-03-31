@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Http\Requests\OrderRequest;
 
 class OrderController extends Controller
 {
@@ -24,21 +25,14 @@ class OrderController extends Controller
         return response()->json($order);
     }
 
-    public function update(Request $request, $id){
+    public function update(OrderRequest $request, $id){
         $order = Order::find($id);
 
         if(!$order){
             return response()->json(['message'=>'Order not found.'], 404);
         }
 
-        $request->validate([
-            'quantity'=>'integer|min:1',
-            'total_amount'=>'numeric|min:0',
-            'location'=>'string|max:255',
-            'status'=>'in:cart,ordered,approved,rejected,to_be_delivered,recieved,not_recieved,completed',
-        ]);
-
-        $order->update($request->all());
+        $order->update($request->validated());
         return response()->json($order);
     }
 
