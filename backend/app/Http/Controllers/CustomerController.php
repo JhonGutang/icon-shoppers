@@ -64,7 +64,6 @@ class CustomerController extends Controller
 
 
     public function addToCart($id)
-    public function addToCart($id)
     {
         $user = Auth::guard('customer-api')->user();
         $product = Product::findOrFail($id);
@@ -151,8 +150,6 @@ class CustomerController extends Controller
     }
 
 
-
-    public function fetchAllPendings()
     public function fetchAllPendings()
     {
         $userId = Auth::guard('customer-api')->user()->id;
@@ -176,7 +173,6 @@ class CustomerController extends Controller
     }
 
 
-    public function fetchPendingProductForCheckout()
     public function fetchPendingProductForCheckout()
     {
         $userId = Auth::guard('customer-api')->user()->id;
