@@ -42,7 +42,7 @@ const Register: React.FC<RegisterFormProps> = ({ fields, role, setAuth }) => {
 
   return (
     <div>
-      <div className="flex flex-col gap-3 h-[20vw] overflow-y-auto mb-5">
+      <div className="flex flex-col gap-3 lg:h-[20vw] h-[30vh] overflow-y-auto mb-5">
         {fields.map((field) => (
           <div key={field.id}>
             <Label htmlFor={field.id} className="mb-2">

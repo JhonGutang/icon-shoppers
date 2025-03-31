@@ -8,11 +8,15 @@ import {
 import { ProductWithShop } from "@/types/product";
 import { Card } from "../ui/card";
 import { Checkbox } from "../ui/checkbox";
-import { MinusSquareIcon, PlusSquareIcon, Trash } from "lucide-react";
+import {
+  MinusSquareIcon,
+  PlusSquareIcon,
+  Trash,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import useCustomerActions from "@/hooks/useCustomerActions";
 import { useState } from "react";
-
+import useRedirectLink from "@/hooks/useRedirectLink";
 interface CheckoutPageProps {
   shopWithProducts: ProductWithShop[];
   setProductsWithShops: React.Dispatch<
@@ -24,6 +28,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
   shopWithProducts,
   setProductsWithShops,
 }) => {
+  const {redirectLink} = useRedirectLink()
   return (
     <div className="w-full">
       <CartNavbar />
@@ -37,7 +42,10 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
           setProductsWithShops={setProductsWithShops}
         />
       ) : (
-        <div className="text-center py-10">Your cart is empty.</div>
+        <div className="flex flex-col gap-2 items-center justify-center h-[80vh]">
+          <div className="text-lg font-bold mb-5">Cart is Empty</div>
+          <Button onClick={() => redirectLink('/')}>Find Products you Fancy</Button>
+        </div>
       )}
     </div>
   );
@@ -106,16 +114,23 @@ const CartContent: React.FC<CartContentProps> = ({
   const totalAmount = shopWithProducts
     .flatMap((shopData) => shopData.products)
     .filter((p) => selectedProducts.includes(p.id))
-    .reduce((sum, product) => sum + Number(product.price) * product.quantity, 0);
+    .reduce(
+      (sum, product) => sum + Number(product.price) * product.quantity,
+      0
+    );
 
   return (
-    <div className="w-full px-8 mt-5 pb-[80px]"> {/* Added bottom padding to prevent content from being covered */}
+    <div className="w-full px-8 mt-5 pb-[80px]">
       <Accordion type="single" collapsible>
         {shopWithProducts.map((shopData) => {
           const { shop, products } = shopData;
 
           return (
-            <AccordionItem key={shop.id} value={`shop-${shop.id}`} className="mb-2">
+            <AccordionItem
+              key={shop.id}
+              value={`shop-${shop.id}`}
+              className="mb-2"
+            >
               <Card className="p-0 px-5">
                 <AccordionTrigger className="text-lg font-semibold">
                   {shop.name}
@@ -151,35 +166,36 @@ const CartContent: React.FC<CartContentProps> = ({
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => handleRemoveProduct(shop.id, product.id)}
+                            onClick={() =>
+                              handleRemoveProduct(shop.id, product.id)
+                            }
                           >
                             <Trash size={15} color="red" />
                           </Button>
                         </div>
                         <div className="flex gap-2 items-center mt-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() =>
-                              handleQuantityChange(shop.id, product.id, "decrement")
-                            }
-                          >
-                            <MinusSquareIcon size={15} />
-                          </Button>
-                          <div>{product.quantity}</div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() =>
-                              handleQuantityChange(shop.id, product.id, "increment")
-                            }
-                          >
-                            <PlusSquareIcon size={15} />
-                          </Button>
+                            <MinusSquareIcon size={20} onClick={() =>
+                              handleQuantityChange(
+                                shop.id,
+                                product.id,
+                                "decrement"
+                              )
+                            } />
+                          <div className="text-lg">{product.quantity}</div>
+                            <PlusSquareIcon size={20}  onClick={() =>
+                              handleQuantityChange(
+                                shop.id,
+                                product.id,
+                                "increment"
+                              )
+                            } />
                         </div>
                         <div className="mt-2">Total:</div>
                         <div className="text-end text-lg font-semibold">
-                          ₱{(Number(product.price) * product.quantity).toFixed(2)}
+                          ₱
+                          {(Number(product.price) * product.quantity).toFixed(
+                            2
+                          )}
                         </div>
                       </div>
                     </div>
@@ -190,12 +206,11 @@ const CartContent: React.FC<CartContentProps> = ({
           );
         })}
       </Accordion>
-
       {/* Fixed Bottom Section */}
       <div className="fixed bottom-0 left-0 w-full bg-white shadow-md border-t py-4 px-8 flex flex-col justify-between items-center">
         <div className="flex justify-between w-full mb-5">
-        <div className="text-lg font-semibold">Total Amount</div>
-        <div className="text-xl">₱{totalAmount.toFixed(2)}</div>
+          <div className="text-lg font-semibold">Total Amount</div>
+          <div className="text-xl">₱{totalAmount.toFixed(2)}</div>
         </div>
         <Button
           className="w-full h-[60px]"
@@ -215,6 +230,5 @@ const CartContent: React.FC<CartContentProps> = ({
     </div>
   );
 };
-
 
 export default CheckoutPage;

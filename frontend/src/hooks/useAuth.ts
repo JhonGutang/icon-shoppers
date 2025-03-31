@@ -1,13 +1,15 @@
 import { useCallback, useState } from "react";
 import { Register, Login } from "@/types/auth";
 import { login, register, getProfile, logout } from "@/services/authService";
-import { toast } from "sonner";
+import { useSnackbar } from "@/components/context/SnackbarContext";
 import useToken from "@/stores/useAuthStore";
 import useRedirectLink from "./useRedirectLink";
 
 const useAuth = () => {
   const store = useToken();
   const { redirectLink } = useRedirectLink();
+  const { openSnackbar } = useSnackbar(); // Use MUI Snackbar
+
   const [registerFormData, setRegisterFormData] = useState<Register>({
     name: "",
     shopOwner: "",
@@ -30,40 +32,43 @@ const useAuth = () => {
     const { id, value } = e.target;
 
     if (auth === "register") {
-      setRegisterFormData((prev: Register) => ({
-        ...prev,
-        [id]: value,
-      }));
+      setRegisterFormData((prev) => ({ ...prev, [id]: value }));
     } else {
-      setLoginFormData((prev: Login) => ({
-        ...prev,
-        [id]: value,
-      }));
+      setLoginFormData((prev) => ({ ...prev, [id]: value }));
     }
   };
 
-  const handleRegister = (role: string) => {
+  const handleRegister = async (role: string) => {
     try {
-      register(registerFormData, role);
-      toast("Registered Successfully");
+      await register(registerFormData, role);
+      openSnackbar("Registered Successfully!", "success"); // MUI Snackbar
     } catch (error) {
       console.error(error);
-      toast("Registration Failed");
+      openSnackbar("Registration Failed!", "error"); // MUI Snackbar
     }
   };
 
   const handleLogin = async (role: string) => {
-    const profile = await login(loginFormData, role);
-    toast("Login successful!");
-    store.setAuth(profile.token, profile.user.role, profile.user.id);
-    redirectLink("/");
+    try {
+      const profile = await login(loginFormData, role);
+      openSnackbar("Login successful!", "success"); // MUI Snackbar
+      store.setAuth(profile.token, profile.user.role, profile.user.id);
+
+      if (role === "seller") {
+        redirectLink("profile");
+      } else {
+        redirectLink("/");
+      }
+    } catch (error) {
+      openSnackbar("Login failed!", "error"); // MUI Snackbar
+    }
   };
 
   const handleLogout = () => {
     const accessToken = useToken.getState().accessToken;
     if (accessToken) {
       logout(accessToken);
-      toast("Logout successful!");
+      openSnackbar("Logout successful!", "info"); // MUI Snackbar
       store.clearAuth();
       redirectLink("customer-auth");
     }
@@ -71,12 +76,12 @@ const useAuth = () => {
 
   const handleGetProfile = useCallback(async () => {
     const accessToken = useToken.getState().accessToken;
-    const role = useToken.getState().userType
+    const role = useToken.getState().userType;
 
     if (accessToken && role) {
       const data = await getProfile(accessToken, role);
       return data.user;
-    } 
+    }
   }, []);
 
   return {

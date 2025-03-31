@@ -9,7 +9,7 @@ const AuthLayout: React.FC<LayoutProps> = ({ children, trigger }) => {
 
   return (
     <div className="w-screen h-screen flex justify-center items-center">
-      <div className="rounded-xl lg:border-2 border-gray-400 w-full h-full border-2 lg:w-[70vw] lg:h-[70vh] flex flex-col lg:flex-row gap-4 justify-center lg:justify-between lg:items-center px-10 lg:px-0">
+      <div className="rounded-xl lg:border-2 border-gray-400 w-full h-full lg:w-[70vw] lg:h-[70vh] flex flex-col lg:flex-row gap-4 justify-center lg:justify-between lg:items-center px-10 lg:px-0">
         <div className="lg:w-[50%] flex flex-col lg:items-center gap-5">
           <Image
             src="/web-shopping.svg"

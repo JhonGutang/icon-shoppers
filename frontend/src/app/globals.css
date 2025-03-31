@@ -76,6 +76,9 @@
   --sidebar-accent-foreground: oklch(0.21 0.034 264.665);
   --sidebar-border: oklch(0.928 0.006 264.531);
   --sidebar-ring: oklch(0.707 0.022 261.325);
+  --success: oklch(0.7 0.2 150); /* Green-like color */
+  --warning: oklch(0.8 0.2 70); /* Yellow-like color */
+  --info: oklch(0.7 0.15 250); /* Blue-like color */
 }
 
 .dark {
@@ -110,6 +113,9 @@
   --sidebar-accent-foreground: oklch(0.985 0.002 247.839);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+  --success: oklch(0.6 0.25 150);
+  --warning: oklch(0.7 0.25 70);
+  --info: oklch(0.6 0.2 250);
 }
 
 
@@ -123,5 +129,32 @@
   }
   body {
     @apply bg-background text-foreground;
+
+  }
+
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .animate-slide-in {
+    animation: slideInRight 0.3s ease-out;
+  }
+  
+  
+  .sonner[data-sonner-toaster] {
+    position: fixed !important;
+    top: 1rem !important;
+    right: 1rem !important;
+    left: auto !important; /* Override if it's placed on the left */
+    bottom: auto !important;
   }
 }
+
+
