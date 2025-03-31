@@ -13,5 +13,19 @@ export const orderService = {
 
   async updateOrderStatus(orderId: number, status: string) {
     return await axiosInstance.put(`/orders/${orderId}`, { status });
+  },
+
+  async fetchSellerOrders() {
+    const response = await axiosInstance.get<Order[]>('/seller/orders');
+    return response.data;
+  },
+
+  async fetchCustomerOrders (token: string) {
+    const response = await axiosInstance.get('/customer/orders', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    return response.data
   }
 }; 

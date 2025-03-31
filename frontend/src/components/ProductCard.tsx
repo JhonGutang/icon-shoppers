@@ -76,7 +76,7 @@ const AddToCart: React.FC<{ product: Product }> = ({ product }) => {
 
   return (
     <Button
-      variant="ghost"
+    variant='outline'
       size="icon"
       onClick={(event) => handleAddToCart(event, product)}
       className="absolute top-2 right-2 z-10  shadow-lg"

@@ -7,35 +7,34 @@ import {
   fetchSpecificProduct,
   updateProduct,
 } from "@/services/productService";
-import { toast } from "sonner";
 import useToken from "@/stores/useAuthStore";
 import useProducts from "@/stores/useProducts";
 import { newProduct, Product, ProductToUpdate } from "@/types/product";
 import { useState } from "react";
 import useRedirectLink from "./useRedirectLink";
+import { useSnackbar } from "@/components/context/SnackbarContext";
 
 const useProductAction = () => {
   const token = useToken.getState().accessToken;
-  const { redirectLink} = useRedirectLink()
-  const { products, setProducts, deleteProductById, addProduct, updateProductById } =
-    useProducts();
+  const { redirectLink } = useRedirectLink();
+  const { products, setProducts, deleteProductById, addProduct, updateProductById } = useProducts();
+  const { openSnackbar } = useSnackbar(); // Use Snackbar
+
   const [newProduct, setNewProduct] = useState<newProduct>({
     name: "",
     price: 0,
     quantity: 0,
     image: undefined,
   });
-  const [product, setProduct] = useState<Product>()
-  
-  const handleFetchAllProducts = async() => {
-    const products = await fetchAllProducts()
-    return products
-  }
+  const [product, setProduct] = useState<Product>();
 
-  const handleFetchFeaturedProducts = async() => {
-    const featured = await fetchFeaturedProducts()
-    return featured
-  }
+  const handleFetchAllProducts = async () => {
+    return await fetchAllProducts();
+  };
+
+  const handleFetchFeaturedProducts = async () => {
+    return await fetchFeaturedProducts();
+  };
 
   const handleFetchShopProducts = async () => {
     if (!token) return;
@@ -48,23 +47,20 @@ const useProductAction = () => {
   };
 
   const handleFetchSpecificProduct = async (id: number) => {
-    // if (!token) return;
     const fetchedData = await fetchSpecificProduct(id);
-    setProduct(fetchedData)
-  }
+    setProduct(fetchedData);
+  };
 
   const handleAddProducts = async () => {
     if (!token) return;
-
-  
     try {
       const newProductData = await addProductService(newProduct, token);
       addProduct(newProductData);
       setNewProduct({ name: "", price: 0, quantity: 0 });
-      toast("Product Added Successfully");
+      openSnackbar("Product Added Successfully", "success");
     } catch (error) {
       console.error(error);
-      toast("Attempt Product Add Failed");
+      openSnackbar("Attempt to add product failed", "error");
     }
   };
 
@@ -76,31 +72,35 @@ const useProductAction = () => {
         onLocalUpdate(updatedProduct);
       }
       updateProductById(updatedProduct.id, updatedProduct);
-      toast("Product updated successfully");
+      openSnackbar("Product updated successfully", "success");
     } catch (error) {
       console.error(error);
-      toast("Failed to update product");
+      openSnackbar("Failed to update product", "error");
     }
   };
-  
 
   const handleDeleteProduct = async (id: number) => {
     if (!token) return;
-    await deleteProduct(id, token);
-    deleteProductById(id);
-    toast("Product deleted");
-    setTimeout(() => {
-      redirectLink('profile')
-    }, 1000);
+    try {
+      await deleteProduct(id, token);
+      deleteProductById(id);
+      openSnackbar("Product deleted", "success");
+      setTimeout(() => {
+        redirectLink("profile");
+      }, 1000);
+    } catch (error) {
+      console.error(error);
+      openSnackbar("Failed to delete product", "error");
+    }
   };
 
   const handleInputs = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, type, value, files } = e.target;
-  
+
     if (type === "file" && files && files[0]) {
       setNewProduct((prev) => ({
         ...prev,
-        [id]: files[0], 
+        [id]: files[0],
       }));
     } else {
       setNewProduct((prev) => ({
@@ -109,8 +109,6 @@ const useProductAction = () => {
       }));
     }
   };
-  
-
 
   const handleProductVisibility = async (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -118,56 +116,43 @@ const useProductAction = () => {
   ) => {
     event.stopPropagation();
     if (!token) return;
-  
+
     const updatedVisibility = !product.is_visible;
-    const updatedProduct = {
-      ...product,
-      is_visible: updatedVisibility,
-    };
-  
+    const updatedProduct = { ...product, is_visible: updatedVisibility };
+
     try {
       await updateProductById(updatedProduct.id, updatedProduct);
-      toast(`Product visibility is now ${updatedVisibility ? 'visible' : 'hidden'}`);
-      const productWithoutImage = {
-        ...updatedProduct,
-        image: null,
-      };
-  
+      openSnackbar(`Product visibility is now ${updatedVisibility ? "visible" : "hidden"}`, "info");
+
+      const productWithoutImage = { ...updatedProduct, image: null };
       await updateProduct(productWithoutImage, token);
     } catch (error) {
       console.error(error);
-      toast.error('Failed to update product visibility');
+      openSnackbar("Failed to update product visibility", "error");
     }
   };
-  
-  
-  const handleFeatureToggle = async(product: Product, onLocalUpdate?: (product: Product) => void) => {
+
+  const handleFeatureToggle = async (product: Product, onLocalUpdate?: (product: Product) => void) => {
     if (!token) return;
-    
-    const updatedProductFeature = {
-      ...product,
-      is_featured: !product.is_featured
-    };
+
+    const updatedProductFeature = { ...product, is_featured: !product.is_featured };
 
     try {
-      
-      if(onLocalUpdate) {
-        onLocalUpdate((updatedProductFeature))
-        toast(updatedProductFeature.is_featured ? 'Product Now Featured': 'Product removed from Featured')
+      if (onLocalUpdate) {
+        onLocalUpdate(updatedProductFeature);
+        openSnackbar(
+          updatedProductFeature.is_featured ? "Product Now Featured" : "Product removed from Featured",
+          "success"
+        );
       }
 
-      const productWithoutImage = {
-        ...updatedProductFeature,
-        image: null,
-      };
-
+      const productWithoutImage = { ...updatedProductFeature, image: null };
       await updateProduct(productWithoutImage, token);
     } catch (error) {
-      console.error(error)
-      toast('Feature toggle Failed: Reverting Back')
+      console.error(error);
+      openSnackbar("Feature toggle failed: Reverting Back", "error");
     }
-    
-}
+  };
 
   return {
     products,

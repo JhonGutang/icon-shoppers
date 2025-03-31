@@ -1,6 +1,5 @@
 import { useCartStore } from "@/stores/useCartStore";
 import { Product, ProductInCart } from "@/types/product";
-import { toast } from "sonner";
 import {
   addToCart,
   checkoutOrder,
@@ -10,7 +9,8 @@ import {
 } from "@/services/customerService";
 import useRedirectLink from "./useRedirectLink";
 import useAuthStore from "@/stores/useAuthStore";
-
+import { useSnackbar } from "@/components/context/SnackbarContext";
+import { orderService } from "@/services/orderService";
 const useCustomerActions = () => {
   const token = useAuthStore.getState().accessToken;
   const role = useAuthStore.getState().userType;
@@ -21,6 +21,7 @@ const useCustomerActions = () => {
   } = useCartStore();
   const setProducts = useCartStore((state) => state.setProducts);
   const { redirectLink } = useRedirectLink();
+  const { openSnackbar } = useSnackbar(); 
 
   const handleOrdersInCart = async () => {
     if (role === "seller") return;
@@ -29,9 +30,15 @@ const useCustomerActions = () => {
     setProducts(orders);
   };
 
-  const handleOrdersToCheckout = async() => {
-    if (!token) return
-    const products = await fetchPendingOrdersBasedOnShop(token)
+  const handleOrdersToCheckout = async () => {
+    if (!token) return;
+    const products = await fetchPendingOrdersBasedOnShop(token);
+    return products;
+  };
+
+  const handleOrdersStatus = async () => {
+    if(!token) return
+    const products = await orderService.fetchCustomerOrders(token)
     return products
   }
 
@@ -46,14 +53,14 @@ const useCustomerActions = () => {
     }
     addProduct(product);
     addToCart(product.id, token);
-    toast("Product Added to Cart");
+    openSnackbar("Product Added to Cart", "success"); 
   };
 
   const handleRemoveToCart = (id: number) => {
     if (!token) return;
     deleteProduct(id);
     removeToCart(id, token);
-    toast("Product Removed from Cart");
+    openSnackbar("Product Removed from Cart", "warning"); 
   };
 
   const handleCheckout = (location: string, products?: ProductInCart[]) => {
@@ -70,10 +77,10 @@ const useCustomerActions = () => {
         order_id: product.order_id,
         quantity: product.quantity,
       }));
-      checkoutOrder(filteredProducts, token)
-      toast('Your Order is Now Being Processed')
+      checkoutOrder(filteredProducts, token);
+      openSnackbar("Your Order is Now Being Processed", "info"); 
       setTimeout(() => {
-        window.location.reload()
+        window.location.reload();
       }, 1500);
     }
   };
@@ -83,7 +90,8 @@ const useCustomerActions = () => {
     handleRemoveToCart,
     handleOrdersInCart,
     handleCheckout,
-    handleOrdersToCheckout
+    handleOrdersToCheckout,
+    handleOrdersStatus
   };
 };
 

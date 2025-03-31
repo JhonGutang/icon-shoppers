@@ -6,26 +6,13 @@ import { ProductWithShop } from "@/types/product";
 import CheckoutContainer from "@/components/CheckoutContainer";
 import React, { useEffect, useState } from "react";
 import CheckoutPage from "@/components/mobile/CheckoutPage";
+import { useIsMobile } from "@/hooks/use-mobile";
+
 const Checkout = () => {
+  const isMobile = useIsMobile(); // Use the custom hook here
   const { handleOrdersToCheckout } = useCustomerActions();
-  const [productsWithShops, setProductsWithShops] = useState<
-    ProductWithShop[] | null
-  >(null);
-  const [checkedShops, setCheckedShops] = useState<{ [key: string]: boolean }>(
-    {}
-  );
-  const [isMobile, setIsMobile] = useState<boolean>(false);
-
-  useEffect(() => {
-    const checkViewport = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkViewport();
-    window.addEventListener("resize", checkViewport);
-
-    return () => window.removeEventListener("resize", checkViewport);
-  }, []);
+  const [productsWithShops, setProductsWithShops] = useState<ProductWithShop[] | null>(null);
+  const [checkedShops, setCheckedShops] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     const fetchProducts = async () => {

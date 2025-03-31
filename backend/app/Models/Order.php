@@ -14,6 +14,7 @@ class Order extends Model
     protected $fillable = [
         'customer_id',
         'product_id',
+        'shop_id',
         'total_amount',
         'location',
         'status',
@@ -36,5 +37,10 @@ class Order extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function shop()
+    {
+        return $this->belongsTo(Shop::class);
     }
 }

@@ -10,37 +10,39 @@ import useProductAction from "@/hooks/useProductActions";
 
 const Profile = () => {
   const { handleGetProfile } = useAuth();
-  const {products, handleFetchShopProducts} = useProductAction()
+  const { products, handleFetchShopProducts } = useProductAction();
   const [user, setUser] = useState<ProfileType>();
- 
+
   const fetchUser = async () => {
     const data = await handleGetProfile();
     setUser(data);
   };
 
   const fetchProducts = async () => {
-  await handleFetchShopProducts()
-  }
+    await handleFetchShopProducts();
+  };
 
   useEffect(() => {
     fetchUser();
-    fetchProducts()
+    fetchProducts();
   }, []);
 
   return (
     <div className="h-screen flex flex-wrap lg:flex-nowrap">
       <Header user={user} />
       <div className="w-full p-5">
-        <div className="text-2xl font-semibold capitalize mb-4">{user?.name} Products <ShoppingBag className="inline"/> </div>
-        <div className="w-full h-[90%] flex flex-wrap gap-3 overflow-y-auto">
-          {products?.map((product) => (
-            <div key={product.id}>
-              <ProductCard
-              product={product}
-              location="profile"
-              />
-            </div>
-          ))}
+        <div className="text-2xl font-semibold capitalize mb-4">
+          {user?.name} Products <ShoppingBag className="inline" />
+        </div>
+
+        <div className=" h-[90%] overflow-y-auto">
+        <div className="w-full columns-1 sm:columns-2 lg:columns-3 gap-3">
+            {products?.map((product) => (
+              <div key={product.id} className="mb-3 break-inside-avoid">
+                <ProductCard product={product} location="profile" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

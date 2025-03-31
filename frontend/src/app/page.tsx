@@ -42,7 +42,7 @@ const Home = () => {
       <Navbar name={user?.name} />
       <Promotional />
       <FeaturedCategory products={featuredProducts} />
-      <ShopCategory />
+      {/* <ShopCategory /> */}
       <AllProducts products={allProducts} />
     </div>
   );
