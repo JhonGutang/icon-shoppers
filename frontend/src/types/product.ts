@@ -38,6 +38,7 @@ export interface ProductWithShop {
   products: ProductInCart[],
   shop: Shop,
   status?: string,
+  total_amount?: number,
 }
 
 export type ProductInCart = Product & { quantity: number };
