@@ -2,45 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
     use HasFactory;
 
-    protected $table = 'orders';
-
     protected $fillable = [
         'customer_id',
-        'product_id',
-        'shop_id',
         'total_amount',
-        'location',
         'status',
     ];
 
-    protected $casts = [
-        'total_amount' => 'decimal:2',
-    ];
+    // Relationship: An order has many order items
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 
-    protected $attributes = [
-        'status' => 'ordered',
-    ];
-
-
+    // Relationship: An order belongs to a customer
     public function customer()
     {
         return $this->belongsTo(Customer::class);
-    }
-
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
-    }
-
-    public function shop()
-    {
-        return $this->belongsTo(Shop::class);
     }
 }

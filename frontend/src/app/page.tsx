@@ -6,14 +6,12 @@ import useAuth from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import { Profile } from "@/types/auth";
 import useProductAction from "@/hooks/useProductActions";
-import useCustomerActions from "@/hooks/useCustomerActions";
 import { Flame, ShoppingBag, Store } from "lucide-react";
 import ImageCarousel from "@/components/imageCarousel";
 import { Button } from "@/components/ui/button";
 import useRedirectLink from "@/hooks/useRedirectLink";
 
 const Home = () => {
-  const { handleOrdersInCart } = useCustomerActions();
   const { handleGetProfile } = useAuth();
   const { handleFetchAllProducts, handleFetchFeaturedProducts } =
     useProductAction();
@@ -34,7 +32,6 @@ const Home = () => {
     };
 
     fetchData();
-    handleOrdersInCart();
   }, []);
 
   return (
