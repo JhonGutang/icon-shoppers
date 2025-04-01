@@ -17,7 +17,6 @@ Route::get('/user', function (Request $request) {
 
 Route::middleware('auth:shop-api')->group(function () {
     Route::get('/profile', [ShopController::class, 'index']);
-    Route::get('/seller/orders', [OrderController::class, 'getSellerOrders']);
 });
 
 Route::middleware('auth:customer-api')->group(function () {

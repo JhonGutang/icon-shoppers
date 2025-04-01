@@ -10,14 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    public function index(Request $request){
-        $orders = Order::with(['customer', 'product'])->get();
 
-        if($request->has('status')){
-            $orders->where('status', $request->status);
-        }
-        return response()->json($orders);
-    }
     public function show($id){
         $order = Order::find($id);
 
@@ -50,35 +43,56 @@ class OrderController extends Controller
         ]);
     }
 
-    public function getSellerOrders(Request $request)
+    public function getSellerOrders()
     {
-
         $shopId = auth('shop-api')->id();
 
-        $orders = Order::whereHas('product', function($query) use ($shopId) {
-            $query->where('shop_id', $shopId);
-        })
-        ->with(['product:id,name,price,image', 'customer:id,name,contact_number,address'])
-        ->when($request->has('status'), function($query) use ($request) {
-            return $query->where('status', $request->status);
-        })
-        ->orderBy('created_at', 'desc')
-        ->get();
+        if (!$shopId) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
-        $groupedOrders = $orders->groupBy('status');
+        $orders = Order::where('shop_id', $shopId)
+            ->with(['customer:id,name,contact_number,address', 'product:id,name,price,image'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        if ($orders->isEmpty()) {
+            return response()->json([
+                'orders' => [],
+                'message' => 'No orders found'
+            ]);
+        }
+
+        $orders = $orders->map(function ($order) {
+            return [
+                'id' => $order->id,
+                'customer' => [
+                    'name' => $order->customer->name
+                ],
+                'product' => [
+                    'name' => $order->product->name
+                ],
+                'quantity' => $order->quantity,
+                'total_amount' => $order->total_amount,
+                'location' => $order->customer->address,
+                'status' => $order->status
+            ];
+        });
 
         return response()->json([
-            'orders' => $groupedOrders,
-            'total_orders' => $orders->count(),
-            'pending_orders' => $orders->where('status', 'ordered')->count(),
-            'completed_orders' => $orders->where('status', 'completed')->count(),
+            'orders' => $orders,
+            // 'statistics' => [
+            //     'total_orders' => $orders->count(),
+            //     'pending_orders' => $orders->where('status', 'ordered')->count(),
+            //     'completed_orders' => $orders->where('status', 'completed')->count()
+            // ]
         ]);
     }
 
     public function getCustomersOrders()
     {
         $userId = Auth::guard('customer-api')->user()->id;
-    
+
         $orders = Order::where('status', 'approved')
             ->where('customer_id', $userId)
             ->with([
@@ -86,13 +100,13 @@ class OrderController extends Controller
                 'product.shop:id,name,email,description,contact_number'
             ])
             ->get();
-    
+
         $grouped = $orders->groupBy(function ($order) {
             return $order->product->shop->id;
         })->map(function ($orders) {
             $shop = $orders->first()->product->shop;
-            $status = $orders->first()->status; 
-    
+            $status = $orders->first()->status;
+
             $products = $orders->map(function ($order) {
                 return [
                     'id' => $order->product->id,
@@ -103,15 +117,15 @@ class OrderController extends Controller
                     'quantity' => $order->quantity,
                 ];
             });
-    
+
             // Ensure the total amount is formatted to 2 decimal places
             $totalAmount = number_format(
                 $orders->sum(function ($order) {
                     return $order->product->price * $order->quantity;
-                }), 
+                }),
                 2, '.', ''
             );
-    
+
             return [
                 'shop' => [
                     'id' => $shop->id,
@@ -121,14 +135,14 @@ class OrderController extends Controller
                     'contact_number' => $shop->contact_number,
                 ],
                 'products' => $products->values(),
-                'status' => $status, 
-                'total_amount' => $totalAmount, 
+                'status' => $status,
+                'total_amount' => $totalAmount,
             ];
         })->values();
-    
+
         return response()->json($grouped);
     }
-    
+
 
     public function addToCart($id)
     {

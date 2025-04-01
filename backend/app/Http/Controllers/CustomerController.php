@@ -81,6 +81,7 @@ class CustomerController extends Controller
             Order::create([
                 'customer_id' => $user->id,
                 'product_id' => $id,
+                'shop_id' => $product->shop_id,
                 'quantity' => 1,
                 'total_amount' => $product->price,
                 'status' => 'ordered',
