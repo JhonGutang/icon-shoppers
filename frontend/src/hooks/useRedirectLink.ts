@@ -3,20 +3,19 @@ import { useRouter } from "next/navigation";
 const useRedirectLink = () => {
   const router = useRouter();
 
-  const toSlug = (name: string) => {
+  const toSlug = (name: string | number) => {
+    if (typeof name === "number") return name.toString(); 
     return name
       .toLowerCase()
-      .replace(/\s+/g, "-") // Convert spaces to hyphens
-      .replace(/[^\w-]/g, ""); // Remove special characters
+      .replace(/\s+/g, "-")
+      .replace(/[^\w-]/g, ""); 
   };
 
-  const redirectLink = (name: string, id?: number) => {
-    if (!name) return; // Prevent errors if name is empty
-    const slug = toSlug(name);
+  const redirectLink = (...pathSegments: (string | number)[]) => {
+    if (!pathSegments.length) return;
     
-    // If an ID is provided, include it in the URL
-    const path = id ? `/${id}-${slug}` : `/${slug}`;
-    
+    const processedSegments = pathSegments.map((segment) => toSlug(segment));
+    const path = `/${processedSegments.join("/")}`;
     router.push(path);
   };
 

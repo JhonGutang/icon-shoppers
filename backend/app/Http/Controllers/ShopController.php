@@ -19,6 +19,28 @@ class ShopController extends Controller
         return response()->json(['user' => $user]);
     }
 
+    public function getSpecificShop($name) {
+        try {
+            $shop = Shop::with('products')->where('name', $name)->firstOrFail();
+            return response()->json([
+                'success' => true,
+                'data' => $shop
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Shop not found'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while fetching the shop',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+
 
     public function login(Request $request)
     {
