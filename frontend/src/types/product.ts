@@ -32,6 +32,7 @@ export interface Shop {
   contact_number: number
   email: string,
   description: string,
+  products?: Product[]
 }
 
 export interface ProductWithShop {

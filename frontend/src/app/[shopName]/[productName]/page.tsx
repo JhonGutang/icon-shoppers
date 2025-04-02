@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Store } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+
 const ProductPage = () => {
   const { redirectLink } = useRedirectLink();
   const { handleAddToCart } = useCustomerActions();
@@ -67,6 +68,7 @@ const ProductPage = () => {
 
 const ProductDetails = ({ product }: { product?: any }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { redirectLink } = useRedirectLink();
 
   return (
     <div className="w-full flex flex-col gap-6">
@@ -120,7 +122,7 @@ const ProductDetails = ({ product }: { product?: any }) => {
                       {product?.shop.name}
                     </div>
                   </div>
-                  <Button variant="outline">View Shop</Button>
+                  <Button variant="outline" onClick={() => redirectLink(`${product?.shop.name}`)}>View Shop</Button>
                 </div>
               </CardTitle>
             </CardHeader>

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,17 +12,30 @@ import useRedirectLink from "@/hooks/useRedirectLink";
 interface ProductCardProps {
   product: Product;
   location?: string;
+  shopName?: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, location }) => {
-  const {redirectLink} = useRedirectLink()
+const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  location,
+  shopName,
+}) => {
+  const { redirectLink } = useRedirectLink();
   const shopId = useAuthStore((state) => state.id);
   const role = useAuthStore((state) => state.userType);
   const isProductOwner =
     shopId === product.shop_id && location === "profile" && role === "seller";
 
   return (
-    <Card className="relative w-[42vw] pt-0 pb-3 lg:w-[20vw] lg:gap-3 rounded-xl cursor-pointer shadow-2xl border-2 border-gray-300" onClick={() => redirectLink(product.name, product.id)}>
+    <Card
+      className="relative w-[42vw] pt-0 pb-3 lg:w-[20vw] lg:gap-3 rounded-xl cursor-pointer shadow-2xl border-2 border-gray-300"
+      onClick={() =>
+        redirectLink(
+          shopName || product.shop_name!,
+          `${product.id} ${product.name}`
+        )
+      }
+    >
       {role === "customer" && <AddToCart product={product} />}
 
       <CardContent className="flex flex-col gap-3 items-center justify-center px-0 w-full h-[80%]">
@@ -38,18 +51,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, location }) => {
         <div className="w-full px-3 py-1">
           <div className="text-xs flex justify-between lg:text-lg font-semibold">
             <div>
+              <div className="font-bold">{product.name}</div>
 
-            <div className="font-bold">{product.name}</div>
-            <div className="text-xs flex items-center gap-1 mt-2">
-              <div>
-                <Store size={15}/>
-              </div>
-              {product.shop_name}</div>
+              {product.shop_name && (
+                <div className="text-xs flex items-center gap-1 mt-2">
+                  <div>
+                    <Store size={15} />
+                  </div>
+                  {product.shop_name}
+                </div>
+              )}
             </div>
-            <div>
-
-            {isProductOwner && <Visibility product={product} />}
-            </div>
+            <div>{isProductOwner && <Visibility product={product} />}</div>
           </div>
           <div className="text-md font-bold w-full text-end">
             ₱{product.price}
@@ -67,7 +80,6 @@ const Visibility: React.FC<{ product: Product }> = ({ product }) => {
     <Button
       variant="outline"
       size="icon"
-      
       onClick={(event) => handleProductVisibility(event, product)}
     >
       {product.is_visible ? <Eye /> : <EyeClosed />}
@@ -80,7 +92,7 @@ const AddToCart: React.FC<{ product: Product }> = ({ product }) => {
 
   return (
     <Button
-    variant='outline'
+      variant="outline"
       size="icon"
       onClick={(event) => handleAddToCart(event, product)}
       className="absolute top-2 right-2 z-10  shadow-lg"
