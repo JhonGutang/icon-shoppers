@@ -11,14 +11,35 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    public function index(Request $request){
-        $orders = Order::with(['customer', 'product'])->get();
+    public function index(Request $request)
+    {
+        $query = Order::with(['customer', 'orderItems.product']);
 
-        if($request->has('status')){
-            $orders->where('status', $request->status);
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
         }
+
+        $orders = $query->get()->map(function ($order) {
+            return [
+                'id' => $order->id,
+                'customer_id' => $order->customer_id,
+                'total_amount' => $order->total_amount,
+                'status' => $order->status,
+                'customer' => $order->customer,
+                'items' => $order->orderItems->map(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'quantity' => $item->quantity,
+                        'price' => $item->price,
+                        'product' => $item->product
+                    ];
+                })
+            ];
+        });
+
         return response()->json($orders);
     }
+
     public function show($id){
         $order = Order::find($id);
 
@@ -53,13 +74,12 @@ class OrderController extends Controller
 
     public function getSellerOrders(Request $request)
     {
-
         $shopId = auth('shop-api')->id();
 
-        $orders = Order::whereHas('product', function($query) use ($shopId) {
+        $orders = Order::whereHas('orderItems.product', function($query) use ($shopId) {
             $query->where('shop_id', $shopId);
         })
-        ->with(['product:id,name,price,image', 'customer:id,name,contact_number,address'])
+        ->with(['orderItems.product:id,name,price,image', 'customer:id,name,contact_number,address'])
         ->when($request->has('status'), function($query) use ($request) {
             return $query->where('status', $request->status);
         })
@@ -77,75 +97,72 @@ class OrderController extends Controller
     }
 
     public function getCustomersOrders()
-{
-    $userId = Auth::guard('customer-api')->user()->id;
+    {
+        $userId = Auth::guard('customer-api')->user()->id;
 
-    $orders = Order::where('customer_id', $userId)
-        ->where('status', '!=', 'cart') 
-        ->with([
-            'orderItems.product:id,name,price,shop_id,image',
-            'orderItems.product.shop:id,name,email,description,contact_number'
-        ])
-        ->get();
+        $orders = Order::where('customer_id', $userId)
+            ->where('status', '!=', 'cart')
+            ->with([
+                'orderItems.product:id,name,price,shop_id,image',
+                'orderItems.product.shop:id,name,email,description,contact_number'
+            ])
+            ->get();
 
-    if ($orders->isEmpty()) {
-        return response()->json([]);
-    }
+        if ($orders->isEmpty()) {
+            return response()->json([]);
+        }
 
-    
-    $grouped = $orders->map(function ($order) {
-        $shopOrders = $order->orderItems->groupBy(function ($item) {
-            return $item->product->shop->id;
-        });
-
-        return $shopOrders->map(function ($items, $shopId) use ($order) {
-            $shop = $items->first()->product->shop;
-
-            $products = $items->map(function ($item) {
-                return [
-                    'id' => $item->product->id,
-                    'order_item_id' => $item->id,
-                    'name' => $item->product->name,
-                    'price' => $item->product->price,
-                    'image' => $item->product->image,
-                    'quantity' => $item->quantity,
-                ];
+        $grouped = $orders->map(function ($order) {
+            $shopOrders = $order->orderItems->groupBy(function ($item) {
+                return $item->product->shop->id;
             });
 
-            return [
-                'order_id' => $order->id,
-                'shop' => [
-                    'id' => $shop->id,
-                    'name' => $shop->name,
-                    'email' => $shop->email,
-                    'description' => $shop->description,
-                    'contact_number' => $shop->contact_number,
-                ],
-                'products' => $products->values(),
-                'status' => $order->status,
-                'total_amount' => number_format($order->total_amount, 2, '.', ''),
-            ];
-        })->values();
-    })->flatten(1);
+            return $shopOrders->map(function ($items, $shopId) use ($order) {
+                $shop = $items->first()->product->shop;
 
-    return response()->json($grouped);
-}
+                $products = $items->map(function ($item) {
+                    return [
+                        'id' => $item->product->id,
+                        'order_item_id' => $item->id,
+                        'name' => $item->product->name,
+                        'price' => $item->product->price,
+                        'image' => $item->product->image,
+                        'quantity' => $item->quantity,
+                    ];
+                });
 
-    
+                return [
+                    'order_id' => $order->id,
+                    'shop' => [
+                        'id' => $shop->id,
+                        'name' => $shop->name,
+                        'email' => $shop->email,
+                        'description' => $shop->description,
+                        'contact_number' => $shop->contact_number,
+                    ],
+                    'products' => $products->values(),
+                    'status' => $order->status,
+                    'total_amount' => number_format($order->total_amount, 2, '.', ''),
+                ];
+            })->values();
+        })->flatten(1);
+
+        return response()->json($grouped);
+    }
 
     public function addToCart($id)
     {
         $user = Auth::guard('customer-api')->user();
         $product = Product::findOrFail($id);
-    
+
         $order = Order::where('customer_id', $user->id)
             ->where('status', 'cart')
             ->first();
-    
+
             if (!$order) {
                 $order = Order::create([
                     'customer_id' => $user->id,
-                    'total_amount' => 0, 
+                    'total_amount' => 0,
                     'status' => 'cart',
                 ]);
             }
@@ -153,7 +170,7 @@ class OrderController extends Controller
         $orderItem = OrderItem::where('order_id', $order->id)
             ->where('product_id', $id)
             ->first();
-    
+
         if ($orderItem) {
             $orderItem->quantity += 1;
             $orderItem->price = $orderItem->quantity * $product->price;
@@ -166,130 +183,125 @@ class OrderController extends Controller
                 'price' => $product->price,
             ]);
         }
-    
+
         // Recalculate total order amount
         $order->total_amount = $order->orderItems()->sum('price');
         $order->save();
-    
+
         return response()->json(['message' => 'Product added to cart successfully']);
     }
-    
 
     public function removeToCart($id)
     {
         $user = Auth::guard('customer-api')->user();
-    
+
         $order = Order::where('customer_id', $user->id)
             ->where('status', 'cart')
             ->first();
-    
+
         if (!$order) {
             return response()->json(['message' => 'No active cart found.'], 404);
         }
-    
+
         $orderItem = OrderItem::where('order_id', $order->id)
             ->where('product_id', $id)
             ->first();
-    
+
         if (!$orderItem) {
             return response()->json(['message' => 'Product not found in cart.'], 404);
         }
-    
+
         $orderItem->delete();
-    
+
         if ($order->orderItems()->count() == 0) {
             $order->delete();
         } else {
             $order->total_amount = $order->orderItems()->sum('price');
             $order->save();
         }
-    
+
         return response()->json(['message' => 'Product removed from cart successfully.'], 200);
     }
-    
-
 
     public function checkoutOrder(Request $request)
-{
-    $customerId = Auth::guard('customer-api')->id();
+    {
+        $customerId = Auth::guard('customer-api')->id();
 
-    $order = Order::where('customer_id', $customerId)
-        ->where('status', 'cart')
-        ->first();
-
-    if (!$order) {
-        return response()->json(['message' => 'No active cart found'], 404);
-    }
-
-    $totalAmount = 0;
-
-    foreach ($request->products as $productItem) {
-        $orderItem = OrderItem::where('order_id', $order->id)
-            ->where('product_id', $productItem['id'])
+        $order = Order::where('customer_id', $customerId)
+            ->where('status', 'cart')
             ->first();
 
-        if (!$orderItem) {
-            return response()->json(['message' => 'Product not found in cart'], 404);
+        if (!$order) {
+            return response()->json(['message' => 'No active cart found'], 404);
         }
 
-        $product = Product::find($productItem['id']);
-        if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
+        $totalAmount = 0;
+
+        foreach ($request->products as $productItem) {
+            $orderItem = OrderItem::where('order_id', $order->id)
+                ->where('product_id', $productItem['id'])
+                ->first();
+
+            if (!$orderItem) {
+                return response()->json(['message' => 'Product not found in cart'], 404);
+            }
+
+            $product = Product::find($productItem['id']);
+            if (!$product) {
+                return response()->json(['message' => 'Product not found'], 404);
+            }
+
+            $orderItem->quantity = $productItem['quantity'];
+            $orderItem->price = $product->price * $productItem['quantity'];
+            $orderItem->save();
+
+            $totalAmount += $orderItem->price;
         }
 
-        $orderItem->quantity = $productItem['quantity'];
-        $orderItem->price = $product->price * $productItem['quantity'];
-        $orderItem->save();
+        $order->total_amount = $totalAmount;
+        $order->status = 'ordered';
+        $order->updated_at = now();
+        $order->save();
 
-        $totalAmount += $orderItem->price;
+        return response()->json(['message' => 'Order checked out successfully']);
     }
-
-    $order->total_amount = $totalAmount;
-    $order->status = 'ordered';
-    $order->updated_at = now();
-    $order->save();
-
-    return response()->json(['message' => 'Order checked out successfully']);
-}
-
-
 
     public function fetchAllPendings()
     {
         $userId = Auth::guard('customer-api')->user()->id;
         $pendings = Order::where('status', 'cart')
             ->where('customer_id', $userId)
-            ->with(['product:id,name,price'])
+            ->with(['orderItems.product:id,name,price'])
             ->get()
             ->map(function ($order) {
-                return [
-                    'order_id' => $order->id,
-                    'status' => $order->status,
-                    'name' => $order->product->name ?? null,
-                    'price' => $order->product->price ?? null,
-                    'quantity' => $order->quantity,
-                    'id' => $order->product->id,
-                ];
-            });
-
+                return $order->orderItems->map(function ($item) use ($order) {
+                    return [
+                        'order_id' => $order->id,
+                        'status' => $order->status,
+                        'name' => $item->product->name ?? null,
+                        'price' => $item->product->price ?? null,
+                        'quantity' => $item->quantity,
+                        'id' => $item->product->id,
+                    ];
+                });
+            })->flatten(1);
 
         return response()->json($pendings);
     }
 
-
     public function fetchPendingProductForCheckout()
     {
         $userId = Auth::guard('customer-api')->user()->id;
-    
+
         // Get the user's cart order
         $order = Order::where('customer_id', $userId)
             ->where('status', 'cart')
             ->first();
-    
+
         if (!$order) {
             return response()->json([]); // Return empty array if no order exists
         }
-    
+
         // Get order items with product & shop details
         $orderItems = OrderItem::where('order_id', $order->id)
             ->with([
@@ -297,11 +309,11 @@ class OrderController extends Controller
                 'product.shop:id,name,email,description,contact_number'
             ])
             ->get();
-    
+
         if ($orderItems->isEmpty()) {
             return response()->json([]); // Return empty array if no items exist
         }
-    
+
         // Group products by shop
         $grouped = $orderItems->groupBy(function ($orderItem) {
             return $orderItem->product->shop->id;
@@ -310,14 +322,14 @@ class OrderController extends Controller
             $products = $items->map(function ($item) {
                 return [
                     'id' => $item->product->id,
-                    'order_item_id' => $item->id, 
+                    'order_item_id' => $item->id,
                     'name' => $item->product->name,
                     'price' => $item->product->price,
                     'image' => $item->product->image,
                     'quantity' => $item->quantity,
                 ];
             });
-    
+
             return [
                 'shop' => [
                     'id' => $shop->id,
@@ -329,9 +341,7 @@ class OrderController extends Controller
                 'products' => $products->values(),
             ];
         })->values();
-    
+
         return response()->json($grouped);
     }
-    
-    
 }
