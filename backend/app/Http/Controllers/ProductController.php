@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
         $userid = Auth::guard('shop-api')->user()->id;
@@ -65,13 +63,11 @@ class ProductController extends Controller
 
 
     public function fetchSpecificProduct($id){
-        $product = Product:: find($id);
+        $product = Product::with('shop:id,name')->find($id);
         return $product;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create(ProductRequest $request)
     {
         $userId = Auth::guard('shop-api')->user()->id;

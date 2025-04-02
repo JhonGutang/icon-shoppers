@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Eye, EyeClosed, ShoppingCart, Store } from "lucide-react";
@@ -6,19 +8,21 @@ import { Product } from "@/types/product";
 import useProductAction from "@/hooks/useProductActions";
 import useAuthStore from "@/stores/useAuthStore";
 import useCustomerActions from "@/hooks/useCustomerActions";
+import useRedirectLink from "@/hooks/useRedirectLink";
 interface ProductCardProps {
   product: Product;
   location?: string;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, location }) => {
+  const {redirectLink} = useRedirectLink()
   const shopId = useAuthStore((state) => state.id);
   const role = useAuthStore((state) => state.userType);
   const isProductOwner =
     shopId === product.shop_id && location === "profile" && role === "seller";
 
   return (
-    <Card className="relative w-[42vw] pt-0 pb-3 lg:w-[20vw] lg:gap-3 rounded-xl cursor-pointer shadow-2xl border-2 border-gray-300">
+    <Card className="relative w-[42vw] pt-0 pb-3 lg:w-[20vw] lg:gap-3 rounded-xl cursor-pointer shadow-2xl border-2 border-gray-300" onClick={() => redirectLink(product.name, product.id)}>
       {role === "customer" && <AddToCart product={product} />}
 
       <CardContent className="flex flex-col gap-3 items-center justify-center px-0 w-full h-[80%]">
