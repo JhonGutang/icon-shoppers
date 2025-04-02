@@ -20,9 +20,7 @@ const Navbar: React.FC<NavbarProps> = ({ name }) => {
   const role = useAuthStore.getState().userType;
   const { redirectLink } = useRedirectLink();
   const { handleLogout } = useAuth();
-  const [cartOpen, setCartOpen] = React.useState(false);
 
-  // Define flexible links based on role:
   const sellerLinks = [
     { label: name ?? "Login", link: name ? "profile" : "shop-auth" },
     { label: "Dashboard", link: "dashboard" },
