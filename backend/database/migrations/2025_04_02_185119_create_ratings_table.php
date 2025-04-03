@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->morphs('rate');
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->foreignId('shop_id')->constrained('shops')->onDelete('cascade');
             $table->unsignedTinyInteger('rating');
             $table->text('feedback')->nullable();
             $table->timestamps();
