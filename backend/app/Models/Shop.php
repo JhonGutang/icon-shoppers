@@ -21,6 +21,7 @@ class Shop extends Authenticatable
         'owner',
         'email',
         'contact_number',
+        'logo_image',
         'description',
         'password',
     ];
