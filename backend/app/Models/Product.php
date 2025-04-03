@@ -13,7 +13,8 @@ class Product extends Model
         'quantity',
         'image',
         'is_visible',
-        'is_featured'
+        'is_featured',
+        'description',
     ];
 
     public function shop()
