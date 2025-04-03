@@ -113,4 +113,8 @@ class Shop extends Authenticatable
     {
         return $this->hasMany(Product::class);
     }
+
+    public function ratings(): MorphMany{
+        return $this->morphMany(Rating::class, 'rate');
+    }
 }
