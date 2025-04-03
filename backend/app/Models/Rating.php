@@ -6,7 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Rating extends Model
 {
-    protected $fillable = ['customer_id', 'rating_score', 'feedback'];
+    protected $fillable = [
+        'customer_id',
+        'product_id',
+        'rating_score',
+        'feedback',
+
+    ];
 
     public function rate(): MorphTo{
         return $this->morphTo();
