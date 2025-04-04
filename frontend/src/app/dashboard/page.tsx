@@ -58,7 +58,7 @@ const Dashboard = () => {
                     {index === 0 && (
                       <>
                         <TableCell rowSpan={order.products.length}>{order.id}</TableCell>
-                        <TableCell rowSpan={order.products.length}>{order.customer?.name}</TableCell>
+                        <TableCell rowSpan={order.products.length}>{order.customerName}</TableCell>
                       </>
                     )}
                     <TableCell>{product.name}</TableCell>
