@@ -51,29 +51,29 @@ class OrderController extends Controller
         ]);
     }
 
-    public function getSellerOrders(Request $request)
+    public function getOrders()
     {
+        // Fetch orders with customer info and related order items (products)
+        $orders = Order::with(['customer', 'orderItems.product'])->get();
 
-        $shopId = auth('shop-api')->id();
+        // Format the data in a way the frontend expects
+        $formattedOrders = $orders->map(function($order) {
+            return [
+                'customerName' => $order->customer->name,
+                'products' => $order->orderItems->map(function($item) {
+                    return [
+                        'name' => $item->product->name,
+                        'quantity' => $item->quantity,
+                        'totalPrice' => $item->quantity * $item->product->price,
+                    ];
+                }),
+                'totalAmount' => $order->total_amount,
+                'status' => $order->status,
+                'shippingAddress' => $order->shipping_address,
+            ];
+        });
 
-        $orders = Order::whereHas('product', function($query) use ($shopId) {
-            $query->where('shop_id', $shopId);
-        })
-        ->with(['product:id,name,price,image', 'customer:id,name,contact_number,address'])
-        ->when($request->has('status'), function($query) use ($request) {
-            return $query->where('status', $request->status);
-        })
-        ->orderBy('created_at', 'desc')
-        ->get();
-
-        $groupedOrders = $orders->groupBy('status');
-
-        return response()->json([
-            'orders' => $groupedOrders,
-            'total_orders' => $orders->count(),
-            'pending_orders' => $orders->where('status', 'ordered')->count(),
-            'completed_orders' => $orders->where('status', 'completed')->count(),
-        ]);
+        return response()->json($formattedOrders);
     }
 
     public function getCustomersOrders()
@@ -81,7 +81,7 @@ class OrderController extends Controller
     $userId = Auth::guard('customer-api')->user()->id;
 
     $orders = Order::where('customer_id', $userId)
-        ->where('status', '!=', 'cart') 
+        ->where('status', '!=', 'cart')
         ->with([
             'orderItems.product:id,name,price,shop_id,image',
             'orderItems.product.shop:id,name,email,description,contact_number'
@@ -92,7 +92,7 @@ class OrderController extends Controller
         return response()->json([]);
     }
 
-    
+
     $grouped = $orders->map(function ($order) {
         $shopOrders = $order->orderItems->groupBy(function ($item) {
             return $item->product->shop->id;
@@ -131,21 +131,21 @@ class OrderController extends Controller
     return response()->json($grouped);
 }
 
-    
+
 
     public function addToCart($id)
     {
         $user = Auth::guard('customer-api')->user();
         $product = Product::findOrFail($id);
-    
+
         $order = Order::where('customer_id', $user->id)
             ->where('status', 'cart')
             ->first();
-    
+
             if (!$order) {
                 $order = Order::create([
                     'customer_id' => $user->id,
-                    'total_amount' => 0, 
+                    'total_amount' => 0,
                     'status' => 'cart',
                 ]);
             }
@@ -153,7 +153,7 @@ class OrderController extends Controller
         $orderItem = OrderItem::where('order_id', $order->id)
             ->where('product_id', $id)
             ->first();
-    
+
         if ($orderItem) {
             $orderItem->quantity += 1;
             $orderItem->price = $orderItem->quantity * $product->price;
@@ -166,47 +166,47 @@ class OrderController extends Controller
                 'price' => $product->price,
             ]);
         }
-    
+
         // Recalculate total order amount
         $order->total_amount = $order->orderItems()->sum('price');
         $order->save();
-    
+
         return response()->json(['message' => 'Product added to cart successfully']);
     }
-    
+
 
     public function removeToCart($id)
     {
         $user = Auth::guard('customer-api')->user();
-    
+
         $order = Order::where('customer_id', $user->id)
             ->where('status', 'cart')
             ->first();
-    
+
         if (!$order) {
             return response()->json(['message' => 'No active cart found.'], 404);
         }
-    
+
         $orderItem = OrderItem::where('order_id', $order->id)
             ->where('product_id', $id)
             ->first();
-    
+
         if (!$orderItem) {
             return response()->json(['message' => 'Product not found in cart.'], 404);
         }
-    
+
         $orderItem->delete();
-    
+
         if ($order->orderItems()->count() == 0) {
             $order->delete();
         } else {
             $order->total_amount = $order->orderItems()->sum('price');
             $order->save();
         }
-    
+
         return response()->json(['message' => 'Product removed from cart successfully.'], 200);
     }
-    
+
 
 
     public function checkoutOrder(Request $request)
@@ -280,16 +280,16 @@ class OrderController extends Controller
     public function fetchPendingProductForCheckout()
     {
         $userId = Auth::guard('customer-api')->user()->id;
-    
+
         // Get the user's cart order
         $order = Order::where('customer_id', $userId)
             ->where('status', 'cart')
             ->first();
-    
+
         if (!$order) {
             return response()->json([]); // Return empty array if no order exists
         }
-    
+
         // Get order items with product & shop details
         $orderItems = OrderItem::where('order_id', $order->id)
             ->with([
@@ -297,11 +297,11 @@ class OrderController extends Controller
                 'product.shop:id,name,email,description,contact_number'
             ])
             ->get();
-    
+
         if ($orderItems->isEmpty()) {
             return response()->json([]); // Return empty array if no items exist
         }
-    
+
         // Group products by shop
         $grouped = $orderItems->groupBy(function ($orderItem) {
             return $orderItem->product->shop->id;
@@ -310,14 +310,14 @@ class OrderController extends Controller
             $products = $items->map(function ($item) {
                 return [
                     'id' => $item->product->id,
-                    'order_item_id' => $item->id, 
+                    'order_item_id' => $item->id,
                     'name' => $item->product->name,
                     'price' => $item->product->price,
                     'image' => $item->product->image,
                     'quantity' => $item->quantity,
                 ];
             });
-    
+
             return [
                 'shop' => [
                     'id' => $shop->id,
@@ -329,9 +329,9 @@ class OrderController extends Controller
                 'products' => $products->values(),
             ];
         })->values();
-    
+
         return response()->json($grouped);
     }
-    
-    
+
+
 }
