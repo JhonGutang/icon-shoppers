@@ -34,7 +34,7 @@ class ProductController extends Controller
                 'shop_name' => $product->shop->name ?? null,
             ];
         });
-
+    
         return response()->json($products->values());
     }
 
@@ -56,10 +56,10 @@ class ProductController extends Controller
                     'shop_name' => $product->shop->name ?? null,
                 ];
             });
-
+    
         return response()->json($products->values());
     }
-
+    
 
 
     public function fetchSpecificProduct($id){
@@ -72,12 +72,12 @@ class ProductController extends Controller
     {
         $userId = Auth::guard('shop-api')->user()->id;
         $validatedData = $request->validated();
-
+    
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('products', 'public');
         }
-
+    
         $product = Product::create([
             'shop_id' => $userId,
             'name' => $validatedData['name'],
@@ -85,12 +85,12 @@ class ProductController extends Controller
             'quantity' => $validatedData['quantity'],
             'is_visible' => true,
             'is_featured' => false,
-            'image' => $imagePath,
+            'image' => $imagePath, 
         ]);
-
+    
         return response()->json($product);
     }
-
+    
 
     /**
      * Store a newly created resource in storage.
@@ -122,11 +122,11 @@ class ProductController extends Controller
     public function update(ProductRequest $request, $id)
     {
         $validatedData = $request->validated();
-
+    
         if (isset($validatedData['image'])) {
             // $validatedData['image'] = $this->uploadImage($validatedData['image']);
         }
-
+    
         $updateData = [
             'name' => $validatedData['name'] ?? null,
             'price' => isset($validatedData['price']) ? number_format($validatedData['price'], 2, '.', '') : null,
@@ -135,14 +135,14 @@ class ProductController extends Controller
             'is_visible' => $validatedData['is_visible'] ?? null,
             'is_featured' => $validatedData['is_featured'] ?? null,
         ];
-
+    
         $updateData = array_filter($updateData, fn($value) => !is_null($value));
         Product::where('id', $id)->update($updateData);
         $product = Product::find($id);
-
+    
         return response()->json($product);
     }
-
+    
 
     /**
      * Remove the specified resource from storage.
