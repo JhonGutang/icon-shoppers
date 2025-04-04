@@ -1,6 +1,8 @@
 "use client";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow
+} from "@/components/ui/table";
 import { useOrders } from "@/hooks/useOrders";
 import { STATUS_OPTIONS, formatStatus, getStatusColor } from "@/lib/orderUtils";
 import { StatusButtons } from "@/components/StatusButton";
@@ -38,11 +40,11 @@ const Dashboard = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Customer Name</TableHead>
-              <TableHead>Product Name</TableHead>
+              <TableHead>Order ID</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead>Product</TableHead>
               <TableHead>Quantity</TableHead>
-              <TableHead>Total Amount</TableHead>
+              <TableHead>Amount</TableHead>
               <TableHead>Location</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Action</TableHead>
@@ -51,28 +53,39 @@ const Dashboard = () => {
           <TableBody>
             {orders.length > 0 ? (
               orders.map((order) => (
-                <TableRow key={order.id}>
-                  <TableCell>{order.id}</TableCell>
-                  <TableCell>{order.customer?.name}</TableCell>
-                  <TableCell>{order.product?.name}</TableCell>
-                  <TableCell>{order.quantity}</TableCell>
-                  <TableCell>${Number(order.total_amount).toFixed(2)}</TableCell>
-                  <TableCell>{order.location}</TableCell>
-                  <TableCell>
-                    <span className={`px-2 py-1 rounded text-white ${getStatusColor(order.status)}`}>
-                      {formatStatus(order.status)}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <StatusButtons
-                      status={order.status}
-                      onApprove={() => handleStatusUpdate(order.id, 
-                        order.status === 'to_be_delivered' ? 'delivering' : 'to_be_delivered'
-                      )}
-                      onReject={() => handleStatusUpdate(order.id, 'rejected')}
-                    />  
-                  </TableCell>
-                </TableRow>
+                order.products?.map((product, index) => (
+                  <TableRow key={`${order.id}-${index}`}>
+                    {index === 0 && (
+                      <>
+                        <TableCell rowSpan={order.products.length}>{order.id}</TableCell>
+                        <TableCell rowSpan={order.products.length}>{order.customer?.name}</TableCell>
+                      </>
+                    )}
+                    <TableCell>{product.name}</TableCell>
+                    <TableCell>{product.quantity}</TableCell>
+                    <TableCell>${Number(product.totalPrice).toFixed(2)}</TableCell>
+                    {index === 0 && (
+                      <>
+                        <TableCell rowSpan={order.products.length}>{order.location}</TableCell>
+                        <TableCell rowSpan={order.products.length}>
+                          <span className={`px-2 py-1 rounded text-white ${getStatusColor(order.status)}`}>
+                            {formatStatus(order.status)}
+                          </span>
+                        </TableCell>
+                        <TableCell rowSpan={order.products.length}>
+                          <StatusButtons
+                            status={order.status}
+                            onApprove={() => handleStatusUpdate(
+                              order.id,
+                              order.status === 'to_be_delivered' ? 'delivering' : 'to_be_delivered'
+                            )}
+                            onReject={() => handleStatusUpdate(order.id, 'rejected')}
+                          />
+                        </TableCell>
+                      </>
+                    )}
+                  </TableRow>
+                ))
               ))
             ) : (
               <TableRow>
