@@ -6,11 +6,42 @@ import { STATUS_OPTIONS, formatStatus, getStatusColor } from "@/lib/orderUtils";
 import { StatusButtons } from "@/components/StatusButton";
 
 const Dashboard = () => {
-  const { orders, error, activeTab, setActiveTab, handleStatusUpdate } = useOrders();
+  const { orders, loading, error, activeTab, setActiveTab, handleStatusUpdate } = useOrders();
+
+  if (loading) {
+    return (
+      <div className="p-6 bg-gray-100 min-h-screen">
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
+
+  // Calculate statistics from orders array
+  const statistics = orders?.orders ? {
+    total_orders: orders.orders.length,
+    pending_orders: orders.orders.filter(order => order.status === 'ordered').length,
+    completed_orders: orders.orders.filter(order => order.status === 'completed').length,
+  } : { total_orders: 0, pending_orders: 0, completed_orders: 0 };
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-5">Order Dashboard</h1>
+
+      {/* Statistics Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="bg-white p-4 rounded-lg shadow">
+          <h3 className="text-lg font-semibold text-gray-600">Total Orders</h3>
+          <p className="text-2xl font-bold">{statistics.total_orders}</p>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <h3 className="text-lg font-semibold text-gray-600">Pending Orders</h3>
+          <p className="text-2xl font-bold">{statistics.pending_orders}</p>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <h3 className="text-lg font-semibold text-gray-600">Completed Orders</h3>
+          <p className="text-2xl font-bold">{statistics.completed_orders}</p>
+        </div>
+      </div>
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -18,6 +49,7 @@ const Dashboard = () => {
         </div>
       )}
 
+      {/* Status Filter Buttons */}
       {STATUS_OPTIONS.length > 0 && (
         <div className="flex justify-center gap-3 mb-4">
           {STATUS_OPTIONS.map((status) => (
@@ -34,6 +66,7 @@ const Dashboard = () => {
         </div>
       )}
 
+      {/* Orders Table */}
       <div className="bg-white p-4 shadow-lg rounded-lg overflow-x-auto">
         <Table>
           <TableHeader>
@@ -49,8 +82,8 @@ const Dashboard = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.length > 0 ? (
-              orders.map((order) => (
+            {orders?.orders && orders.orders.length > 0 ? (
+              orders.orders.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell>{order.id}</TableCell>
                   <TableCell>{order.customer?.name}</TableCell>

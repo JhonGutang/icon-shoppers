@@ -11,14 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    public function index(Request $request){
-        $orders = Order::with(['customer', 'product'])->get();
 
-        if($request->has('status')){
-            $orders->where('status', $request->status);
-        }
-        return response()->json($orders);
-    }
     public function show($id){
         $order = Order::find($id);
 
@@ -51,6 +44,16 @@ class OrderController extends Controller
         ]);
     }
 
+
+        return response()->json([
+            'orders' => $orders,
+            // 'statistics' => [
+            //     'total_orders' => $orders->count(),
+            //     'pending_orders' => $orders->where('status', 'ordered')->count(),
+            //     'completed_orders' => $orders->where('status', 'completed')->count()
+            // ]
+        ]);
+
     public function getOrders()
     {
         // Fetch orders with customer info and related order items (products)
@@ -74,6 +77,7 @@ class OrderController extends Controller
         });
 
         return response()->json($formattedOrders);
+
     }
 
     public function getCustomersOrders()

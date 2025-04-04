@@ -1,5 +1,6 @@
 import axiosInstance from "@/hooks/useAxios";
 import { Order } from "@/types/order";
+import useAuthStore from "@/stores/useAuthStore";
 
 export const orderService = {
   async fetchOrders(status?: string) {
@@ -12,12 +13,30 @@ export const orderService = {
   },
 
   async updateOrderStatus(orderId: number, status: string) {
-    return await axiosInstance.put(`/orders/${orderId}`, { status });
+    const response = await axiosInstance.put(`orders/${orderId}`, { status });
+    return response.data;
   },
 
-  async fetchSellerOrders() {
-    const response = await axiosInstance.get<Order[]>('/seller/orders');
-    return response.data;
+  async fetchSellerOrders(status?: string) {
+    try {
+      const url = status && status !== "All" 
+        ? `seller/orders?status=${status.toLowerCase()}`
+        : 'seller/orders';
+        
+      const token = useAuthStore.getState().accessToken;
+      console.log('Using token:', token); // Debug log
+      
+      const response = await axiosInstance.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      console.log('Full API Response:', response.data);
+      return response.data.orders;
+    } catch (error) {
+      console.error('Full API Error:', error);
+      throw error;
+    }
   },
 
   async fetchCustomerOrders (token: string) {
