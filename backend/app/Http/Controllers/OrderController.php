@@ -44,41 +44,6 @@ class OrderController extends Controller
         ]);
     }
 
-    public function getSellerOrders()
-    {
-        $shopId = auth('shop-api')->id();
-
-        if (!$shopId) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-
-        $orders = Order::where('shop_id', $shopId)
-            ->with(['customer:id,name,contact_number,address', 'product:id,name,price,image'])
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        if ($orders->isEmpty()) {
-            return response()->json([
-                'orders' => [],
-                'message' => 'No orders found'
-            ]);
-        }
-
-        $orders = $orders->map(function ($order) {
-            return [
-                'id' => $order->id,
-                'customer' => [
-                    'name' => $order->customer->name
-                ],
-                'product' => [
-                    'name' => $order->product->name
-                ],
-                'quantity' => $order->quantity,
-                'total_amount' => $order->total_amount,
-                'location' => $order->customer->address,
-                'status' => $order->status
-            ];
-        });
 
         return response()->json([
             'orders' => $orders,
@@ -88,6 +53,31 @@ class OrderController extends Controller
             //     'completed_orders' => $orders->where('status', 'completed')->count()
             // ]
         ]);
+
+    public function getOrders()
+    {
+        // Fetch orders with customer info and related order items (products)
+        $orders = Order::with(['customer', 'orderItems.product'])->get();
+
+        // Format the data in a way the frontend expects
+        $formattedOrders = $orders->map(function($order) {
+            return [
+                'customerName' => $order->customer->name,
+                'products' => $order->orderItems->map(function($item) {
+                    return [
+                        'name' => $item->product->name,
+                        'quantity' => $item->quantity,
+                        'totalPrice' => $item->quantity * $item->product->price,
+                    ];
+                }),
+                'totalAmount' => $order->total_amount,
+                'status' => $order->status,
+                'shippingAddress' => $order->shipping_address,
+            ];
+        });
+
+        return response()->json($formattedOrders);
+
     }
 
     public function getCustomersOrders()
