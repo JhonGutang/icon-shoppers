@@ -21,6 +21,7 @@ class Shop extends Authenticatable
         'owner',
         'email',
         'contact_number',
+        'logo_image',
         'description',
         'password',
     ];
@@ -112,5 +113,9 @@ class Shop extends Authenticatable
     public function products()
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function ratings(): MorphMany{
+        return $this->morphMany(Rating::class, 'rate');
     }
 }

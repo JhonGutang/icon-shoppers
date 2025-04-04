@@ -13,17 +13,22 @@ class Product extends Model
         'quantity',
         'image',
         'is_visible',
-        'is_featured'
+        'is_featured',
+        'description',
     ];
 
     public function shop()
     {
         return $this->belongsTo(Shop::class, 'shop_id'); // Ensure the correct foreign key is used
     }
-    
+
 
     public function orders()
 {
     return $this->hasMany(Order::class);
 }
+
+    public function ratings(): MorphMany{
+        return $this->morphMany(Rating::class, 'rate');
+    }
 }
