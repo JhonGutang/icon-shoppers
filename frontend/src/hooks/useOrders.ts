@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Order, OrderStatus, OrdersResponse } from "@/types/order";
+import { Order, OrderStatus } from "@/types/order";
 import { orderService } from "@/services/orderService";
 
 export const useOrders = () => {
-  const [orders, setOrders] = useState<OrdersResponse | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<OrderStatus>("All");
@@ -11,8 +11,16 @@ export const useOrders = () => {
   const fetchOrders = async (status?: OrderStatus) => {
     try {
       setLoading(true);
-      const data = await orderService.fetchSellerOrders(status);
-      setOrders(data);
+      const data = await orderService.fetchOrders(status);
+      
+      let filteredOrders = data;
+      if (status !== "All") {
+        filteredOrders = data.filter((order: Order) => 
+          (status === "approved" ? order.status.toLowerCase() === "active" : order.status.toLowerCase() === status.toLowerCase().replace(/ /g, "_"))
+        );
+      }
+      
+      setOrders(filteredOrders);
       setError(null);
     } catch (err) {
       setError("Failed to fetch orders");
