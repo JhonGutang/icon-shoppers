@@ -7,8 +7,8 @@ interface HeroProps {
 const Hero = ({ onViewProducts }: HeroProps) => {
   return (
     <div className="w-full h-[100vh] flex items-center hero-background">
-      <div className="w-1/2 px-10">
-        <div className="text-4xl">
+      <div className="lg:w-1/2 lg:px-10 pl-4">
+        <div className="lg:text-4xl text-2xl">
           Your Hometown Market, Now Just a Click Away.
         </div>
         <div className="mb-5">
