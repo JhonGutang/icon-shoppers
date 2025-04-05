@@ -1,38 +1,31 @@
 "use client";
-import Navbar from "@/components/Navbar";
 import ProductCard from "@/components/ProductCard";
 import useProductAction from "@/hooks/useProductActions";
-import useAuth from "@/hooks/useAuth";
-import { Profile } from "@/types/auth";
 import { Product } from "@/types/product";
 import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
 
-const ProductsPage = () => {
+const Products = () => {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const { handleFetchAllProducts } = useProductAction();
-  const { handleGetProfile } = useAuth();
-  const [user, setUser] = useState<Profile>();
 
   useEffect(() => {
     const fetchProducts = async () => {
       const products = await handleFetchAllProducts();
-      const profile = await handleGetProfile();
       setAllProducts(products);
-      setUser(profile);
     };
 
     fetchProducts();
   }, []);
 
   return (
-    <div>
-      <Navbar name={user?.name} />
-
+    <div className="w-full h-full">
       {/* Title Section */}
-      <div className="w-full text-center">
-        <div className="text-xl font-bold flex items-center justify-center gap-2">
-          <span>All Products</span>
-        </div>
+      <div className="w-full text-center flex justify-between items-center">
+        <div className="text-xl font-semibold">Products</div>
+        <Button>
+            All
+        </Button>
       </div>
 
       {/* Centered Masonry Gallery Layout */}
@@ -49,4 +42,4 @@ const ProductsPage = () => {
   );
 };
 
-export default ProductsPage;
+export default Products;

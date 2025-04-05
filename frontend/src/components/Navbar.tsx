@@ -1,88 +1,34 @@
-"use client";
-import { Input } from "./ui/input";
-import { CircleUserRound } from "lucide-react";
-import useRedirectLink from "@/hooks/useRedirectLink";
-import useAuth from "@/hooks/useAuth";
-import useAuthStore from "@/stores/useAuthStore";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import React from "react";
-
+import { Button } from "./ui/button";
 interface NavbarProps {
-  name: string | undefined;
+    activeComponent: string,
+    setActiveComponent: (value: string) => void
 }
 
-const Navbar: React.FC<NavbarProps> = ({ name }) => {
-  const role = useAuthStore.getState().userType;
-  const { redirectLink } = useRedirectLink();
-  const { handleLogout } = useAuth();
+const Navbar:React.FC<NavbarProps> = ({activeComponent, setActiveComponent}) => {
+    
+    const labels = [
+        "Home",
+        "Products",
+        "Shops",
+        "Cart",
+        "Check Orders",
+        "My Account"
+    ];
 
-  const sellerLinks = [
-    { label: name ?? "Login", link: name ? "profile" : "shop-auth" },
-    { label: "Dashboard", link: "dashboard" },
-    { label: "Orders", link: "seller-orders" },
-    { label: "Sign Out", link: "" },
-  ];
-
-  const customerLinks = [
-    { label: name ?? "Login", link: name ? "profile" : "customer-auth" },
-    { label: "View Cart", link: "checkout" },
-    { label: "Orders", link: "orders" },
-    { label: "Sign Out", link: "" },
-  ];
-
-  const links = role === "seller" ? sellerLinks : customerLinks;
-
-  return (
-    <div className="lg:px-10 px-4 py-3 flex justify-center items-center lg:gap-10 gap-5">
-      <img src="/logo.png" alt="" className="w-[45px] lg:w-[80px]" onClick={() => redirectLink('/')}/>
-      <Input
-        type="text"
-        placeholder="search"
-        className="lg:h-[50px] w-[60vw] lg:w-[50vw] text-xs lg:text-md"
-      />
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild className="cursor-pointer">
-          <CircleUserRound />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56">
-          {links.map((link) => (
-            <div key={link.label}>
-           { link.label === "Login" && !name ? (
-                <DropdownMenuItem
-                  className="cursor-pointer capitalize"
-                  onClick={() => redirectLink(link.link)}
+    return ( 
+        <div className="w-[60vw] h-[60px] border-2 border-black rounded-full items-center justify-center flex gap-3 py-3 mb-3">
+            {labels.map((label, index) => (
+                <Button 
+                    variant='ghost' 
+                    key={index} 
+                    className={`hover:bg-green-500 hover:px-10  rounded-full hover:text-white ${activeComponent === label ? 'bg-green-500 text-white px-10' : ''}`}
+                    onClick={() => setActiveComponent(label)}
                 >
-                  {link.label}
-                </DropdownMenuItem>
-              ) : (
-                name && (
-                  <DropdownMenuItem
-                    className={
-                      link.label === "Sign Out"
-                        ? "text-red-500 cursor-pointer capitalize"
-                        : "cursor-pointer capitalize"
-                    }
-                    onClick={() =>
-                      link.label === "Sign Out"
-                        ? handleLogout()
-                        : redirectLink(link.link)
-                    }
-                  >
-                    {link.label}
-                  </DropdownMenuItem>
-                )
-              )}
-            </div>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-  );
-};
-
+                    {label}
+                </Button>
+            ))}
+        </div>
+     );
+}
+ 
 export default Navbar;

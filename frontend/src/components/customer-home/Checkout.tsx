@@ -9,7 +9,7 @@ import CheckoutPage from "@/components/mobile/CheckoutPage";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Checkout = () => {
-  const isMobile = useIsMobile(); // Use the custom hook here
+  const isMobile = useIsMobile(); 
   const { handleOrdersToCheckout } = useCustomerActions();
   const [productsWithShops, setProductsWithShops] = useState<ProductWithShop[] | null>(null);
   const [checkedShops, setCheckedShops] = useState<{ [key: string]: boolean }>({});
@@ -31,7 +31,7 @@ const Checkout = () => {
   if (!productsWithShops) return <div>Loading...</div>;
 
   return (
-    <div>
+    <div className="w-full">
       {isMobile ? (
         <CheckoutPage
           shopWithProducts={productsWithShops}
@@ -83,14 +83,14 @@ const Cart: React.FC<CartProps> = ({
 }) => {
   if (!productsWithShops || productsWithShops.length === 0) {
     return (
-      <div className="w-[35vw] border-2 border-black h-full p-4">
+      <div className="w-[35vw] border-2 h-full p-4">
         <div className="text-center mt-10">No pending orders.</div>
       </div>
     );
   }
 
   return (
-    <div className="w-[35vw] border-2 border-black h-full p-4 overflow-y-auto">
+    <div className="w-[35vw] border-2 rounded-lg h-full p-4 overflow-y-auto">
       <h2 className="text-xl font-bold mb-4">Shops with Pending Orders</h2>
       <ul>
         {productsWithShops.map(({ shop }) => (

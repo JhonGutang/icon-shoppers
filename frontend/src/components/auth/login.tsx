@@ -1,6 +1,4 @@
-import AuthLayout from "@/layout/AuthLayout";
 import { Button } from "../ui/button";
-import useRedirectLink from "@/hooks/useRedirectLink";
 import useAuth from "@/hooks/useAuth";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -12,7 +10,6 @@ type LoginFormProps = {
   };
 
 const Login:React.FC<LoginFormProps> = ({ fields, role, setAuth }) => {
-  const { redirectLink } = useRedirectLink();
   const { loginFormData, handleInputs, handleLogin } = useAuth();
 
   return (

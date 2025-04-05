@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchSpecificShop } from "@/services/shopService";
 import { Product, Shop } from "@/types/product";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/Header";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import ProductCard from "@/components/ProductCard";
 

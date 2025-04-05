@@ -57,7 +57,7 @@ const useAuth = () => {
       if (role === "seller") {
         redirectLink("profile");
       } else {
-        redirectLink("/");
+        redirectLink("/home");
       }
     } catch (error) {
       openSnackbar("Login failed!", "error");
