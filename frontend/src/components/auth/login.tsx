@@ -33,14 +33,14 @@ const Login:React.FC<LoginFormProps> = ({ fields, role, setAuth }) => {
         ))}
       </div>
       <div>
-        <Button className="w-full h-[45px]" onClick={() => handleLogin(role)}>
+        <Button className="w-full h-[45px] main-btn-color" onClick={() => handleLogin(role)}>
           Login
         </Button>
         <div className="text-sm">
           Don&apos;t have any account yet?{" "}
           <Button
             variant="link"
-            className="cursor-pointer"
+            className="cursor-pointer "
             onClick={() => setAuth('register')}
           >
             Register Now

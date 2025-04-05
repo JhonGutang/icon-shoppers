@@ -19,21 +19,23 @@ class ProductController extends Controller
 
     public function fetchAllProducts()
     {
-        $products = Product::with('shop:id,name')->get()->filter(function($product) {
-            return $product->is_visible;
-        })->map(function($product) {
-            return [
-                'id' => $product->id,
-                'name' => $product->name,
-                'shop_id' => $product->shop_id,
-                'price' => $product->price,
-                'quantity' => $product->quantity,
-                'image' => $product->image,
-                'is_visible' => $product->is_visible,
-                'is_featured' => $product->is_featured,
-                'shop_name' => $product->shop->name ?? null,
-            ];
-        });
+        $products = Product::with('shop:id,name')
+            ->where('is_visible', true)
+            ->limit(30)
+            ->get()
+            ->map(function($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'shop_id' => $product->shop_id,
+                    'price' => $product->price,
+                    'quantity' => $product->quantity,
+                    'image' => $product->image,
+                    'is_visible' => $product->is_visible,
+                    'is_featured' => $product->is_featured,
+                    'shop_name' => $product->shop->name ?? null,
+                ];
+            });
     
         return response()->json($products->values());
     }
