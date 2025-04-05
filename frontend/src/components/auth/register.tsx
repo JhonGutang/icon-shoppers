@@ -62,7 +62,7 @@ const Register: React.FC<RegisterFormProps> = ({ fields, role, setAuth }) => {
       </div>
       <div>
         <Button
-          className="w-full h-[45px] cursor-pointer"
+          className="w-full h-[45px] cursor-pointer main-btn-color"
           onClick={redirectIfSuccessful}
         >
           Register

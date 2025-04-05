@@ -1,6 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -123,38 +123,35 @@
 
 
 
+
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Poppins', sans-serif;
+    
 
   }
 
-  @keyframes slideInRight {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
+  .main-text-color {
+    color: #0E6835;
+  }
+
+  .main-btn-color {
+    background-color: #4CC292 !important;
+    color: white !important;
+  }
+
+  .hero-background {
+    background: url('/hero.jpg') no-repeat center;
+    background-size: cover;
   }
   
-  .animate-slide-in {
-    animation: slideInRight 0.3s ease-out;
-  }
   
-  
-  .sonner[data-sonner-toaster] {
-    position: fixed !important;
-    top: 1rem !important;
-    right: 1rem !important;
-    left: auto !important; /* Override if it's placed on the left */
-    bottom: auto !important;
-  }
+
 }
 
 

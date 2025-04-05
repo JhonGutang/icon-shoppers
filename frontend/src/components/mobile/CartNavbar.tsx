@@ -9,7 +9,7 @@ const CartNavbar = () => {
         <ChevronLeft />
         <div>Back</div>
       </Button>
-      <img src="/logo.png" alt="" className="w-[60px]" />
+      <img src="/logo.png" alt="" className="w-[60px]" onClick={() => redirectLink('/')}/>
       <div>
         <UserRound />
       </div>

@@ -39,7 +39,7 @@ const Navbar: React.FC<NavbarProps> = ({ name }) => {
 
   return (
     <div className="lg:px-10 px-4 py-3 flex justify-center items-center lg:gap-10 gap-5">
-      <img src="/logo.png" alt="" className="w-[45px] lg:w-[80px]" />
+      <img src="/logo.png" alt="" className="w-[45px] lg:w-[80px]" onClick={() => redirectLink('/')}/>
       <Input
         type="text"
         placeholder="search"

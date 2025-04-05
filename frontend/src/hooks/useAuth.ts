@@ -41,17 +41,17 @@ const useAuth = () => {
   const handleRegister = async (role: string) => {
     try {
       await register(registerFormData, role);
-      openSnackbar("Registered Successfully!", "success"); // MUI Snackbar
+      openSnackbar("Registered Successfully!", "success");
     } catch (error) {
       console.error(error);
-      openSnackbar("Registration Failed!", "error"); // MUI Snackbar
+      openSnackbar("Registration Failed!", "error");
     }
   };
 
   const handleLogin = async (role: string) => {
     try {
       const profile = await login(loginFormData, role);
-      openSnackbar("Login successful!", "success"); // MUI Snackbar
+      openSnackbar("Login successful!", "success");
       store.setAuth(profile.token, profile.user.role, profile.user.id);
 
       if (role === "seller") {
@@ -60,7 +60,7 @@ const useAuth = () => {
         redirectLink("/");
       }
     } catch (error) {
-      openSnackbar("Login failed!", "error"); // MUI Snackbar
+      openSnackbar("Login failed!", "error");
     }
   };
 
@@ -68,7 +68,7 @@ const useAuth = () => {
     const accessToken = useToken.getState().accessToken;
     if (accessToken) {
       logout(accessToken);
-      openSnackbar("Logout successful!", "info"); // MUI Snackbar
+      openSnackbar("Logout successful!", "info");
       store.clearAuth();
       redirectLink("customer-auth");
     }
