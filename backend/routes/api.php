@@ -23,4 +23,5 @@ Route::middleware('auth:shop-api')->group(function () {
 
 Route::middleware('auth:customer-api')->group(function () {
     Route::get('/customer-profile', [CustomerController::class, 'index']);
+    Route::put('/customer-profile', [CustomerController::class, 'update']);
 });

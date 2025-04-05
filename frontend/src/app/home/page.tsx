@@ -6,6 +6,7 @@ import Checkout from "@/components/customer-home/Checkout";
 import Products from "@/components/customer-home/Products";
 import { useEffect, useState } from "react";
 import Shops from "@/components/customer-home/Shops";
+import Profile from "@/components/customer-home/Profile";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState<string>('Home');
@@ -22,6 +23,7 @@ const Home = () => {
       {activeComponent === 'Shops' && <Shops/>}
       {activeComponent === 'Cart' && <Checkout />}
       {activeComponent === 'Check Orders' && <Orders />}
+      {activeComponent === 'My Account' && <Profile />}
     </div>
   );
 };
