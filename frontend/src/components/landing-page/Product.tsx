@@ -16,7 +16,7 @@ const Product = () => {
     ];
     
     return (
-        <div className="w-full h-[100vh] flex flex-col justify-center items-center">
+        <div className="w-full lg:h-[100vh] h-[60vh] flex flex-col justify-center items-center">
             <div className="text-2xl px-10 mb-10 text-center">
                 Discover Trends from Well known Local Shops
             </div>
