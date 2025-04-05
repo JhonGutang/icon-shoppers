@@ -1,5 +1,5 @@
 import axiosInstance from "@/hooks/useAxios";
-import { Register, Login } from "@/types/auth";
+import { Register, Login, CustomerProfile } from "@/types/auth";
 
 const formatData = (data: Register | Login, auth: string) => {
   if (auth === "register") {
@@ -33,7 +33,6 @@ const formatCustomerData = (data: Register) => {
 }
 
 export const register = async (details: Register, role: string) => {
-  console.log(role);
   if (role === "seller") {
     const formattedData = formatData(details, "register");
     axiosInstance.post("/register", formattedData);
@@ -60,16 +59,47 @@ export const logout = async (token: string) => {
 };
 
 export const getProfile = async (token: string, role: string) => {
-
-  const API_ENDPOINT = role === 'seller' ? "/profile" : "/customer-profile"
+  const API_ENDPOINT = role === 'seller' ? "/profile" : "/customer-profile";
+  
   try {
     const response = await axiosInstance.get(API_ENDPOINT, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data;
+    
+    return formatProfileData(response.data);
   } catch (error) {
     console.error(error);
+  }
+};
+
+const formatProfileData = (data: CustomerProfile) => {
+  return {
+    name: data.name,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+    email: data.email,
+    contactNumber: data.contact_number,
+    description: data.description,
+    middleName: data.middle_name,
+    address: data.address,
+  };
+};
+
+export const updateProfile = async (token: string, updatedData: CustomerProfile, role: string) => {
+  const API_ENDPOINT = role === 'seller' ? "/profile" : "/customer-profile";  
+  
+  try { 
+    const response = await axiosInstance.put(API_ENDPOINT, updatedData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    
+    return formatProfileData(response.data.customer)
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    throw error; 
   }
 };

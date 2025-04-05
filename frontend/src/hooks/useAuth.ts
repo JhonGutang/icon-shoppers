@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { Register, Login } from "@/types/auth";
-import { login, register, getProfile, logout } from "@/services/authService";
+import { Register, Login, CustomerProfile } from "@/types/auth";
+import { login, register, getProfile, logout, updateProfile } from "@/services/authService";
 import { useSnackbar } from "@/components/context/SnackbarContext";
 import useToken from "@/stores/useAuthStore";
 import useRedirectLink from "./useRedirectLink";
@@ -8,7 +8,7 @@ import useRedirectLink from "./useRedirectLink";
 const useAuth = () => {
   const store = useToken();
   const { redirectLink } = useRedirectLink();
-  const { openSnackbar } = useSnackbar(); // Use MUI Snackbar
+  const { openSnackbar } = useSnackbar(); 
 
   const [registerFormData, setRegisterFormData] = useState<Register>({
     name: "",
@@ -80,9 +80,24 @@ const useAuth = () => {
 
     if (accessToken && role) {
       const data = await getProfile(accessToken, role);
-      return data.user;
+      return data;
     }
   }, []);
+
+  const handleUpdateProfile = async (updatedData: CustomerProfile) => {
+    const accessToken = useToken.getState().accessToken;
+    const role = useToken.getState().userType;
+
+    if (accessToken && role) {
+      try {
+        const response = await updateProfile(accessToken, updatedData, role);
+        openSnackbar("Profile updated successfully!", "success");
+        return response;
+      } catch (error) {
+        openSnackbar("Failed to update profile!", "error");
+      }
+    }
+  };
 
   return {
     registerFormData,
@@ -92,6 +107,7 @@ const useAuth = () => {
     handleLogin,
     handleLogout,
     handleGetProfile,
+    handleUpdateProfile,
   };
 };
 

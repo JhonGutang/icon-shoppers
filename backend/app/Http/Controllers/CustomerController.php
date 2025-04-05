@@ -19,9 +19,8 @@ class CustomerController extends Controller
     public function index()
     {
         $user = Auth::guard('customer-api')->user();
-        return response()->json(['user' => $user]);
+        return $user;
     }
-
 
     public function login(Request $request) {
         $credentials = $request->validate([
@@ -62,6 +61,31 @@ class CustomerController extends Controller
         ], 201);
     }
 
+    public function update(Request $request)
+    {
+        $user = Auth::guard('customer-api')->user(); 
+        $customer = Customer::findOrFail($user->id);
+
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'contactNumber' => 'required|string',
+            'address' => 'nullable|string',
+            'middleName' => 'nullable|string',
+        ]);
+
+        $customer->name = $validatedData['name'];
+        $customer->email = $validatedData['email'];
+        $customer->contact_number = $validatedData['contactNumber'];
+        $customer->address = $validatedData['address'];
+        $customer->middle_name = $validatedData['middleName'];
+        $customer->save();
+
+        return response()->json([
+            'message' => 'Customer updated successfully.',
+            'customer' => $customer,
+        ]);
+    }
 
     public function addToCart($id)
     {
@@ -101,7 +125,6 @@ class CustomerController extends Controller
         }
     }
 
-
     public function checkoutOrder(Request $request)
     {
         $customerId = Auth::guard('customer-api')->id();
@@ -136,7 +159,6 @@ class CustomerController extends Controller
         return response()->json(['message' => 'Order updated and checked out successfully']);
     }
 
-
     public function fetchAllPendings()
     {
         $userId = Auth::guard('customer-api')->user()->id;
@@ -158,7 +180,6 @@ class CustomerController extends Controller
         return response()->json($pendings);
     }
 
-
     public function fetchPendingProductForCheckout()
     {
         $userId = Auth::guard('customer-api')->user()->id;
@@ -170,7 +191,6 @@ class CustomerController extends Controller
                 'product.shop:id,name,email,description,contact_number'
             ])
             ->get();
-
 
         $grouped = $pendings->groupBy(function ($order) {
             return $order->product->shop->id;
@@ -202,14 +222,6 @@ class CustomerController extends Controller
         return response()->json($grouped);
     }
 
-
-
-
-
-
-
-
-
     /**
      * Store a newly created resource in storage.
      */
@@ -230,14 +242,6 @@ class CustomerController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(Customer $customer)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Customer $customer)
     {
         //
     }
