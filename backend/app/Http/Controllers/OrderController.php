@@ -53,25 +53,53 @@ class OrderController extends Controller
 
     public function getOrders()
     {
-        // Fetch orders with customer info and related order items (products)
-        $orders = Order::with(['customer', 'orderItems.product'])->get();
+        // Check if shop is authenticated
+        if (!Auth::guard('shop-api')->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
 
-        // Format the data in a way the frontend expects
-        $formattedOrders = $orders->map(function($order) {
+        $shopId = Auth::guard('shop-api')->id();
+
+        $orders = Order::with([
+            'customer',
+            'orderItems.product',
+            'orderItems.product.shop'
+        ])
+        ->whereHas('orderItems.product', function($query) use ($shopId) {
+            $query->where('shop_id', $shopId);
+        })
+        ->get();
+
+        $formattedOrders = $orders->map(function($order) use ($shopId) {
             return [
                 'customerName' => $order->customer->name,
-                'products' => $order->orderItems->map(function($item) {
-                    return [
-                        'name' => $item->product->name,
-                        'quantity' => $item->quantity,
-                        'totalPrice' => $item->quantity * $item->product->price,
-                    ];
-                }),
-                'totalAmount' => $order->total_amount,
+                'products' => $order->orderItems
+                    ->filter(function($item) use ($shopId) {
+                        return $item->product->shop_id == $shopId;
+                    })
+                    ->map(function($item) {
+                        return [
+                            'name' => $item->product->name,
+                            'quantity' => $item->quantity,
+                            'totalPrice' => $item->quantity * $item->product->price,
+                            'shop' => [
+                                'id' => $item->product->shop->id,
+                                'name' => $item->product->shop->name,
+                                'email' => $item->product->shop->email,
+                                'description' => $item->product->shop->description,
+                                'contact_number' => $item->product->shop->contact_number,
+                            ]
+                        ];
+                    })->values(),
+                'totalAmount' => number_format($order->total_amount, 2, '.', ''),
                 'status' => $order->status,
                 'shippingAddress' => $order->shipping_address,
             ];
-        });
+        })
+        ->filter(function($order) {
+            return count($order['products']) > 0;
+        })
+        ->values();
 
         return response()->json($formattedOrders);
     }

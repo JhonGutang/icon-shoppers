@@ -1,17 +1,22 @@
 import { useState, useEffect } from "react";
 import { Order, OrderStatus } from "@/types/order";
 import { orderService } from "@/services/orderService";
+import useAuthStore from "@/stores/useAuthStore";
 
 export const useOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<OrderStatus>("All");
+  const token = useAuthStore((state) => state.accessToken);
 
   const fetchOrders = async (status?: OrderStatus) => {
     try {
       setLoading(true);
-      const data = await orderService.fetchOrders(status);
+      if (!token) {
+        throw new Error("No authentication token");
+      }
+      const data = await orderService.fetchOrders(token, status);
       
       let filteredOrders = data;
       if (status !== "All") {
@@ -32,7 +37,10 @@ export const useOrders = () => {
 
   const handleStatusUpdate = async (orderId: number, newStatus: string) => {
     try {
-      await orderService.updateOrderStatus(orderId, newStatus);
+      if (!token) {
+        throw new Error("No authentication token");
+      }
+      await orderService.updateOrderStatus(token, orderId, newStatus);
       fetchOrders(activeTab);
     } catch (err) {
       setError("Failed to update order status");
@@ -41,8 +49,10 @@ export const useOrders = () => {
   };
 
   useEffect(() => {
-    fetchOrders(activeTab);
-  }, [activeTab]);
+    if (token) {
+      fetchOrders(activeTab);
+    }
+  }, [activeTab, token]);
 
   return {
     orders,
