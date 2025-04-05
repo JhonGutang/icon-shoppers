@@ -19,6 +19,11 @@ class ShopController extends Controller
         return response()->json(['user' => $user]);
     }
 
+    public function getAllShops () {
+        $shops = Shop::all();
+        return $shops;
+    }
+
     public function getSpecificShop($name) {
         try {
             $shop = Shop::with('products')->where('name', $name)->firstOrFail();
