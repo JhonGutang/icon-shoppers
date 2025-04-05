@@ -22,7 +22,7 @@ const Products = () => {
     <div className="w-full h-full">
       {/* Title Section */}
       <div className="w-full text-center flex justify-between items-center">
-        <div className="text-xl font-semibold">Products</div>
+        <div className="text-xl">Products</div>
         <Button>
             All
         </Button>
