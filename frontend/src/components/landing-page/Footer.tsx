@@ -1,7 +1,10 @@
 import { Facebook, Instagram, Mail, Phone } from "lucide-react";
 import { Button } from "../ui/button";
+import useRedirectLink from "@/hooks/useRedirectLink";
+
 
 const Footer = () => {
+    const {redirectLink} = useRedirectLink()
   return (
     <div className="w-full border-t-2 border-green-700">
       <div className="w-full flex justify-between items-center">
@@ -23,8 +26,8 @@ const Footer = () => {
             Join our community supporting local shops in Cebu!
           </div>
           <div className="flex gap-3">
-            <Button className="bg-green-600">Join Icon Shoppers</Button>
-            <Button className="bg-green-600">Sellers Center</Button>
+            <Button className="bg-green-600" onClick={() => redirectLink('/customer-auth')}>Join Icon Shoppers</Button>
+            <Button className="bg-green-600" onClick={() => redirectLink('/shop-auth')}>Sellers Center</Button>
           </div>
         </div>
       </div>
