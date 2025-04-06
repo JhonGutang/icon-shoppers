@@ -1,5 +1,5 @@
 export interface Order {
-    id: number;
+    id: string | number;
     customer_id: number;
     product_id: number;
     shop_id: number;
@@ -14,6 +14,21 @@ export interface Order {
     product?: {
       name: string;
     };
+    customerName: string;
+    products: Array<{
+      name: string;
+      quantity: number;
+      totalPrice: number;
+      shop: {
+        id: number;
+        name: string;
+        email: string;
+        description: string;
+        contact_number: string;
+      };
+    }>;
+    totalAmount: string;
+    shippingAddress: string | null;
   }
   
   export type OrderStatus = "All" | "approved" | "rejected" | "to_be_delivered" | "recieved" | "not_recieved" | "completed";
