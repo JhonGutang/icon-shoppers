@@ -161,46 +161,7 @@ class OrderController extends Controller
 
 
 
-    public function addToCart($id)
-    {
-        $user = Auth::guard('customer-api')->user();
-        $product = Product::findOrFail($id);
 
-        $order = Order::where('customer_id', $user->id)
-            ->where('status', 'cart')
-            ->first();
-
-            if (!$order) {
-                $order = Order::create([
-                    'customer_id' => $user->id,
-                    'total_amount' => 0,
-                    'status' => 'cart',
-                ]);
-            }
-
-        $orderItem = OrderItem::where('order_id', $order->id)
-            ->where('product_id', $id)
-            ->first();
-
-        if ($orderItem) {
-            $orderItem->quantity += 1;
-            $orderItem->price = $orderItem->quantity * $product->price;
-            $orderItem->save();
-        } else {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $id,
-                'quantity' => 1,
-                'price' => $product->price,
-            ]);
-        }
-
-        // Recalculate total order amount
-        $order->total_amount = $order->orderItems()->sum('price');
-        $order->save();
-
-        return response()->json(['message' => 'Product added to cart successfully']);
-    }
 
 
     public function removeToCart($id)
@@ -236,49 +197,43 @@ class OrderController extends Controller
     }
 
 
-
     public function checkoutOrder(Request $request)
-{
-    $customerId = Auth::guard('customer-api')->id();
+    {
+        $customerId = Auth::guard('customer-api')->id();
+        
+        $order = Order::create([
+            'customer_id' => $customerId,
+            'status' => 'ordered',
+            'total_amount' => 0,
+        ]);
 
-    $order = Order::where('customer_id', $customerId)
-        ->where('status', 'cart')
-        ->first();
+        $totalAmount = 0;
 
-    if (!$order) {
-        return response()->json(['message' => 'No active cart found'], 404);
-    }
+        $productIds = collect($request->products)->pluck('id');
+        $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
 
-    $totalAmount = 0;
+        foreach ($request->products as $productItem) {
+            $product = $products->get($productItem['id']);
+            if (!$product) {
+                return response()->json(['message' => 'Product not found'], 404);
+            }
 
-    foreach ($request->products as $productItem) {
-        $orderItem = OrderItem::where('order_id', $order->id)
-            ->where('product_id', $productItem['id'])
-            ->first();
+            $orderItem = new OrderItem([
+                'order_id' => $order->id,
+                'product_id' => $productItem['id'],
+                'quantity' => $productItem['quantity'],
+                'price' => $product->price * $productItem['quantity'],
+                'total' => $product->price * $productItem['quantity'],
+            ]);
+            $orderItem->save();
 
-        if (!$orderItem) {
-            return response()->json(['message' => 'Product not found in cart'], 404);
+            $totalAmount += $orderItem->total;
         }
 
-        $product = Product::find($productItem['id']);
-        if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
-        }
+        $order->update(['total_amount' => $totalAmount]);
 
-        $orderItem->quantity = $productItem['quantity'];
-        $orderItem->price = $product->price * $productItem['quantity'];
-        $orderItem->save();
-
-        $totalAmount += $orderItem->price;
+        return response()->json(['message' => 'Order created and checked out successfully']);
     }
-
-    $order->total_amount = $totalAmount;
-    $order->status = 'ordered';
-    $order->updated_at = now();
-    $order->save();
-
-    return response()->json(['message' => 'Order checked out successfully']);
-}
 
 
 
@@ -302,63 +257,6 @@ class OrderController extends Controller
 
 
         return response()->json($pendings);
-    }
-
-
-    public function fetchPendingProductForCheckout()
-    {
-        $userId = Auth::guard('customer-api')->user()->id;
-
-        // Get the user's cart order
-        $order = Order::where('customer_id', $userId)
-            ->where('status', 'cart')
-            ->first();
-
-        if (!$order) {
-            return response()->json([]); // Return empty array if no order exists
-        }
-
-        // Get order items with product & shop details
-        $orderItems = OrderItem::where('order_id', $order->id)
-            ->with([
-                'product:id,name,price,shop_id,image',
-                'product.shop:id,name,email,description,contact_number'
-            ])
-            ->get();
-
-        if ($orderItems->isEmpty()) {
-            return response()->json([]); // Return empty array if no items exist
-        }
-
-        // Group products by shop
-        $grouped = $orderItems->groupBy(function ($orderItem) {
-            return $orderItem->product->shop->id;
-        })->map(function ($items) {
-            $shop = $items->first()->product->shop;
-            $products = $items->map(function ($item) {
-                return [
-                    'id' => $item->product->id,
-                    'order_item_id' => $item->id,
-                    'name' => $item->product->name,
-                    'price' => $item->product->price,
-                    'image' => $item->product->image,
-                    'quantity' => $item->quantity,
-                ];
-            });
-
-            return [
-                'shop' => [
-                    'id' => $shop->id,
-                    'name' => $shop->name,
-                    'email' => $shop->email,
-                    'description' => $shop->description,
-                    'contact_number' => $shop->contact_number,
-                ],
-                'products' => $products->values(),
-            ];
-        })->values();
-
-        return response()->json($grouped);
     }
 
 
