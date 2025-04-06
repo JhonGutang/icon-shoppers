@@ -74,14 +74,13 @@ const useCustomerActions = () => {
       console.log(products);
       const filteredProducts = products.map((product) => ({
         id: product.id,
-        order_id: product.order_id,
         quantity: product.quantity,
       }));
       checkoutOrder(filteredProducts, token);
       openSnackbar("Your Order is Now Being Processed", "info"); 
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     }
   };
 

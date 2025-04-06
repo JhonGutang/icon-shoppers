@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 
@@ -17,7 +16,6 @@ Route::middleware('auth:customer-api')->group(function () {
     Route::post('order/{id}',[OrderController::class, 'addToCart']);
     Route::patch('checkout', [OrderController::class, 'checkoutOrder']);
     Route::get('from-cart',[OrderController::class, 'fetchAllPendings']);
-    Route::get('to-checkout',[OrderController::class, 'fetchPendingProductForCheckout']);
     Route::delete('order/{id}',[OrderController::class, 'removeToCart']);
     Route::get('/customer/orders', [OrderController::class, 'getCustomersOrders']);
 });
