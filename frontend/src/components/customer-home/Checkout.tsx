@@ -38,14 +38,14 @@ const Checkout = () => {
           setProductsWithShops={setProductsWithShops}
         />
       ) : (
-        <div className="h-screen flex">
+        <div className="h-full flex gap-4">
           <Cart
             productsWithShops={productsWithShops}
             checkedShops={checkedShops}
             setCheckedShops={setCheckedShops}
           />
 
-          <div className="w-full h-screen overflow-y-auto">
+          <div className="w-full h-full overflow-y-auto">
             {productsWithShops.length === 0 && <FallBackMessage />}
             {productsWithShops
               .filter(
