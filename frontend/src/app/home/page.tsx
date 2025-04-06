@@ -9,7 +9,7 @@ import Shops from "@/components/customer-home/Shops";
 import Profile from "@/components/customer-home/Profile";
 
 const Home = () => {
-  const [activeComponent, setActiveComponent] = useState<string>('Home');
+  const [activeComponent, setActiveComponent] = useState<string>("Home");
 
   useEffect(() => {
     console.log(activeComponent);
@@ -17,13 +17,16 @@ const Home = () => {
 
   return (
     <div className="w-full h-screen flex flex-col items-center py-5 lg:px-20">
-      <Navbar activeComponent={activeComponent} setActiveComponent={setActiveComponent} />
-      {activeComponent === 'Home' && <Default />}
-      {activeComponent === 'Products' && <Products />}
-      {activeComponent === 'Shops' && <Shops/>}
-      {activeComponent === 'Cart' && <Checkout />}
-      {activeComponent === 'Check Orders' && <Orders />}
-      {activeComponent === 'My Account' && <Profile />}
+      <Navbar
+        activeComponent={activeComponent}
+        setActiveComponent={setActiveComponent}
+      />
+        {activeComponent === "Home" && <Default />}
+        {activeComponent === "Products" && <Products />}
+        {activeComponent === "Shops" && <Shops />}
+        {activeComponent === "Cart" && <Checkout />}
+        {activeComponent === "Check Orders" && <Orders />}
+        {activeComponent === "My Account" && <Profile />}
     </div>
   );
 };

@@ -5,11 +5,11 @@ const CartNavbar = () => {
   const {redirectLink} = useRedirectLink()
   return (
     <div className="w-full flex justify-between items-center px-8 h-[8vh]">
-      <Button variant='ghost' className="flex gap-1" onClick={() => redirectLink('/')}>
+      <Button variant='ghost' className="flex gap-1" onClick={() => redirectLink('/home')}>
         <ChevronLeft />
         <div>Back</div>
       </Button>
-      <img src="/logo.png" alt="" className="w-[60px]" onClick={() => redirectLink('/')}/>
+      <img src="/logo.png" alt="" className="w-[60px]" onClick={() => redirectLink('/home')}/>
       <div>
         <UserRound />
       </div>

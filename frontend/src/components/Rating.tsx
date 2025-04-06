@@ -22,7 +22,7 @@ const StarRating: React.FC<StarRatingProps> = ({
     };
 
     return ( 
-        <div className="w-full flex gap-2">
+        <div className="w-full flex lg:gap-2">
             {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                     key={star}

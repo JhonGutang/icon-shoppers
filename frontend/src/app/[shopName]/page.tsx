@@ -6,6 +6,7 @@ import { Product, Shop } from "@/types/product";
 import Navbar from "@/components/Header";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import ProductCard from "@/components/ProductCard";
+import CartNavbar from "@/components/mobile/CartNavbar";
 
 const ShopPage = () => {
   const { shopName } = useParams();
@@ -69,7 +70,7 @@ const ShopPage = () => {
 
   return (
     <div className="space-y-5">
-      <Navbar name={shop?.name || ""} />
+      <CartNavbar/>
       <div className="w-full px-5">
         {/* Shop Details */}
         <div className="flex gap-5 items-center mb-5">

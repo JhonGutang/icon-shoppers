@@ -17,7 +17,7 @@ const Shops = () => {
 
   return (
     <div className="w-full">
-      <div className="text-xl mb-6">Shops</div>
+      <div className="text-xl mb-6 px-6">Shops</div>
       <div className="flex gap-4 px-7">
         {shops.map((shop) => (
             <div key={shop.id}>
