@@ -16,7 +16,7 @@ const Home = () => {
   }, [activeComponent]);
 
   return (
-    <div className="w-full h-screen flex flex-col items-center py-5 px-20">
+    <div className="w-full h-screen flex flex-col items-center py-5 lg:px-20">
       <Navbar activeComponent={activeComponent} setActiveComponent={setActiveComponent} />
       {activeComponent === 'Home' && <Default />}
       {activeComponent === 'Products' && <Products />}
