@@ -19,10 +19,17 @@ const normalizeStatus = (status?: string): string => {
 
 export const orderService = {
   async fetchOrders(token: string, status?: string): Promise<Order[]> {
-    const queryStatus = normalizeStatus(status);
-    const url = queryStatus ? `/orders?status=${queryStatus}` : "/orders";
-    const response = await axiosInstance.get<Order[]>(url, authHeader(token));
-    return response.data;
+    try {
+      const queryStatus = normalizeStatus(status);
+      // Only add status parameter if it's not "All"
+      const url = status !== "All" ? `/orders?status=${queryStatus}` : "/orders";
+      const response = await axiosInstance.get<Order[]>(url, authHeader(token));
+      console.log('API Response:', response.data); // Debug log
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      throw error;
+    }
   },
 
   async updateOrderStatus(token: string, orderId: number, status: string) {

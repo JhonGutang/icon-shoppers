@@ -17,12 +17,24 @@ export const useOrders = () => {
       if (!token) throw new Error("No authentication token");
 
       const data = await orderService.fetchOrders(token, status);
-      const filteredOrders = status === "All" ? data : data.filter((order) =>
-        status === "approved"
-          ? order.status.toLowerCase() === "active"
-          : order.status.toLowerCase() === status.toLowerCase().replace(/ /g, "_")
-      );
+      console.log('Fetched orders:', data); // Debug log
 
+      // Filter orders based on status
+      const filteredOrders = status === "All" 
+        ? data 
+        : data.filter((order) => {
+            const orderStatus = order.status.toLowerCase();
+            const filterStatus = status.toLowerCase().replace(/ /g, "_");
+            
+            // Handle special case for "approved" status
+            if (status === "approved") {
+              return orderStatus === "active";
+            }
+            
+            return orderStatus === filterStatus;
+          });
+
+      console.log('Filtered orders:', filteredOrders); // Debug log
       setOrders(filteredOrders);
       setError(null);
     } catch (err) {
@@ -61,7 +73,9 @@ export const useOrders = () => {
   };
 
   useEffect(() => {
-    if (token) fetchOrders(activeTab);
+    if (token) {
+      fetchOrders(activeTab);
+    }
   }, [activeTab, token]);
 
   return {
