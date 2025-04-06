@@ -73,7 +73,7 @@ class OrderController extends Controller
         ]);
     }
 
-    public function getOrders()
+    public function getOrders(Request $request)
     {
         if (!Auth::guard('shop-api')->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);
@@ -81,15 +81,21 @@ class OrderController extends Controller
 
         $shopId = Auth::guard('shop-api')->id();
 
-        $orders = Order::with([
+        $query = Order::with([
             'customer',
             'orderItems.product',
             'orderItems.product.shop'
         ])
         ->whereHas('orderItems.product', function($query) use ($shopId) {
             $query->where('shop_id', $shopId);
-        })
-        ->get();
+        });
+
+        // Add status filter if provided
+        if ($request->has('status') && $request->status !== 'All') {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->get();
 
         $formattedOrders = $orders->map(function($order) use ($shopId) {
             return [
