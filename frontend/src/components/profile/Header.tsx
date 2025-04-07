@@ -39,7 +39,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
             <div>
               {console.log("name=",user?.name)}
             </div>
-            <div className="text-sm font-mono">{user?.contact_number}</div>
+            <div className="text-sm font-mono">{user?.contactNumber}</div>
             <StarRating />
           </div>
         </div>
