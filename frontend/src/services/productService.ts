@@ -27,10 +27,14 @@ export const fetchAllProducts = async (type: string) => {
   return response.data;
 };
 
-export const fetchFeaturedProducts = async () => {
-  const response = await axiosInstance.get("featured-products");
+
+export const searchProducts = async (search: string) => {
+  const response = await axiosInstance.get("search-products", {
+    params: { search },
+  });
   return response.data;
-};
+}
+
 
 export const fetchSpecificProduct = async (id: number) => {
   const response = await axiosInstance.get(`product/${id}`);
