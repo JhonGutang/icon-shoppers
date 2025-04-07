@@ -18,6 +18,5 @@ Route::middleware('auth:customer-api')->group(function () {
     Route::post('order/{id}',[OrderController::class, 'addToCart']);
     Route::patch('checkout', [OrderController::class, 'checkoutOrder']);
     Route::get('from-cart',[OrderController::class, 'fetchAllPendings']);
-    Route::delete('order/{id}',[OrderController::class, 'removeFromCart']);
     Route::get('/customer/orders', [OrderController::class, 'getCustomersOrders']);
 });

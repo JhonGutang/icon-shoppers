@@ -14,4 +14,8 @@ Route::middleware('auth:shop-api')->group(function () {
     Route::delete('/logout', [ShopController::class,'logout']);
 });
 
+Route::middleware('auth:customer-api')-> group(function () {
+    Route::delete('/customer-logout', [CustomerController::class,'logout']);
+});
+
 ?>

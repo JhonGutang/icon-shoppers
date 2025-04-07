@@ -253,4 +253,13 @@ class CustomerController extends Controller
     {
         //
     }
+
+    public function logout () {
+        /** @var \App\Models\Customer $user */
+        $user = Auth::guard('customer-api')->user();
+        $user->tokens()->delete();
+        return response()->json([
+            'message' => 'Logged out successfully'
+        ]);
+    }
 }
