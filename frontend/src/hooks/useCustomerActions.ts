@@ -51,6 +51,7 @@ const useCustomerActions = () => {
       redirectLink("login");
       return;
     }
+    console.log(product);
     addProduct(product);
     addToCart(product.id, token);
     openSnackbar("Product Added to Cart", "success"); 

@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Store } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-
 const ProductPage = () => {
   const { redirectLink } = useRedirectLink();
   const { handleAddToCart } = useCustomerActions();
@@ -32,10 +31,10 @@ const ProductPage = () => {
   const redirectAfterAdd = (event: MouseEvent<HTMLButtonElement>) => {
     if (!product) return;
 
+    console.log(product);
     setIsLoading(true);
     handleAddToCart(event, product);
-
-    redirectLink("checkout");
+    redirectLink("/home");
     setIsLoading(false);
   };
 
@@ -47,7 +46,7 @@ const ProductPage = () => {
       </div>
 
       <Button
-        className={`w-[90%] fixed bottom-5 left-1/2 transform -translate-x-1/2 h-[60px] z-10 ${
+        className={`w-[90%] fixed bottom-5 left-1/2 transform -translate-x-1/2 h-[60px] z-10 bg-green-600 ${
           isLoading ? "bg-gray-400" : ""
         }`}
         onClick={redirectAfterAdd}
@@ -59,7 +58,7 @@ const ProductPage = () => {
             <span>Adding to Cart</span>
           </div>
         ) : (
-          <span>Checkout</span>
+          <span>Add To Cart</span>
         )}
       </Button>
     </div>
@@ -74,7 +73,7 @@ const ProductDetails = ({ product }: { product?: any }) => {
     <div className="w-full flex flex-col gap-6">
       <div className="h-[30vh] border-2 px-4 rounded-xl">
         <img
-          src={`http://localhost:8000/storage/${product?.image}`}
+          src={`http://192.168.1.6:8000/storage/${product?.image}`}
           alt={product?.name || "Product Image"}
           className="w-full h-full rounded-xl object-contain"
         />
@@ -82,6 +81,12 @@ const ProductDetails = ({ product }: { product?: any }) => {
 
       <div className="flex flex-col gap-3">
         <h1 className="capitalize text-2xl font-bold">{product?.name}</h1>
+        <div className="flex items-center gap-3">
+          <div className="font-semibold">{product?.shop.name}</div>
+          <div>
+            <Button variant="ghost" className="text-green-600" onClick={() => redirectLink(product?.shop.name)}>View Shop</Button>
+          </div>
+        </div>
         <div
           className={`overflow-hidden transition-all duration-300 ${
             isExpanded ? "max-h-full" : "max-h-[10vh]"
@@ -110,24 +115,6 @@ const ProductDetails = ({ product }: { product?: any }) => {
           </div>
           <div>Stocks: {product?.quantity}</div>
         </div>
-
-        <Card className="mt-5">
-          <CardContent>
-            <CardHeader className="px-0">
-              <CardTitle>
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-2">
-                    <Store />
-                    <div className="font-semibold text-xl">
-                      {product?.shop.name}
-                    </div>
-                  </div>
-                  <Button variant="outline" onClick={() => redirectLink(`${product?.shop.name}`)}>View Shop</Button>
-                </div>
-              </CardTitle>
-            </CardHeader>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

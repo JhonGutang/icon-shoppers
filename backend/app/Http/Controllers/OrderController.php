@@ -7,6 +7,8 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Http\Requests\OrderRequest;
+use App\Models\Cart;
+use App\Models\CartItem;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -257,37 +259,32 @@ class OrderController extends Controller
 
 
 
-    public function removeToCart($id)
-    {
-        $user = Auth::guard('customer-api')->user();
+public function removeFromCart($productId)
+{
+    $user = Auth::guard('customer-api')->user();
 
-        $order = Order::where('customer_id', $user->id)
-            ->where('status', 'cart')
-            ->first();
+    $cart = Cart::where('customer_id', $user->id)->first();
 
-        if (!$order) {
-            return response()->json(['message' => 'No active cart found.'], 404);
-        }
-
-        $orderItem = OrderItem::where('order_id', $order->id)
-            ->where('product_id', $id)
-            ->first();
-
-        if (!$orderItem) {
-            return response()->json(['message' => 'Product not found in cart.'], 404);
-        }
-
-        $orderItem->delete();
-
-        if ($order->orderItems()->count() == 0) {
-            $order->delete();
-        } else {
-            $order->total_amount = $order->orderItems()->sum('price');
-            $order->save();
-        }
-
-        return response()->json(['message' => 'Product removed from cart successfully.'], 200);
+    if (!$cart) {
+        return response()->json(['message' => 'No active cart found.'], 404);
     }
+
+    $cartItem = CartItem::where('cart_id', $cart->id)
+        ->where('product_id', $productId)
+        ->first();
+
+    if (!$cartItem) {
+        return response()->json(['message' => 'Product not found in cart.'], 404);
+    }
+
+    $cartItem->delete();
+
+    if ($cart->cartItems()->count() === 0) {
+        $cart->delete();
+    }
+
+    return response()->json(['message' => 'Product removed from cart successfully.'], 200);
+}
 
 
     public function checkoutOrder(Request $request)
