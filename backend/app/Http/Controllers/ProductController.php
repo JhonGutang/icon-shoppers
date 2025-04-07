@@ -21,13 +21,11 @@ class ProductController extends Controller
     {
         $query = Product::with('shop:id,name')->where('is_visible', true);
 
-        // Check the 'type' parameter to determine which products to fetch
         if ($request->query('type') === 'featured') {
             $query->where('is_featured', true);
         } elseif ($request->query('type') === 'all') {
             // No additional conditions needed for all products
         } else {
-            // If the type is not recognized, you can return an empty array or handle it as needed
             return response()->json([]);
         }
 
