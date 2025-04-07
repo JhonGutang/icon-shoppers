@@ -77,7 +77,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
         name: formData.name,
         email: formData.email,
         contact_number: formData.contact_number,
-        description: formData.description
+        description: formData.description,
+        logo_image: formData.logo_image
       };
 
       console.log("Sending data:", profileData);

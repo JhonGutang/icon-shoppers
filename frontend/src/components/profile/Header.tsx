@@ -16,6 +16,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
   const { redirectLink } = useRedirectLink();
 
   const getImageUrl = (path: string | undefined): string | undefined => {
+    console.log("Path:", path);
     if (!path) return undefined;
     return `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/storage/${path}`;
   };
@@ -31,9 +32,9 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
       <div className="px-5">
         <div className="lg:w-full flex lg:flex-row flex-col lg:items-start items-center lg:gap-4 -translate-y-4">
           <div className="lg:w-40 lg:h-40 w-50 border-4 border-white rounded-xl">
-            {user?.logo_image ? (
+            {user?.profileImage ? (
               <img
-                src={getImageUrl(user.logo_image)}
+                src={getImageUrl(user.profileImage)}
                 alt={`${user.name}'s logo`}
                 className="rounded-xl w-full h-full object-cover"
               />
