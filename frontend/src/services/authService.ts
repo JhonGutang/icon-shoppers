@@ -68,7 +68,7 @@ export const getProfile = async (token: string, role: string) => {
       },
     });
     
-    return formatProfileData(response.data);
+    return formatProfileData(response.data.user);
   } catch (error) {
     console.error(error);
   }
