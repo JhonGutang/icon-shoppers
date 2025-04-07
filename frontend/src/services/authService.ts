@@ -68,7 +68,7 @@ export const getProfile = async (token: string, role: string) => {
       },
     });
     
-    return formatProfileData(response.data);
+    return formatProfileData(response.data.user);
   } catch (error) {
     console.error(error);
   }
@@ -81,6 +81,7 @@ const formatProfileData = (data: CustomerProfile) => {
     updatedAt: data.updated_at,
     email: data.email,
     contactNumber: data.contact_number,
+    profileImage: data.profile_image,
     description: data.description,
     middleName: data.middle_name,
     address: data.address,

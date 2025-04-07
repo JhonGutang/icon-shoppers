@@ -26,7 +26,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    contact_number: "",
+    contactNumber: "",
     description: "",
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +37,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
       setFormData({
         name: user.name || "",
         email: user.email || "",
-        contact_number: user.contact_number || "",
+        contactNumber: user.contactNumber || "",
         description: user.description || "",
       });
     }
@@ -124,10 +124,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
           </div>
 
           <div>
-            <Label htmlFor="contact_number">Contact Number</Label>
+            <Label htmlFor="contactNuumber">Contact Number</Label>
             <Input
-              id="contact_number"
-              value={formData.contact_number}
+              id="contactNumber"
+              value={formData.contactNumber}
               onChange={handleInputChange}
               required
               disabled={isLoading}
