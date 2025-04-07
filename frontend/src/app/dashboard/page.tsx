@@ -6,9 +6,12 @@ import {
 import { useOrders } from "@/hooks/useOrders";
 import { STATUS_OPTIONS, formatStatus, getStatusColor } from "@/lib/orderUtils";
 import { StatusButtons } from "@/components/StatusButton";
+import { toast } from "sonner";
 
 const Dashboard = () => {
   const { orders, error, activeTab, setActiveTab, handleStatusUpdate } = useOrders();
+  
+  console.log('Orders data:', orders);
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -20,21 +23,19 @@ const Dashboard = () => {
         </div>
       )}
 
-      {STATUS_OPTIONS.length > 0 && (
-        <div className="flex justify-center gap-3 mb-4">
-          {STATUS_OPTIONS.map((status) => (
-            <button
-              key={status}
-              className={`px-4 py-2 rounded flex-1 max-w-[200px] ${
-                activeTab === status ? "bg-blue-500 text-white" : "bg-gray-300 hover:bg-gray-400"
-              }`}
-              onClick={() => setActiveTab(status)}
-            >
-              {formatStatus(status)}
-            </button>
-          ))}
-        </div>
-      )}
+      <div className="flex justify-center gap-3 mb-4">
+        {STATUS_OPTIONS.map((status) => (
+          <button
+            key={status}
+            className={`px-4 py-2 rounded flex-1 max-w-[200px] ${
+              activeTab === status ? "bg-blue-500 text-white" : "bg-gray-300 hover:bg-gray-400"
+            }`}
+            onClick={() => setActiveTab(status)}
+          >
+            {formatStatus(status)}
+          </button>
+        ))}
+      </div>
 
       <div className="bg-white p-4 shadow-lg rounded-lg overflow-x-auto">
         <Table>
@@ -52,8 +53,9 @@ const Dashboard = () => {
           </TableHeader>
           <TableBody>
             {orders.length > 0 ? (
-              orders.map((order) => (
-                order.products?.map((product, index) => (
+              orders.map((order) => {
+                console.log('Current order:', order);
+                return order.products?.map((product, index) => (
                   <TableRow key={`${order.id}-${index}`}>
                     {index === 0 && (
                       <>
@@ -75,18 +77,32 @@ const Dashboard = () => {
                         <TableCell rowSpan={order.products.length}>
                           <StatusButtons
                             status={order.status}
-                            onApprove={() => handleStatusUpdate(
-                              order.id,
-                              order.status === 'to_be_delivered' ? 'delivering' : 'to_be_delivered'
-                            )}
-                            onReject={() => handleStatusUpdate(order.id, 'rejected')}
+                            onApprove={() => {
+                              if (!order.id) {
+                                console.error('Order ID is missing:', order);
+                                toast.error('Cannot update order: Missing order ID');
+                                return;
+                              }
+                              const nextStatus = order.status === "to_be_delivered"
+                                ? "delivering"
+                                : "to_be_delivered";
+                              handleStatusUpdate(order.id.toString(), nextStatus);
+                            }}
+                            onReject={() => {
+                              if (!order.id) {
+                                console.error('Order ID is missing:', order);
+                                toast.error('Cannot update order: Missing order ID');
+                                return;
+                              }
+                              handleStatusUpdate(order.id.toString(), "rejected");
+                            }}
                           />
                         </TableCell>
                       </>
                     )}
                   </TableRow>
-                ))
-              ))
+                ));
+              })
             ) : (
               <TableRow>
                 <TableCell colSpan={8} className="text-center text-gray-500">

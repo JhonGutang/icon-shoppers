@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Order, OrderStatus } from "@/types/order";
 import { orderService } from "@/services/orderService";
 import useAuthStore from "@/stores/useAuthStore";
+import { toast } from "sonner"; // or your toast library
 
 export const useOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -13,18 +14,27 @@ export const useOrders = () => {
   const fetchOrders = async (status?: OrderStatus) => {
     try {
       setLoading(true);
-      if (!token) {
-        throw new Error("No authentication token");
-      }
+      if (!token) throw new Error("No authentication token");
+
       const data = await orderService.fetchOrders(token, status);
-      
-      let filteredOrders = data;
-      if (status !== "All") {
-        filteredOrders = data.filter((order: Order) => 
-          (status === "approved" ? order.status.toLowerCase() === "active" : order.status.toLowerCase() === status.toLowerCase().replace(/ /g, "_"))
-        );
-      }
-      
+      console.log('Fetched orders:', data); // Debug log
+
+      // Filter orders based on status
+      const filteredOrders = status === "All" 
+        ? data 
+        : data.filter((order) => {
+            const orderStatus = order.status.toLowerCase();
+            const filterStatus = status.toLowerCase().replace(/ /g, "_");
+            
+            // Handle special case for "approved" status
+            if (status === "approved") {
+              return orderStatus === "active";
+            }
+            
+            return orderStatus === filterStatus;
+          });
+
+      console.log('Filtered orders:', filteredOrders); // Debug log
       setOrders(filteredOrders);
       setError(null);
     } catch (err) {
@@ -35,16 +45,30 @@ export const useOrders = () => {
     }
   };
 
-  const handleStatusUpdate = async (orderId: number, newStatus: string) => {
+  const handleStatusUpdate = async (orderId: string, newStatus: OrderStatus) => {
     try {
-      if (!token) {
-        throw new Error("No authentication token");
+      setLoading(true);
+      let result;
+      
+      if (newStatus === 'rejected') {
+        result = await orderService.rejectOrder(token, orderId);
+      } else if (newStatus === 'to_be_delivered') {
+        result = await orderService.approveOrder(token, orderId);
+      } else {
+        result = await orderService.updateOrderStatus(token, orderId, newStatus);
       }
-      await orderService.updateOrderStatus(token, orderId, newStatus);
-      fetchOrders(activeTab);
+
+      if (result.success) {
+        toast.success(`Order ${newStatus.replace(/_/g, " ")}!`);
+        fetchOrders(activeTab);
+      } else {
+        toast.error(result.error || "Failed to update order status.");
+      }
     } catch (err) {
-      setError("Failed to update order status");
-      console.error("Error updating order status:", err);
+      toast.error("Failed to update order status.");
+      console.error("Status update error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,6 +84,6 @@ export const useOrders = () => {
     error,
     activeTab,
     setActiveTab,
-    handleStatusUpdate
+    handleStatusUpdate,
   };
 };

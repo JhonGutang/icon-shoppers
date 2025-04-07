@@ -11,12 +11,13 @@ return new class extends Migration {
             $table->id(); // order_id
             $table->unsignedBigInteger('customer_id');
             $table->decimal('total_amount', 10, 2);
-            $table->string('status')->default('pending');
+            $table->string('status')->default('ordered');
+            $table->string('location')->nullable();
             $table->timestamps();
-        
+
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
         });
-        
+
     }
 
     public function down(): void

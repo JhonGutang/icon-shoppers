@@ -17,7 +17,7 @@ export function StatusButtons({ onApprove, onReject, status }: StatusButtonsProp
     )
   }
 
-  if (status === 'rejected') {
+  if (status === 'rejected' || status === 'completed') {
     return (
       <div className="flex items-center justify-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md font-medium">
         <span>Completed</span>
@@ -31,10 +31,9 @@ export function StatusButtons({ onApprove, onReject, status }: StatusButtonsProp
         variant="default" 
         onClick={onApprove}
         className="bg-blue-600 hover:bg-blue-700 text-white"
-        disabled={true}
       >
         <Truck className="mr-1 h-4 w-4" />
-        Delivering
+        Start Delivery
       </Button>
     )
   }

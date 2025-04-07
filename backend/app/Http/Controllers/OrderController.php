@@ -12,12 +12,22 @@ use Illuminate\Support\Facades\Auth;
 class OrderController extends Controller
 {
     public function index(Request $request){
-        $orders = Order::with(['customer', 'product'])->get();
+        try {
+            $query = Order::with(['customer', 'orderItems.product']);
 
-        if($request->has('status')){
-            $orders->where('status', $request->status);
+            if ($request->has('status')) {
+                $query->where('status', $request->status);
+            }
+
+            $orders = $query->get();
+
+            return response()->json($orders);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch orders'
+            ], 500);
         }
-        return response()->json($orders);
     }
     public function show($id){
         $order = Order::find($id);
@@ -29,14 +39,26 @@ class OrderController extends Controller
     }
 
     public function update(OrderRequest $request, $id){
-        $order = Order::find($id);
+        try {
+            $order = Order::findOrFail($id);
+            $order->update($request->validated());
 
-        if(!$order){
-            return response()->json(['message'=>'Order not found.'], 404);
+            return response()->json([
+                'success' => true,
+                'message' => 'Order updated successfully',
+                'order' => $order
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update order'
+            ], 500);
         }
-
-        $order->update($request->validated());
-        return response()->json($order);
     }
 
     public function delete($id){
@@ -51,27 +73,33 @@ class OrderController extends Controller
         ]);
     }
 
-    public function getOrders()
+    public function getOrders(Request $request)
     {
-        // Check if shop is authenticated
         if (!Auth::guard('shop-api')->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
         $shopId = Auth::guard('shop-api')->id();
 
-        $orders = Order::with([
+        $query = Order::with([
             'customer',
             'orderItems.product',
             'orderItems.product.shop'
         ])
         ->whereHas('orderItems.product', function($query) use ($shopId) {
             $query->where('shop_id', $shopId);
-        })
-        ->get();
+        });
+
+        // Add status filter if provided
+        if ($request->has('status') && $request->status !== 'All') {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->get();
 
         $formattedOrders = $orders->map(function($order) use ($shopId) {
             return [
+                'id' => $order->id,
                 'customerName' => $order->customer->name,
                 'products' => $order->orderItems
                     ->filter(function($item) use ($shopId) {
@@ -95,14 +123,79 @@ class OrderController extends Controller
                 'status' => $order->status,
                 'shippingAddress' => $order->shipping_address,
             ];
-        })
-        ->filter(function($order) {
-            return count($order['products']) > 0;
-        })
-        ->values();
+        });
 
         return response()->json($formattedOrders);
     }
+
+
+    public function approve($id)
+    {
+        try {
+            $order = Order::findOrFail($id);
+
+            $order->update([
+                'status' => 'to_be_delivered'
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order approved successfully',
+                'order' => $order
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to approve order'
+            ], 500);
+        }
+    }
+
+    public function reject($id)
+    {
+        \Log::info('Attempting to reject order: ' . $id);
+
+        try {
+            $order = Order::findOrFail($id);
+
+            // Update the order status to rejected and completed
+            $order->update([
+                'status' => 'completed'
+            ]);
+
+            \Log::info('Order rejected successfully:', ['id' => $order->id, 'new_status' => $order->status]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order rejected and marked as completed',
+                'order' => $order
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::warning('Order not found: ' . $id);
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        } catch (\Exception $e) {
+            \Log::error('Error rejecting order:', [
+                'order_id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reject order'
+            ], 500);
+        }
+    }
+
+
 
     public function getCustomersOrders()
 {
@@ -200,7 +293,7 @@ class OrderController extends Controller
     public function checkoutOrder(Request $request)
     {
         $customerId = Auth::guard('customer-api')->id();
-        
+
         $order = Order::create([
             'customer_id' => $customerId,
             'status' => 'ordered',
