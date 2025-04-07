@@ -1,5 +1,6 @@
 import axiosInstance from "@/hooks/useAxios";
 import { Order } from "@/types/order";
+import { ProductWithShop } from "@/types/product";
 import axios from "axios";
 
 // Helper to generate headers
@@ -89,8 +90,8 @@ export const orderService = {
     return response.data;
   },
 
-  async fetchCustomerOrders(token: string): Promise<Order[]> {
-    const response = await axiosInstance.get<Order[]>("/customer/orders", authHeader(token));
+  async fetchCustomerOrders(token: string): Promise<ProductWithShop[]> {
+    const response = await axiosInstance.get<ProductWithShop[]>("/customer/orders", authHeader(token));
     return response.data;
   }
 };

@@ -41,6 +41,8 @@ const Profile = () => {
     setIsEditing(false);
   };
 
+  if (!user) return <div className="w-full h-screen flex justify-center items-center text-2xl">Loading Please Wait</div>;
+
   return (
     <div className="w-full h-full py-5">
       <div className="text-center text-xl lg:mb-0 mb-7">Account Information</div>
