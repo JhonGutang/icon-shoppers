@@ -38,6 +38,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
     >
       {role === "customer" && <AddToCart product={product} />}
 
+      {Boolean(product.is_featured) && (
+        <div className="absolute top-2 left-2 text-xs text-white bg-green-600 text-center w-20 rounded-full py-1 z-10">Featured</div>
+      )}
+
       <CardContent className="flex flex-col gap-3 items-center justify-center px-0 w-full h-[80%]">
         <img
           src={
