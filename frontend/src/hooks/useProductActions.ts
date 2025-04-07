@@ -28,8 +28,8 @@ const useProductAction = () => {
   });
   const [product, setProduct] = useState<Product>();
 
-  const handleFetchAllProducts = async () => {
-    return await fetchAllProducts();
+  const handleFetchAllProducts = async (type: string) => {
+    return await fetchAllProducts(type);
   };
 
   const handleFetchFeaturedProducts = async () => {
