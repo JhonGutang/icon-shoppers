@@ -21,6 +21,7 @@ export interface Profile {
     created_at: string
     updated_at: string
     contact_number: string
+    logo_image: string
     description: string
 }
 
