@@ -1,16 +1,8 @@
 "use client";
-import CartNavbar from "@/components/mobile/CartNavbar";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import useCustomerActions from "@/hooks/useCustomerActions";
 import { ProductWithShop } from "@/types/product";
-import { ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const Orders = () => {
@@ -19,12 +11,15 @@ const Orders = () => {
 
   const fetchOrders = async () => {
     const products = await handleOrdersStatus();
+    if(products)
     setOrders(products);
   };
 
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  if (!orders) return <div className="w-full h-screen flex justify-center items-center text-2xl">Loading Please Wait</div>;
   return (
     <div className="w-full">
       <div className="flex justify-between px-10 mb-4">

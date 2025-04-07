@@ -28,7 +28,7 @@ const Checkout = () => {
     fetchProducts();
   }, []);
 
-  if (!productsWithShops) return <div>Loading...</div>;
+  if (!productsWithShops) return <div className="w-full h-screen flex justify-center items-center text-2xl">Loading Please Wait</div>;
 
   return (
     <div className="w-full">
