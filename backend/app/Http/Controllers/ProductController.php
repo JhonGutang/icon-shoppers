@@ -17,26 +17,32 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
-    public function fetchAllProducts()
+    public function fetchAllProducts(Request $request)
     {
-        $products = Product::with('shop:id,name')
-            ->where('is_visible', true)
-            ->limit(30)
-            ->get()
-            ->map(function($product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'shop_id' => $product->shop_id,
-                    'price' => $product->price,
-                    'quantity' => $product->quantity,
-                    'image' => $product->image,
-                    'is_visible' => $product->is_visible,
-                    'is_featured' => $product->is_featured,
-                    'shop_name' => $product->shop->name ?? null,
-                ];
-            });
-    
+        $query = Product::with('shop:id,name')->where('is_visible', true);
+
+        if ($request->query('type') === 'featured') {
+            $query->where('is_featured', true);
+        } elseif ($request->query('type') === 'all') {
+            // No additional conditions needed for all products
+        } else {
+            return response()->json([]);
+        }
+
+        $products = $query->get()->map(function($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'shop_id' => $product->shop_id,
+                'price' => $product->price,
+                'quantity' => $product->quantity,
+                'image' => $product->image,
+                'is_visible' => $product->is_visible,
+                'is_featured' => $product->is_featured,
+                'shop_name' => $product->shop->name ?? null,
+            ];
+        });
+
         return response()->json($products->values());
     }
 

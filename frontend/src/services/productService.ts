@@ -20,8 +20,10 @@ export const fetchShopProducts = async (token: string) => {
   return formatData(response.data);
 };
 
-export const fetchAllProducts = async () => {
-  const response = await axiosInstance.get("all-products");
+export const fetchAllProducts = async (type: string) => {
+  const response = await axiosInstance.get("all-products", {
+    params: { type },
+  });
   return response.data;
 };
 
