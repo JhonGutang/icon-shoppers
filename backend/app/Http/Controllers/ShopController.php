@@ -44,7 +44,7 @@ class ShopController extends Controller
             ], 500);
         }
     }
-    
+
 
 
     public function login(Request $request)
@@ -116,8 +116,10 @@ class ShopController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Shop $shop)
+    public function update(Request $request)
     {
+        $shop = Auth::guard('shop-api')->user();
+
         $validatedData = $request->validate([
             'name'=>'required|string|max:255',
             'email' => 'required|email|unique:shops,email,'.$shop->id,
@@ -126,11 +128,13 @@ class ShopController extends Controller
         ]);
 
         $shop->update($validatedData);
+
         return response()->json([
             'message'=>'Edited successfully',
             'shop'=>$shop,
         ]);
     }
+
 
     /**
      * Remove the specified resource from storage.

@@ -1,13 +1,6 @@
 import { Profile } from "@/types/auth";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogFooter,
-  DialogClose,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogFooter, DialogClose, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,26 +12,27 @@ import axios from "axios";
 
 interface EditProfileProps {
   user: Profile | undefined;
-  onSave?: (updatedProfile: Profile) => void;
+  onSave?: () => void;
 }
 
 const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    contactNumber: "",
-    description: "",
+    contact_number: "",
+    description: ""
   });
   const [isLoading, setIsLoading] = useState(false);
   const accessToken = useToken((state) => state.accessToken);
 
   useEffect(() => {
     if (user) {
+      console.log("Setting form data with user:", user);
       setFormData({
         name: user.name || "",
         email: user.email || "",
-        contactNumber: user.contactNumber || "",
-        description: user.description || "",
+        contact_number: user.contactNumber || "",
+        description: user.description || ""
       });
     }
   }, [user]);
@@ -55,20 +49,34 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user?.id || !accessToken) return;
-
+    console.log("Save Changes clicked");
+    if (!accessToken) {
+      console.log("No access token available");
+      return;
+    }
+    
     setIsLoading(true);
 
     try {
-      const response = await axiosInstance.put(`shop/${user.id}`, formData, {
+      const apiData = {
+        name: formData.name,
+        email: formData.email,
+        contact_number: formData.contact_number,
+        description: formData.description
+      };
+      
+      console.log("Sending API data:", apiData);
+
+      const response = await axiosInstance.put('profile/{id}', apiData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
       });
 
+      console.log("API Response:", response.data);
       toast.success("Profile updated successfully");
-      onSave?.(response.data.data);
+      onSave?.();
 
       const closeButton = document.querySelector(
         '[aria-label="Close"]'
@@ -124,10 +132,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
           </div>
 
           <div>
-            <Label htmlFor="contactNuumber">Contact Number</Label>
+            <Label htmlFor="contact_number">Contact Number</Label>
             <Input
-              id="contactNumber"
-              value={formData.contactNumber}
+              id="contact_number"
+              value={formData.contact_number}
               onChange={handleInputChange}
               required
               disabled={isLoading}
