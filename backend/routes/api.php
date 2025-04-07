@@ -19,6 +19,7 @@ Route::get('/user', function (Request $request) {
 
 Route::middleware('auth:shop-api')->group(function () {
     Route::get('/profile', [ShopController::class, 'index']);
+    Route::put('/profile/{id}', [ShopController::class, 'update']);
     Route::get('/seller/orders', [OrderController::class, 'getSellerOrders']);
 });
 
