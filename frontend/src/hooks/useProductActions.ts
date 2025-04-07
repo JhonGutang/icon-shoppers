@@ -2,7 +2,6 @@ import {
   addProduct as addProductService,
   deleteProduct,
   fetchAllProducts,
-  fetchFeaturedProducts,
   fetchShopProducts,
   fetchSpecificProduct,
   updateProduct,
@@ -32,9 +31,6 @@ const useProductAction = () => {
     return await fetchAllProducts(type);
   };
 
-  const handleFetchFeaturedProducts = async () => {
-    return await fetchFeaturedProducts();
-  };
 
   const handleFetchShopProducts = async () => {
     if (!token) return;
@@ -160,7 +156,6 @@ const useProductAction = () => {
     newProduct,
     handleFetchAllProducts,
     handleFetchShopProducts,
-    handleFetchFeaturedProducts,
     handleFetchSpecificProduct,
     handleAddProducts,
     handleDeleteProduct,
