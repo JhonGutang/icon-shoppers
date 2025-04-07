@@ -51,7 +51,7 @@ export const login = async (credentials: Login, role: string) => {
 };
 
 export const logout = async (token: string) => {
-  await axiosInstance.delete("/logout", {
+  await axiosInstance.delete("/customer-logout", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
