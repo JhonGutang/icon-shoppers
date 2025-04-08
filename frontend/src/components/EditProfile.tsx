@@ -1,4 +1,4 @@
-import { Profile } from "@/types/auth";
+import { ProfileDisplay } from "@/types/auth";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogFooter, DialogClose, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ import axiosInstance from "@/hooks/useAxios";
 import axios from "axios";
 
 interface EditProfileProps {
-  user: Profile | undefined;
+  user: ProfileDisplay | undefined;
   onSave?: () => void;
 }
 
@@ -39,9 +39,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
         email: user.email || "",
         contact_number: user.contactNumber || "",
         description: user.description || "",
-        logo_image: user.logo_image || "",
+        logo_image: user.profileImage || "",
       });
-      setImagePreview(user.logo_image || "");
+      setImagePreview(user.profileImage || "");
     }
   }, [user]);
 

@@ -1,3 +1,5 @@
+import { OrderStatus } from "@/types/order";
+
 export const STATUS_OPTIONS: OrderStatus[] = [
   "All",
   "approved",

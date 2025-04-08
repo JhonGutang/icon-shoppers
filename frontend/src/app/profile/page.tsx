@@ -3,7 +3,7 @@
 import ProductCard from "@/components/ProductCard";
 import Header from "@/components/profile/Header";
 import useAuth from "@/hooks/useAuth";
-import { Profile as ProfileType } from "@/types/auth";
+import { ProfileDisplay } from "@/types/auth";
 import { ShoppingBag } from "lucide-react";
 import { useEffect, useState } from "react";
 import useProductAction from "@/hooks/useProductActions";
@@ -11,7 +11,7 @@ import useProductAction from "@/hooks/useProductActions";
 const Profile = () => {
   const { handleGetProfile } = useAuth();
   const { products, handleFetchShopProducts } = useProductAction();
-  const [user, setUser] = useState<ProfileType>();
+  const [user, setUser] = useState<ProfileDisplay>();
 
   const fetchUser = async () => {
     const data = await handleGetProfile();

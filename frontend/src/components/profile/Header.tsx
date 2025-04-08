@@ -1,4 +1,4 @@
-import { Profile } from "@/types/auth";
+import { ProfileDisplay } from "@/types/auth";
 import { Button } from "../ui/button";
 import StarRating from "../Rating";
 import CreateProduct from "./CreateProduct";
@@ -8,7 +8,7 @@ import EditProfile from "../EditProfile";
 import { CircleUserRound } from "lucide-react";
 
 interface HeaderProps {
-  user: Profile | undefined;
+  user: ProfileDisplay | undefined;
 }
 
 const Header: React.FC<HeaderProps> = ({ user }) => {
@@ -52,7 +52,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
             </div>
             <div className="text-sm font-mono">{user?.email}</div>
             <div></div>
-            <div className="text-sm font-mono">{user?.contact_number}</div>
+            <div className="text-sm font-mono">{user?.contactNumber}</div>
             <StarRating />
           </div>
         </div>

@@ -1,5 +1,5 @@
 import axiosInstance from "@/hooks/useAxios";
-import { Register, Login, CustomerProfile, EditProfile } from "@/types/auth";
+import { Register, Login, CustomerProfile, EditProfile, SellerProfile } from "@/types/auth";
 
 const formatData = (data: Register | Login, auth: string) => {
   if (auth === "register") {
@@ -69,8 +69,9 @@ export const getProfile = async (token: string, role: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    
-    return formatProfileData(response.data.user);
+  
+    const data = role === 'seller' ? formatSellerProfile(response.data.user) : formatCustomerData(response.data)
+    return  data
   } catch (error) {
     console.error(error);
   }
@@ -87,6 +88,19 @@ const formatProfileData = (data: CustomerProfile) => {
     description: data.description,
     middleName: data.middle_name,
     address: data.address,
+  };
+};
+const formatSellerProfile = (data: SellerProfile) => {
+  return {
+    name: data.name,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+    email: data.email,
+    contactNumber: data.contact_number,
+    profileImage: data.logo_image,
+    description: data.description,
+    address: data.address,
+    owner: data.owner
   };
 };
 
