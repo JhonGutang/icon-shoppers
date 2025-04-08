@@ -20,10 +20,13 @@ class ShopController extends Controller
         return response()->json(['user' => $user]);
     }
 
-    public function getAllShops () {
-        $shops = Shop::all();
-        return $shops;
+    public function getAllShops(Request $request) {
+        $search = $request->query('search');
+        $shops = $search ? Shop::where('name', 'like', "%{$search}%")->get() : Shop::all();
+        return response()->json($shops);
     }
+
+    
 
     public function getSpecificShop($name) {
         try {

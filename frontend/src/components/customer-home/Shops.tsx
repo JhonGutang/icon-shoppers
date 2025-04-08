@@ -3,36 +3,55 @@ import { fetchAllShops } from "@/services/shopService";
 import { Shop } from "@/types/product";
 import ShopsCard from "../ShopsCard";
 import { Skeleton } from "../ui/skeleton";
+import { Input } from "../ui/input";
 
 const Shops = () => {
   const [shops, setShops] = useState<Shop[]>([]);
-  const [loading, setLoading] = useState<boolean>(true); // Add loading state
+  const [loading, setLoading] = useState<boolean>(true);
+  const [search, setSearch] = useState<string>("");
 
   useEffect(() => {
     const getShops = async () => {
-      const shopData = await fetchAllShops();
+      const shopData = await fetchAllShops(search);
       setShops(shopData);
-      setLoading(false); // Set loading to false after fetching data
+      setLoading(false);
     };
 
     getShops();
-  }, []);
+  }, [search]);
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
 
   return (
     <div className="w-full">
-      <div className="text-xl mb-6 px-6">Shops</div>
+      <div className="mb-6 px-6 flex gap-5 items-center ">
+        <div className="text-xl ">Shops</div>
+        <Input 
+          placeholder="Search Shops..." 
+          className="w-[50vw] h-[45px] rounded-full pl-5" 
+          value={search} 
+          onChange={handleSearchChange} 
+        />
+      </div>
       <div className="flex gap-4 px-7">
-        {loading ? ( // Check if loading
-          Array.from({ length: 5 }).map((_, index) => ( // Show skeletons
-            <Skeleton key={index} className="lg:w-[40vw] lg:h-[45vh] mb-4" />
-          ))
-        ) : (
-          shops.map((shop) => (
-            <div key={shop.id}>
-              <ShopsCard shop={shop} />
-            </div>
-          ))
-        )}
+        {loading
+          ? Array.from({ length: 5 }).map((_, index) => (
+              <Skeleton
+                key={index}
+                className="lg:w-[40vw] lg:h-[45vh] mb-4"
+              />
+            ))
+          : shops.length > 0 ? (
+              shops.map((shop) => (
+                <div key={shop.id}>
+                  <ShopsCard shop={shop} />
+                </div>
+              ))
+            ) : (
+              <div className="text-center w-full">Shop not found</div>
+            )}
       </div>
     </div>
   );
