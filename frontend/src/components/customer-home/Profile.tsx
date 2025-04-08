@@ -7,8 +7,8 @@ import { EditProfile } from "@/types/auth";
 
 const Profile = () => {
   const { handleGetProfile, handleUpdateProfile, handleLogout } = useAuth();
-  const [user, setUser] = useState<any>(null);
-  const [editableUser, setEditableUser] = useState<EditProfile>();
+  const [user, setUser] = useState<EditProfile>();
+  const [editableUser, setEditableUser] = useState<EditProfile | undefined>();
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const fetchProfile = async () => {
@@ -23,7 +23,7 @@ const Profile = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setEditableUser((prev: any) => ({ ...prev, [id]: value }));
+    setEditableUser((prev) => prev ? { ...prev, [id]: value } : undefined);
   };
 
   const handleEditProfile = () => {

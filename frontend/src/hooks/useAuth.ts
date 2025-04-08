@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Register, Login, CustomerProfile, EditProfile } from "@/types/auth";
+import { Register, Login, EditProfile } from "@/types/auth";
 import { login, register, getProfile, logout, updateProfile } from "@/services/authService";
 import { useSnackbar } from "@/components/context/SnackbarContext";
 import useToken from "@/stores/useAuthStore";
