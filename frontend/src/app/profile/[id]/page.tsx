@@ -40,7 +40,6 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
   product,
   id,
 }) => {
-  const role = useAuthStore((state) => state.userType);
   const { handleDeleteProduct, handleFeatureToggle } = useProductAction();
   const [localProduct, setLocalProduct] = useState(product);
 

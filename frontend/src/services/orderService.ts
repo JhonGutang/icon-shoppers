@@ -1,7 +1,6 @@
 import axiosInstance from "@/hooks/useAxios";
 import { Order } from "@/types/order";
 import { ProductWithShop } from "@/types/product";
-import axios from "axios";
 
 // Helper to generate headers
 const authHeader = (token: string) => ({
@@ -41,10 +40,10 @@ export const orderService = {
         authHeader(token)
       );
       return { success: true, data: response.data };
-    } catch (error: any) {
+    } catch (error) {
       return {
         success: false,
-        error: error.response?.data?.message || 'Failed to update order'
+        error: error || 'Failed to update order'
       };
     }
   },

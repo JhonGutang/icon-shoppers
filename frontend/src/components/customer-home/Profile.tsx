@@ -3,11 +3,12 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import useAuth from "@/hooks/useAuth";
 import { Button } from "../ui/button";
+import { EditProfile } from "@/types/auth";
 
 const Profile = () => {
   const { handleGetProfile, handleUpdateProfile, handleLogout } = useAuth();
   const [user, setUser] = useState<any>(null);
-  const [editableUser, setEditableUser] = useState<any>(null);
+  const [editableUser, setEditableUser] = useState<EditProfile>();
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const fetchProfile = async () => {
@@ -30,10 +31,11 @@ const Profile = () => {
   };
 
   const handleConfirm = async () => {
-    const updatedUser = await handleUpdateProfile(editableUser);
-    console.log(updatedUser);
-    setUser(updatedUser);
-    setIsEditing(false);
+    if(editableUser) {
+      const updatedUser = await handleUpdateProfile(editableUser);
+      setUser(updatedUser);
+      setIsEditing(false);
+    }
   };
 
   const handleCancel = () => {

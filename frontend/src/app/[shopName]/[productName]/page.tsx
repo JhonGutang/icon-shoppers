@@ -7,8 +7,8 @@ import useCustomerActions from "@/hooks/useCustomerActions";
 import useRedirectLink from "@/hooks/useRedirectLink";
 import CartNavbar from "@/components/mobile/CartNavbar";
 import { Button } from "@/components/ui/button";
-import { Loader2, Store } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2} from "lucide-react";
+import { Product } from "@/types/product";
 
 const ProductPage = () => {
   const { redirectLink } = useRedirectLink();
@@ -65,7 +65,7 @@ const ProductPage = () => {
   );
 };
 
-const ProductDetails = ({ product }: { product?: any }) => {
+const ProductDetails = ({ product }: { product?: Product }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { redirectLink } = useRedirectLink();
 
@@ -82,9 +82,9 @@ const ProductDetails = ({ product }: { product?: any }) => {
       <div className="flex flex-col gap-3">
         <h1 className="capitalize text-2xl font-bold">{product?.name}</h1>
         <div className="flex items-center gap-3">
-          <div className="font-semibold">{product?.shop.name}</div>
+          <div className="font-semibold">{product?.shop_name}</div>
           <div>
-            <Button variant="ghost" className="text-green-600" onClick={() => redirectLink(product?.shop.name)}>View Shop</Button>
+            <Button variant="ghost" className="text-green-600" onClick={() => redirectLink(product?.shop_name || "")}>View Shop</Button>
           </div>
         </div>
         <div

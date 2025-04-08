@@ -1,5 +1,5 @@
 import { Shop } from "@/types/product";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent } from "./ui/card";
 import StarRating from "./Rating";
 import { Button } from "./ui/button";
 import useRedirectLink from "@/hooks/useRedirectLink";

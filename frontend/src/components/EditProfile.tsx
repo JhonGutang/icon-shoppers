@@ -83,7 +83,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
 
       console.log("Sending data:", profileData);
 
-      const response = await axiosInstance.put('profile', profileData, {
+      await axiosInstance.put('profile', profileData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",

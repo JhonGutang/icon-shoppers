@@ -1,5 +1,5 @@
 import axiosInstance from "@/hooks/useAxios";
-import { Register, Login, CustomerProfile } from "@/types/auth";
+import { Register, Login, CustomerProfile, EditProfile } from "@/types/auth";
 
 const formatData = (data: Register | Login, auth: string) => {
   if (auth === "register") {
@@ -90,7 +90,7 @@ const formatProfileData = (data: CustomerProfile) => {
   };
 };
 
-export const updateProfile = async (token: string, updatedData: CustomerProfile, role: string) => {
+export const updateProfile = async (token: string, updatedData: EditProfile, role: string) => {
   const API_ENDPOINT = role === 'seller' ? "/profile" : "/customer-profile";  
   
   try { 

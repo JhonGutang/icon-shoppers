@@ -1,18 +1,10 @@
-import CartNavbar from "./CartNavbar";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../ui/accordion";
+
 import { ProductWithShop } from "@/types/product";
 import { Card, CardContent } from "../ui/card";
 import { Checkbox } from "../ui/checkbox";
 import {
   MinusCircle,
-  MinusSquareIcon,
   PlusCircle,
-  PlusSquareIcon,
   Trash,
 } from "lucide-react";
 import { Button } from "../ui/button";

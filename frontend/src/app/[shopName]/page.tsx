@@ -6,7 +6,6 @@ import { Product, Shop } from "@/types/product";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import ProductCard from "@/components/ProductCard";
 import CartNavbar from "@/components/mobile/CartNavbar";
-import StarRating from "@/components/Rating";
 import { Button } from "@/components/ui/button";
 const ShopPage = () => {
   const { shopName } = useParams();

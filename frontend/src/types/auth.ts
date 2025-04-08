@@ -36,3 +36,12 @@ export interface CustomerProfile {
     description: string
     middle_name?: string
 }
+
+export interface EditProfile {
+    name: string;
+    middleName?: string;
+    shopOwner?: string;
+    email: string;
+    address?: string,
+    contactNumber: string;
+}

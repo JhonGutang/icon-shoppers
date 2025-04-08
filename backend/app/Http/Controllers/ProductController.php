@@ -96,10 +96,19 @@ class ProductController extends Controller
     }
     
 
-
     public function fetchSpecificProduct($id){
         $product = Product::with('shop:id,name')->find($id);
-        return $product;
+        return response()->json([
+            'id' => $product->id,
+            'name' => $product->name,
+            'shop_id' => $product->shop_id,
+            'price' => $product->price,
+            'quantity' => $product->quantity,
+            'image' => $product->image,
+            'is_visible' => $product->is_visible,
+            'is_featured' => $product->is_featured,
+            'shop_name' => $product->shop->name ?? null,
+        ]);
     }
 
 
