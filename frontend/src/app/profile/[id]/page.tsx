@@ -14,7 +14,6 @@ import { Label } from "@/components/ui/label";
 import useProductAction from "@/hooks/useProductActions";
 import { Product, productFields, ProductToUpdate } from "@/types/product";
 import { useEffect, use, useState, ReactNode } from "react";
-import useAuthStore from "@/stores/useAuthStore";
 import { Card, CardContent } from "@/components/ui/card";
 
 const ProductPage = ({ params }: { params: Promise<{ id: number }> }) => {
