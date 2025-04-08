@@ -6,9 +6,11 @@ export const fetchSpecificShop = async(name: string) => {
     return response.data.data
 }
 
-export const fetchAllShops = async() => {
-    const response = await axiosInstance.get('/shops');
-    return response.data
+export const fetchAllShops = async(search?: string) => {
+    const response = await axiosInstance.get('/shops', {
+        params: search ? { search } : {}
+    });
+    return response.data;
 }
 
 
