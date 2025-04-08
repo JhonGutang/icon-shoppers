@@ -31,6 +31,7 @@ export interface Shop {
   name: string,
   contact_number: number
   email: string,
+  logo_image?: string
   description: string,
   products?: Product[]
 }

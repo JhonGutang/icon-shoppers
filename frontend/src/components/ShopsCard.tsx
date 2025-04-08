@@ -14,9 +14,9 @@ const ShopsCard: React.FC<ShopsProps> = ({ shop }) => {
     <Card className="lg:w-[25vw] lg:h-[45vh] px-0 pt-0">
       <CardContent className="px-0">
         <img
-          src="https://i.pinimg.com/736x/fd/3d/8e/fd3d8e2a1dd4f09b4170d31e26913bab.jpg"
+          src={shop.logo_image ? `http://192.168.1.6:8000/storage/${shop.logo_image}` : 'https://i.pinimg.com/736x/fd/3d/8e/fd3d8e2a1dd4f09b4170d31e26913bab.jpg'}
           alt=""
-          className="rounded-t-xl"
+          className="rounded-t-xl lg:h-[30vh] w-full"
         />
         <div className="p-3  lg:flex justify-between">
           <div className="text-lg">{shop.name}</div>

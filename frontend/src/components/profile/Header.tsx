@@ -19,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
     console.log("Path:", path);
     if (!path) return undefined;
     return `${
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+      process.env.NEXT_PUBLIC_API_URL || "http://192.168.1.6:8000"
     }/storage/${path}`;
   };
 
