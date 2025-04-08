@@ -66,7 +66,7 @@ const Products = () => {
           <div>
             <Input 
               placeholder="Search Products..." 
-              className="w-[50vw] h-[45px]" 
+              className="w-[50vw] h-[45px] rounded-full pl-5" 
               value={search} 
               onChange={handleSearchChange} 
             />

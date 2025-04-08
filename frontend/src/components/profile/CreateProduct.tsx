@@ -32,7 +32,7 @@ const CreateProduct = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Add New Product</Button>
+        <Button className="bg-green-700 text-white hover:bg-white hover:text-green-700">Add New Product</Button>
       </DialogTrigger>
       <DialogContent className="w-[60vw]">
         <DialogHeader>

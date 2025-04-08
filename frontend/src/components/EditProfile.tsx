@@ -124,10 +124,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Edit Profile</Button>
+        <Button variant="outline" className="bg-green-700 text-white hover:bg-white hover:text-green-700">Edit Profile</Button>
       </DialogTrigger>
       <DialogContent className="max-w-xs sm:max-w-sm md:max-w-md w-full p-4 sm:p-6">
-        <DialogTitle className="text-lg sm:text-xl">Edit Profile</DialogTitle>
+        <DialogTitle className="text-lg sm:text-xl ">Edit Profile</DialogTitle>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex justify-center">
             <div className="relative w-24 h-24">

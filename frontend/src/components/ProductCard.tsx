@@ -29,12 +29,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <Card
       className="relative w-[42vw] pt-0 pb-3 lg:w-[20vw] lg:gap-3 rounded-xl cursor-pointer shadow-2xl border-2 border-gray-300"
-      onClick={() =>
-        redirectLink(
-          shopName || product.shop_name!,
-          `${product.id} ${product.name}`
-        )
-      }
+      onClick={() => {
+        if (role === "seller") {
+          window.location.href = `/profile/${product.id}`;
+        } else {
+          redirectLink(shopName || product.shop_name!, `${product.id} ${product.name}`);
+        }
+      }}
     >
       {role === "customer" && <AddToCart product={product} />}
 
@@ -46,7 +47,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <img
           src={
             product.image
-              ? `http://192.168.1.6:8000/storage/${product.image}`
+              ? `http://127.0.0.1:8000/storage/${product.image}`
               : "https://i.pinimg.com/736x/c5/a0/03/c5a00375d647591a14dd36e31151acb1.jpg"
           }
           alt={product.name}

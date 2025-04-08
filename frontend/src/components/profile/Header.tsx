@@ -3,22 +3,24 @@ import { Button } from "../ui/button";
 import StarRating from "../Rating";
 import CreateProduct from "./CreateProduct";
 import useRedirectLink from "@/hooks/useRedirectLink";
-import useAuthStore from "@/stores/useAuthStore";
+import useAuth from "@/hooks/useAuth";
 import EditProfile from "../EditProfile";
-import { CircleUserRound } from 'lucide-react';
+import { CircleUserRound } from "lucide-react";
 
 interface HeaderProps {
   user: Profile | undefined;
 }
 
 const Header: React.FC<HeaderProps> = ({ user }) => {
-  const role = useAuthStore((state) => state.userType);
+  const {handleLogout} = useAuth()
   const { redirectLink } = useRedirectLink();
 
   const getImageUrl = (path: string | undefined): string | undefined => {
     console.log("Path:", path);
     if (!path) return undefined;
-    return `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/storage/${path}`;
+    return `${
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+    }/storage/${path}`;
   };
 
   return (
@@ -49,27 +51,36 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
               {user?.name || "Guest"}
             </div>
             <div className="text-sm font-mono">{user?.email}</div>
-            <div>
-            </div>
+            <div></div>
             <div className="text-sm font-mono">{user?.contact_number}</div>
             <StarRating />
           </div>
         </div>
 
-        <div>
-          {user?.description || "No description provided."}
-        </div>
+        <div>{user?.description || "No description provided."}</div>
 
-        <div className="w-full flex gap-3 mt-5">
-          {role === "seller" && (
-            <>
+        <div className="w-full mt-5">
+          <div className="text-xl mb-2">Actions</div>
+          <div className="space-y-2">
+            <div className="flex gap-3">
               <CreateProduct />
-              <Button onClick={() => redirectLink("orders")}>
+              <Button
+                className="bg-green-700 text-white hover:bg-white hover:text-green-700"
+                onClick={() => redirectLink("dashboard")}
+              >
                 Check Orders
               </Button>
-            </>
-          )}
-          {user && role !=="customer" && <EditProfile user={user} onSave={()=>window.location.reload()}/>}
+            </div>
+            <div className="space-x-2">
+              <EditProfile
+                user={user}
+                onSave={() => window.location.reload()}
+              />
+              <Button className="bg-red-600 text-white hover:bg-white hover:text-red-600" onClick={handleLogout}>
+                Logout
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
