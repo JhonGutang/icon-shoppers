@@ -142,7 +142,7 @@ const CheckoutContainer: React.FC<CheckoutContainerProps> = ({
               <CardTitle>Shop Detail</CardTitle>
               <CardContent className="px-2 mt-3">
                 <div className="mb-3">
-                  <img src="https://i.pinimg.com/736x/fd/3d/8e/fd3d8e2a1dd4f09b4170d31e26913bab.jpg" alt="" className="rounded-lg mb-3" />
+                  <img src={`http://192.168.1.6:8000/storage/${shop.logo_image}`} alt="" className="rounded-lg mb-3" />
                   <div className="text-2xl capitalize">{shop.name}</div>
                   <div className="text-sm">{shop.email}</div>
                   <div className="text-sm">{shop.contact_number}</div>

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
@@ -14,26 +13,25 @@ class CartController extends Controller
     public function index() {
         $userId = Auth::guard('customer-api')->user()->id;
 
-        // Get the user's cart
+
         $cart = Cart::where('customer_id', $userId)->first();
     
         if (!$cart) {
-            return response()->json([]); // Return empty array if no cart exists
+            return response()->json([]); 
         }
     
-        // Get cart items with product & shop details
+
         $cartItems = CartItem::where('cart_id', $cart->id)
             ->with([
                 'product:id,name,price,shop_id,image',
-                'product.shop:id,name,email,description,contact_number'
+                'product.shop:id,name,email,description,contact_number,logo_image'
             ])
             ->get();
     
         if ($cartItems->isEmpty()) {
-            return response()->json([]); // Return empty array if no items exist
+            return response()->json([]);
         }
-    
-        // Group products by shop
+
         $grouped = $cartItems->groupBy(function ($cartItem) {
             return $cartItem->product->shop->id;
         })->map(function ($items) {
@@ -54,6 +52,7 @@ class CartController extends Controller
                     'id' => $shop->id,
                     'name' => $shop->name,
                     'email' => $shop->email,
+                    'logo_image' => $shop->logo_image,
                     'description' => $shop->description,
                     'contact_number' => $shop->contact_number,
                 ],

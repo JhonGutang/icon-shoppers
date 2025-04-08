@@ -9,26 +9,26 @@ interface ShopsProps {
 }
 
 const ShopsCard: React.FC<ShopsProps> = ({ shop }) => {
-  const {redirectLink} = useRedirectLink()
+  const { redirectLink } = useRedirectLink();
   return (
-    <Card className="lg:w-[25vw] lg:h-[45vh] px-0 pt-0">
+    <Card className="lg:w-[25vw] lg:h-[45vh] px-0 pt-0 transition-transform duration-300 hover:scale-105">
       <CardContent className="px-0">
         <img
           src={shop.logo_image ? `http://192.168.1.6:8000/storage/${shop.logo_image}` : 'https://i.pinimg.com/736x/fd/3d/8e/fd3d8e2a1dd4f09b4170d31e26913bab.jpg'}
           alt=""
           className="rounded-t-xl lg:h-[30vh] w-full"
         />
-        <div className="p-3  lg:flex justify-between">
+        <div className="p-3 lg:flex justify-between">
           <div className="text-lg">{shop.name}</div>
           <div>
-            <StarRating/>
+            <StarRating />
           </div>
         </div>
 
         <div className="w-full text-center">
-            <Button className="px-10 bg-green-700" onClick={() => redirectLink(shop.name)}>
-                View Shop
-            </Button>
+          <Button className="px-10 bg-green-700" onClick={() => redirectLink(shop.name)}>
+            View Shop
+          </Button>
         </div>
       </CardContent>
     </Card>

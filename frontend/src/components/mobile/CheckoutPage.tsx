@@ -117,7 +117,7 @@ const CartContent: React.FC<CartContentProps> = ({
     );
 
   return (
-    <div className="w-full px-8 mt-5 pb-[80px]">
+    <div className="w-full max-h-[85vh] overflow-y-auto px-8 mt-5 pb-[80px]">
       <div className="">
         {shopWithProducts.map((shopData) => {
           const { shop, products } = shopData;

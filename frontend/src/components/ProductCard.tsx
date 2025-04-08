@@ -9,6 +9,7 @@ import useProductAction from "@/hooks/useProductActions";
 import useAuthStore from "@/stores/useAuthStore";
 import useCustomerActions from "@/hooks/useCustomerActions";
 import useRedirectLink from "@/hooks/useRedirectLink";
+
 interface ProductCardProps {
   product: Product;
   location?: string;
@@ -28,7 +29,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <Card
-      className="relative w-[42vw] pt-0 pb-3 lg:w-[20vw] lg:gap-3 rounded-xl cursor-pointer shadow-2xl border-2 border-gray-300"
+      className="relative w-[42vw] pt-0 pb-3 lg:w-[20vw] lg:gap-3 rounded-xl cursor-pointer shadow-2xl border-2 border-gray-300 transition-transform duration-300 hover:scale-105"
       onClick={() => {
         if (role === "seller") {
           window.location.href = `/profile/${product.id}`;
