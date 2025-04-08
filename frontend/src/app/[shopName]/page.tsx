@@ -73,7 +73,7 @@ const ShopPage = () => {
       <CartNavbar />
       <div className="w-full px-5">
         {/* Shop Details */}
-        <div className="flex lg:flex-col gap-5 lg:items-start items-center mb-5">
+        <div className="flex flex-col gap-5 lg:items-start items-center mb-5">
           <div className="w-1/2 lg:w-full lg:h-[40vh]">
             <img
               src="https://i.pinimg.com/736x/06/6f/79/066f790bcd35c0847b8b6a221fa04a10.jpg"
@@ -82,7 +82,7 @@ const ShopPage = () => {
             />
           </div>
 
-          <div className="flex justify-between w-full items-center px-10">
+          <div className="flex  justify-between w-full items-center lg:gap-0 gap-4 lg:px-10">
             <div>
               <h1 className="text-3xl font-semibold">{shop?.name}</h1>
               <div className="text-sm">
@@ -103,7 +103,7 @@ const ShopPage = () => {
         </div>
 
         {/* Shop Description */}
-        <div className="mb-5 px-10">
+        <div className="mb-5 lg:px-10">
           <h2 className="font-semibold">Description</h2>
           <p className="mt-2">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore
@@ -113,7 +113,7 @@ const ShopPage = () => {
         </div>
 
         {/* Category Filter */}
-        <div className="mb-5">
+        <div className="mb-5 lg:px-10">
           <ToggleButtonGroup
             size="small"
             value={category}
@@ -131,7 +131,7 @@ const ShopPage = () => {
         </div>
 
         {/* Products List */}
-        <div className="columns-2 lg:columns-4 gap-1 pb-5 px-10">
+        <div className="columns-2 lg:columns-4 gap-1 pb-5 lg:px-10">
           {Array.isArray(productsToDisplay) && productsToDisplay.length ? (
             productsToDisplay.map((product) => (
               <div key={product.id} className="break-inside-avoid mb-3">

@@ -50,8 +50,10 @@ export const login = async (credentials: Login, role: string) => {
   return response.data;
 };
 
-export const logout = async (token: string) => {
-  await axiosInstance.delete("/customer-logout", {
+export const logout = async (token: string, role: string) => {
+
+  const API_ENDPOINT = role === 'seller' ?  "/shop-logout" : "/customer-logout"
+  await axiosInstance.delete(API_ENDPOINT, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

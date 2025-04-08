@@ -66,11 +66,18 @@ const useAuth = () => {
 
   const handleLogout = () => {
     const accessToken = useToken.getState().accessToken;
-    if (accessToken) {
-      logout(accessToken);
+    const role = useToken.getState().userType
+
+    if (accessToken && role) {
+      logout(accessToken, role);
       openSnackbar("Logout successful!", "info");
       store.clearAuth();
-      redirectLink("customer-auth");
+
+      if(role === 'seller') {
+        redirectLink("shop-auth");
+      } else {
+        redirectLink("customer-auth");
+      }
     }
   };
 

@@ -15,6 +15,7 @@ import useProductAction from "@/hooks/useProductActions";
 import { Product, productFields, ProductToUpdate } from "@/types/product";
 import { useEffect, use, useState, ReactNode } from "react";
 import useAuthStore from "@/stores/useAuthStore";
+import { Card, CardContent } from "@/components/ui/card";
 
 const ProductPage = ({ params }: { params: Promise<{ id: number }> }) => {
   const { handleFetchSpecificProduct, product } = useProductAction();
@@ -47,34 +48,65 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
     setLocalProduct(product);
   }, [product]);
 
-  return (
-    <div className="w-full">
-      <h1>Product Id: {localProduct?.id}</h1>
-      <h1>Product Name: {localProduct?.name}</h1>
-      <h1>Product Price: {localProduct?.price}</h1>
-      <h1>Product quantity: {localProduct?.quantity}</h1>
-      <h1>Product featured: {localProduct?.is_featured ? "true" : "false"}</h1>
+  const buttons = [
+    {
+      label: "Featured",
+      onClick: () => localProduct && handleFeatureToggle(localProduct, setLocalProduct),
+      className: localProduct?.is_featured ? "rounded-full bg-green-700 text-white hover:bg-white hover:text-green-700" : "rounded-full text-green-700 bg-white hover:bg-green-700 hover:text-white",
+    },
+    {
+      label: "Discounted",
+      onClick: () => {}, 
+      className: "rounded-full bg-green-700 text-white hover:bg-white hover:text-green-700"
+    },
+    {
+      label: "Delete",
+      onClick: () => handleDeleteProduct(id),
+      className: "rounded-full bg-green-700 text-white hover:bg-white hover:text-green-700"
+    },
+  ];
 
-      {role === "seller" && (
-        <div className="flex">
-          <Button
-            onClick={() =>
-              localProduct && handleFeatureToggle(localProduct, setLocalProduct)
-            }
-          >
-            Featured{" "}
-          </Button>
-          <Button>Discounted </Button>
-          <Button onClick={() => handleDeleteProduct(id)}>Delete </Button>
-          <EditProductDialog
-            id={id}
-            product={localProduct}
-            onLocalUpdate={setLocalProduct}
-          >
-            Update Product
-          </EditProductDialog>
+  return (
+    <div className="w-full p-6">
+      <div>
+        <div className="text-xl mb-4">Product Details</div>
+      </div>
+
+      <div className="flex gap-3">
+        <Card className="w-[20vw] h-[40vh] p-0">
+          <CardContent className="flex items-center justify-center h-full p-0">
+            <img
+              src={`http://127.0.0.1:8000/storage/${product?.image}`}
+              alt="Product Image"
+              className="object-cover w-full h-full rounded-xl"
+            />
+          </CardContent>
+        </Card>
+
+        <div>
+          <div className="text-lg">{product?.name}</div>
+          <div className="text-lg">Stocks: {product?.quantity}</div>
+          <div className="text-lg">Price: {product?.price}</div>
         </div>
-      )}
+      </div>
+
+      <div className="flex mt-5 gap-2">
+        <div className="flex gap-2">
+
+        {buttons.map((button, index) => (
+          <Button key={index} className={button.className} onClick={button.onClick}>
+            {button.label}
+          </Button>
+        ))}
+        </div>
+        <EditProductDialog
+          id={id}
+          product={localProduct}
+          onLocalUpdate={setLocalProduct}
+        >
+          Update Product
+        </EditProductDialog>
+      </div>
     </div>
   );
 };
@@ -117,7 +149,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild className="cursor-pointer">
-        <Button>{children}</Button>
+        <Button className="rounded-full bg-green-700">{children}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Update Product</DialogTitle>
@@ -142,7 +174,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
         </div>
         <DialogFooter>
           <DialogClose asChild>
-          <Button onClick={handleSubmitUpdate}>Update</Button>
+            <Button onClick={handleSubmitUpdate}>Update</Button>
           </DialogClose>
           <DialogClose asChild>
             <Button>Cancel</Button>
@@ -155,7 +187,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
 
 const FeedbackContainer = () => {
   return (
-    <div className=" w-full text-center p-10">
+    <div className=" w-full p-10">
       <div className="text-2xl mb-5">Feedbacks</div>
       <div className="w-full flex flex-col gap-4 h-[90%] overflow-y-auto">
         {Array.from({ length: 15 }).map((_, index) => (
