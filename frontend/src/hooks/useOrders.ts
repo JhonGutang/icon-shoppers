@@ -24,7 +24,8 @@ export const useOrders = () => {
         ? data 
         : data.filter((order) => {
             const orderStatus = order.status.toLowerCase();
-            const filterStatus = status.toLowerCase().replace(/ /g, "_");
+            
+            const filterStatus = status?.toLowerCase().replace(/ /g, "_");
             
             // Handle special case for "approved" status
             if (status === "approved") {
@@ -46,6 +47,7 @@ export const useOrders = () => {
   };
 
   const handleStatusUpdate = async (orderId: string, newStatus: OrderStatus) => {
+    if(!token) return
     try {
       setLoading(true);
       let result;
@@ -55,7 +57,7 @@ export const useOrders = () => {
       } else if (newStatus === 'to_be_delivered') {
         result = await orderService.approveOrder(token, orderId);
       } else {
-        result = await orderService.updateOrderStatus(token, orderId, newStatus);
+        result = await orderService.updateOrderStatus(token, Number(orderId), newStatus);
       }
 
       if (result.success) {
