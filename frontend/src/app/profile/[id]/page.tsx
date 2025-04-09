@@ -15,6 +15,7 @@ import useProductAction from "@/hooks/useProductActions";
 import { Product, productFields, ProductToUpdate } from "@/types/product";
 import { useEffect, use, useState, ReactNode } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import EditProduct from "@/components/EditProduct";
 
 const ProductPage = ({ params }: { params: Promise<{ id: number }> }) => {
   const { handleFetchSpecificProduct, product } = useProductAction();
@@ -69,7 +70,9 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
       <div>
         <div className="text-xl mb-4">Product Details</div>
       </div>
-
+      <div>
+        <EditProduct/>
+      </div>
       <div className="flex gap-3">
         <Card className="w-[20vw] h-[40vh] p-0">
           <CardContent className="flex items-center justify-center h-full p-0">
