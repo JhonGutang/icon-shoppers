@@ -62,9 +62,10 @@ export const addProduct = async (data: newProduct, token: string) => {
 };
 
 export const updateProduct = async (data: ProductToUpdate, token: string) => {
-  const response = await axiosInstance.put(`product/${data.id}`, data, {
+  const response = await axiosInstance.post(`product/${data.id}`, data.formData, {
     headers: {
       Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
     },
   });
   return response.data;
