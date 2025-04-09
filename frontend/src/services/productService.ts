@@ -62,7 +62,7 @@ export const addProduct = async (data: newProduct, token: string) => {
 };
 
 export const updateProduct = async (data: ProductToUpdate, token: string) => {
-  const response = await axiosInstance.patch(`product/${data.id}`, data, {
+  const response = await axiosInstance.put(`product/${data.id}`, data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -71,7 +71,7 @@ export const updateProduct = async (data: ProductToUpdate, token: string) => {
 };
 
 export const deleteProduct = async (id: number, token: string) => {
-  await axiosInstance.delete(`/products/${id}`, {
+  await axiosInstance.delete(`/product/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

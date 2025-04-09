@@ -15,6 +15,7 @@ import useProductAction from "@/hooks/useProductActions";
 import { Product, productFields, ProductToUpdate } from "@/types/product";
 import { useEffect, use, useState, ReactNode } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import EditProduct from "@/components/EditProduct";
 
 const ProductPage = ({ params }: { params: Promise<{ id: number }> }) => {
   const { handleFetchSpecificProduct, product } = useProductAction();
@@ -39,7 +40,7 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
   product,
   id,
 }) => {
-  const { handleDeleteProduct, handleFeatureToggle } = useProductAction();
+  const { handleDeleteProduct, handleFeatureToggle, handleUpdateProduct, handleFetchSpecificProduct } = useProductAction();
   const [localProduct, setLocalProduct] = useState(product);
 
   useEffect(() => {
@@ -64,46 +65,50 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
     },
   ];
 
+  const handleProductUpdate = async (updatedProduct: Product) => {
+    await handleFetchSpecificProduct(id);
+    setLocalProduct(updatedProduct);
+  };
+
   return (
     <div className="w-full p-6">
-      <div>
-        <div className="text-xl mb-4">Product Details</div>
-      </div>
+      <div className="text-xl mb-4">Product Details</div>
+      <div className="flex gap-6">
+        <div className="flex-1">
+          <div className="flex gap-3">
+            <Card className="w-[20vw] h-[40vh] p-0">
+              <CardContent className="flex items-center justify-center h-full p-0">
+                <img
+                  src={`http://127.0.0.1:8000/storage/${product?.image}`}
+                  alt="Product Image"
+                  className="object-cover w-full h-full rounded-xl"
+                />
+              </CardContent>
+            </Card>
 
-      <div className="flex gap-3">
-        <Card className="w-[20vw] h-[40vh] p-0">
-          <CardContent className="flex items-center justify-center h-full p-0">
-            <img
-              src={`http://127.0.0.1:8000/storage/${product?.image}`}
-              alt="Product Image"
-              className="object-cover w-full h-full rounded-xl"
-            />
-          </CardContent>
-        </Card>
+            <div>
+              <div className="text-lg">{product?.name}</div>
+              <div className="text-lg">Stocks: {product?.quantity}</div>
+              <div className="text-lg">Price: {product?.price}</div>
+            </div>
+          </div>
 
-        <div>
-          <div className="text-lg">{product?.name}</div>
-          <div className="text-lg">Stocks: {product?.quantity}</div>
-          <div className="text-lg">Price: {product?.price}</div>
+          <div className="flex mt-5 gap-2">
+            <div className="flex gap-2">
+              {buttons.map((button, index) => (
+                <Button key={index} className={button.className} onClick={button.onClick}>
+                  {button.label}
+                </Button>
+              ))}
+            </div>
+            {localProduct && (
+              <EditProduct 
+                product={localProduct}
+                onSave={handleProductUpdate}
+              />
+            )}
+          </div>
         </div>
-      </div>
-
-      <div className="flex mt-5 gap-2">
-        <div className="flex gap-2">
-
-        {buttons.map((button, index) => (
-          <Button key={index} className={button.className} onClick={button.onClick}>
-            {button.label}
-          </Button>
-        ))}
-        </div>
-        <EditProductDialog
-          id={id}
-          product={localProduct}
-          onLocalUpdate={setLocalProduct}
-        >
-          Update Product
-        </EditProductDialog>
       </div>
     </div>
   );
