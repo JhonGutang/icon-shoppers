@@ -1,14 +1,15 @@
 // components/EditProduct.tsx
-import { Product } from "@/types/product";
+
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogFooter, DialogClose, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Camera } from "lucide-react";
+import { Product } from "@/types/product";
 import { updateProduct } from "@/services/productService";
 import useToken from "@/stores/useAuthStore";
-import { Camera } from "lucide-react";
 
 interface EditProductProps {
   product: Product | undefined;
@@ -16,12 +17,7 @@ interface EditProductProps {
 }
 
 const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    quantity: "",
-    price: "",
-  });
-
+  const [formData, setFormData] = useState({ name: "", quantity: "", price: "" });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -29,35 +25,41 @@ const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
   const accessToken = useToken((state) => state.accessToken);
 
   useEffect(() => {
-    if (product) {
-      setFormData({
-        name: product.name || "",
-        quantity: product.quantity?.toString() || "",
-        price: product.price.toString(),
-      });
-      setImagePreview(`http://127.0.0.1:8000/storage/${product.image}`);
-    }
+    if (product) populateFormFromProduct(product);
   }, [product]);
+
+  const populateFormFromProduct = (product: Product) => {
+    setFormData({
+      name: product.name ?? "",
+      quantity: product.quantity?.toString() ?? "",
+      price: product.price?.toString() ?? "",
+    });
+    setImagePreview(`http://127.0.0.1:8000/storage/${product.image}`);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData(prev => ({ ...prev, [id]: value }));
   };
 
+  const validateImageFile = (file: File) => {
+    const isValidType = /^image\/(jpeg|png|gif|jpg)$/.test(file.type);
+    const isValidSize = file.size <= 5 * 1024 * 1024;
+
+    if (!isValidType) {
+      toast.error("Please select a valid image file (JPEG, PNG, GIF, JPG)");
+      return false;
+    }
+    if (!isValidSize) {
+      toast.error("Image size should be less than 5MB");
+      return false;
+    }
+    return true;
+  };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (!file.type.match(/^image\/(jpeg|png|gif|jpg)$/)) {
-        toast.error('Please select a valid image file (JPEG, PNG, GIF)');
-        return;
-      }
-      
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (file.size > maxSize) {
-        toast.error('Image size should be less than 5MB');
-        return;
-      }
-
+    if (file && validateImageFile(file)) {
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
     }
@@ -68,35 +70,23 @@ const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
     if (!accessToken || !product) return;
 
     setIsLoading(true);
-
     try {
       const form = new FormData();
-      form.append('name', formData.name);
-      form.append('quantity', formData.quantity);
-      form.append('price', formData.price);
-      
-      if (imageFile) {
-        form.append('image', imageFile);
-      }
+      form.append("name", formData.name);
+      form.append("quantity", formData.quantity);
+      form.append("price", formData.price);
+      if (imageFile) form.append("image", imageFile);
+      form.append("_method", "PUT");
 
-      form.append('_method', 'PUT');
-
-      const updatedProduct = await updateProduct({
-        id: product.id,
-        formData: form,
-      }, accessToken);
-
+      const updatedProduct = await updateProduct({ id: product.id, formData: form }, accessToken);
       toast.success("Product updated successfully");
       onSave(updatedProduct);
       setOpen(false);
     } catch (error: any) {
-      console.error(error);
-      if (error.response?.data?.errors) {
-        const errorMessages = Object.values(error.response.data.errors).flat();
-        errorMessages.forEach((message: string) => toast.error(message));
-      } else {
-        toast.error("Failed to update product");
-      }
+      const messages = error.response?.data?.errors
+        ? Object.values(error.response.data.errors).flat()
+        : ["Failed to update product"];
+      messages.forEach((msg: string) => toast.error(msg));
     } finally {
       setIsLoading(false);
     }
@@ -105,7 +95,9 @@ const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="bg-green-700 text-white hover:bg-white hover:text-green-700">Edit Product</Button>
+        <Button variant="outline" className="bg-green-700 text-white hover:bg-white hover:text-green-700">
+          Edit Product
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-xs sm:max-w-sm md:max-w-md w-full p-4 sm:p-6">
         <DialogTitle className="text-lg sm:text-xl">Edit Product</DialogTitle>
@@ -173,7 +165,7 @@ const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
               {isLoading ? "Saving..." : "Save Changes"}
             </Button>
             <DialogClose asChild>
-              <Button type="button" variant="outline" className="w-full sm:w-auto">
+              <Button type="button" variant="outline" className="w-full sm:w-auto" disabled={isLoading}>
                 Cancel
               </Button>
             </DialogClose>
