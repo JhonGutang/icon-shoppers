@@ -6,7 +6,7 @@
           "commands": [
             "cd backend",
             "composer install",
-            "php artisan migrate",
+            "php artisan migrate --seed",
             "php artisan storage:link",
           ]
         },
