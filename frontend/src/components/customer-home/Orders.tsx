@@ -42,7 +42,7 @@ const Orders = () => {
                         <div className="flex  items-center gap-2">
                           <div>
                             <img
-                              src={`http://192.168.1.6:8000/storage/${product.image}`}
+                              src={`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`}
                               alt=""
                               className="w-[80px]"
                             />
