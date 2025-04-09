@@ -40,7 +40,7 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
   product,
   id,
 }) => {
-  const { handleDeleteProduct, handleFeatureToggle, handleUpdateProduct } = useProductAction();
+  const { handleDeleteProduct, handleFeatureToggle, handleUpdateProduct, handleFetchSpecificProduct } = useProductAction();
   const [localProduct, setLocalProduct] = useState(product);
 
   useEffect(() => {
@@ -64,6 +64,11 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
       className: "rounded-full bg-green-700 text-white hover:bg-white hover:text-green-700"
     },
   ];
+
+  const handleProductUpdate = async (updatedProduct: Product) => {
+    await handleFetchSpecificProduct(id);
+    setLocalProduct(updatedProduct);
+  };
 
   return (
     <div className="w-full p-6">
@@ -96,24 +101,13 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
                 </Button>
               ))}
             </div>
-            <EditProductDialog
-              id={id}
-              product={localProduct}
-              onLocalUpdate={setLocalProduct}
-            >
-              Update Product
-            </EditProductDialog>
+            {localProduct && (
+              <EditProduct 
+                product={localProduct}
+                onSave={handleProductUpdate}
+              />
+            )}
           </div>
-        </div>
-
-        <div className="w-1/2">
-          {localProduct && (
-            <EditProduct 
-              product={localProduct}
-              onSave={(updated) => handleUpdateProduct(updated, setLocalProduct)}
-              onCancel={() => {}}
-            />
-          )}
         </div>
       </div>
     </div>

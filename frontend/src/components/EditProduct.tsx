@@ -5,13 +5,13 @@ import { Dialog, DialogContent, DialogTitle, DialogFooter, DialogClose, DialogTr
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import axiosInstance from "@/hooks/useAxios";
 import { toast } from "sonner";
-import axios from "axios";
+import { updateProduct } from "@/services/productService";
+import useToken from "@/stores/useAuthStore";
 
 interface EditProductProps {
   product: Product | undefined;
-  onSave?: () => void;
+  onSave: (updatedProduct: Product) => void;
 }
 
 const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
@@ -22,12 +22,13 @@ const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const accessToken = useToken((state) => state.accessToken);
 
   useEffect(() => {
     if (product) {
       setFormData({
         name: product.name || "",
-        quantity: product.quantity.toString(),
+        quantity: product.quantity?.toString() || "",
         price: product.price.toString(),
       });
     }
@@ -40,37 +41,42 @@ const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!accessToken || !product) return;
+
     setIsLoading(true);
 
     try {
-      await axiosInstance.put(`/products/${product?.id}`, {
+      const updatedProduct = await updateProduct({
+        id: product.id,
         name: formData.name,
         quantity: Number(formData.quantity),
-        price: Number(formData.price),
-      });
+        price: formData.price,
+      }, accessToken);
 
       toast.success("Product updated successfully");
-      onSave?.();
-      document.querySelector('[aria-label="Close"]')?.click();
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || "Update failed");
-      } else {
-        toast.error("Unexpected error");
-      }
+      onSave(updatedProduct);
+      setOpen(false);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update product");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const [open, setOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="bg-green-700 text-white hover:bg-white hover:text-green-700">Edit Product</Button>
+        <Button variant="outline" className="bg-green-700 text-white hover:bg-white hover:text-green-700" onClick={() => setOpen(true)}>Edit Product</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Edit Product</DialogTitle>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={async (e) => {
+          await handleSubmit(e);
+          setOpen(false);
+        }} className="space-y-4">
           <div>
             <Label htmlFor="name">Product Name</Label>
             <Input id="name" value={formData.name} onChange={handleInputChange} required disabled={isLoading} />
