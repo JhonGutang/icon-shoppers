@@ -10,6 +10,7 @@ require __DIR__.'/api/auth.php';
 require __DIR__.'/api/order.php';
 require __DIR__.'/api/shop.php';
 require __DIR__.'/api/cart.php';
+require __DIR__.'/api/rating.php';
 
 Route::get('/user', function (Request $request) {
     return $request->user();
