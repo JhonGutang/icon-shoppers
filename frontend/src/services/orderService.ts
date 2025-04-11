@@ -2,7 +2,6 @@ import axiosInstance from "@/hooks/useAxios";
 import { Order } from "@/types/order";
 import { ProductWithShop } from "@/types/product";
 
-// Helper to generate headers
 const authHeader = (token: string) => ({
   headers: {
     Authorization: `Bearer ${token}`,
@@ -21,10 +20,9 @@ export const orderService = {
   async fetchOrders(token: string, status?: string): Promise<Order[]> {
     try {
       const queryStatus = normalizeStatus(status);
-      // Only add status parameter if it's not "All"
       const url = status !== "All" ? `/orders?status=${queryStatus}` : "/orders";
       const response = await axiosInstance.get<Order[]>(url, authHeader(token));
-      console.log('API Response:', response.data); // Debug log
+      console.log('API Response:', response.data);
       return response.data;
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -53,7 +51,7 @@ export const orderService = {
       const response = await axiosInstance.put(
         `/orders/${orderId}/approve`,
         {},
-        {
+        { 
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -92,5 +90,6 @@ export const orderService = {
   async fetchCustomerOrders(token: string): Promise<ProductWithShop[]> {
     const response = await axiosInstance.get<ProductWithShop[]>("/customer/orders", authHeader(token));
     return response.data;
+    
   }
 };
