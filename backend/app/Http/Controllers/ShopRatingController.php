@@ -44,11 +44,13 @@ class ShopRatingController extends Controller
 
     public function getShopRatings($shopId)
     {
-        $ratings = ShopRating::with('customer')
-            ->where('shop_id', $shopId)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $shop=Shop::findOrFail($shopId);
 
-        return response()->json($ratings);
+        $ratings= $shop->ratings()->with('customer')->orderBy('created_at', 'desc')->get();
+        $averageRating =$shop-> ratings()->avg('rating_score');
+
+        return response()->json([
+            'ratings' => $ratings, 'average_rating'=>round($averageRating, 2)
+        ]);
     }
 }

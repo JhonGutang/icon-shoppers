@@ -45,11 +45,13 @@ class ProductRatingController extends Controller
 
     public function getProductRatings($productId)
     {
-        $ratings = ProductRating::with('customer')
-            ->where('product_id', $productId)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $product=Product::findOrFail($productId);
 
-        return response()->json($ratings);
+        $ratings= $product->ratings()->with('customer')->orderBy('created_at', 'desc')->get();
+        $averageRating =$product-> ratings()->avg('rating_score');
+
+        return response()->json([
+            'ratings' => $ratings, 'average_rating'=>round($averageRating, 2)
+        ]);
     }
 }
