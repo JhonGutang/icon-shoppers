@@ -230,12 +230,7 @@ const ProductDetails = ({
             }`}
           >
             <p className="md:text-base">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat id
-              ex, dolorum placeat repudiandae nulla dolorem ipsa! Quia quod tempora
-              error quae nesciunt unde culpa iure voluptatum excepturi similique
-              eveniet exercitationem magnam dolorum consequatur eaque, itaque
-              doloribus. Vero, molestias placeat rerum suscipit vel tempora nam
-              reiciendis cumque tenetur velit consectetur.
+              {product?.description || "No description provided."}
             </p>
           </div>
           

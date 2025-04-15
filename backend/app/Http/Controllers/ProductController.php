@@ -105,6 +105,7 @@ class ProductController extends Controller
             'price' => $product->price,
             'quantity' => $product->quantity,
             'image' => $product->image,
+            'description'=> $product->description,
             'is_visible' => $product->is_visible,
             'is_featured' => $product->is_featured,
             'shop_name' => $product->shop->name ?? null,
