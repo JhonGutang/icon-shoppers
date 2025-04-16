@@ -142,9 +142,7 @@ const ProductDetails = ({
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mt-4 gap-3">
           <div className="flex items-baseline gap-2">
             <span className="font-bold text-2xl md:text-3xl text-gray-900">₱{product?.price}</span>
-            {product?.old_price && (
-              <span className="text-gray-400 line-through text-sm md:text-base">₱{product.old_price}</span>
-            )}
+
           </div>
           
           <div className="flex items-center text-sm md:text-base text-gray-500">
