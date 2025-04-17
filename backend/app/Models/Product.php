@@ -19,7 +19,7 @@ class Product extends Model
 
     public function shop()
     {
-        return $this->belongsTo(Shop::class, 'shop_id'); // Ensure the correct foreign key is used
+        return $this->belongsTo(Shop::class, 'shop_id');
     }
 
 
