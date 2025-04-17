@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Camera } from "lucide-react";
 import { Product } from "@/types/product";
 import { updateProduct } from "@/services/productService";
+import { useSnackbar } from "./context/SnackbarContext";
 import useToken from "@/stores/useAuthStore";
 
 interface EditProductProps {
@@ -17,6 +18,7 @@ interface EditProductProps {
 }
 
 const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
+  const {openSnackbar} = useSnackbar()
   const [formData, setFormData] = useState({ name: "", quantity: "", price: "" });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
@@ -76,17 +78,16 @@ const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
       form.append("quantity", formData.quantity);
       form.append("price", formData.price);
       if (imageFile) form.append("image", imageFile);
-      form.append("_method", "PUT");
 
-      const updatedProduct = await updateProduct({ id: product.id, formData: form }, accessToken);
-      toast.success("Product updated successfully");
+      const updatedProduct = await updateProduct( product.id, form, accessToken);
+      openSnackbar('Product Updated Successfully', 'success')
+      setTimeout(() => {
+        window.location.reload()
+      }, 1000);
       onSave(updatedProduct);
       setOpen(false);
-    } catch (error: any) {
-      const messages = error.response?.data?.errors
-        ? Object.values(error.response.data.errors).flat()
-        : ["Failed to update product"];
-      messages.forEach((msg: string) => toast.error(msg));
+    } catch (error) {
+      openSnackbar('Update Failed', 'error');
     } finally {
       setIsLoading(false);
     }

@@ -20,7 +20,7 @@ Route::get('search-products', [ProductController::class, 'searchProducts']);
 Route::middleware('auth:shop-api')->group(function () {
     Route::get('/products', [ProductController::class,'index']);
     Route::post('/product', [ProductController::class, 'create']);
-    Route::put('/product/{id}', [ProductController::class,'update']);
+    Route::post('/product/{id}', [ProductController::class,'update']);
     Route::delete('/products/{product}', [ProductController::class, 'destroy']);
 });
 ?>
