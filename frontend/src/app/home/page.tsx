@@ -22,8 +22,8 @@ const Home = () => {
         setActiveComponent={setActiveComponent}
       />
         {activeComponent === "Home" && <Default />}
-        {activeComponent === "Products" && <Products />}
-        {activeComponent === "Shops" && <Shops />}
+        {activeComponent === "Products" && <Products location="Products" />}
+        {activeComponent === "Shops" && <Shops  location="Shops"/>}
         {activeComponent === "Cart" && <Checkout />}
         {activeComponent === "Check Orders" && <Orders />}
         {activeComponent === "My Account" && <Profile />}

@@ -94,7 +94,7 @@ const ProductImage = ({ product }: { product?: Product }) => {
     <div className="relative bg-gray-100 h-80 md:h-full md:min-h-96">
       <div className="h-full flex items-center justify-center p-4 md:p-8">
         <img
-          src={`http://192.168.1.6:8000/storage/${product?.image}`}
+          src={`http://127.0.0.1:8000/storage/${product?.image}`}
           alt={product?.name || "Product Image"}
           className="h-full object-contain md:max-h-96"
         />
@@ -218,9 +218,7 @@ const ProductDetails = ({
               isExpanded ? "max-h-full" : "max-h-32 md:max-h-48"
             }`}
           >
-            <p className="md:text-base">
-              {product?.description || "No description provided."}
-            </p>
+           
           </div>
           
           <button
@@ -242,7 +240,7 @@ const ProductDetails = ({
               <StarRating initialRating={2} onChange={(rating) => console.log(rating,)} />
             </div>
             <div className="pt-2">
-              <Feedback productId={product?.id} />
+              <Feedback />
             </div>
           </div>
         </div>
