@@ -121,7 +121,7 @@ const useProductAction = () => {
       openSnackbar(`Product visibility is now ${updatedVisibility ? "visible" : "hidden"}`, "info");
 
       const productWithoutImage = { ...updatedProduct, image: null };
-      await updateProduct(productWithoutImage, token);
+      await updateProduct(productWithoutImage.id, productWithoutImage, token);
     } catch (error) {
       console.error(error);
       openSnackbar("Failed to update product visibility", "error");
@@ -143,7 +143,8 @@ const useProductAction = () => {
       }
 
       const productWithoutImage = { ...updatedProductFeature, image: null };
-      await updateProduct(productWithoutImage, token);
+
+      await updateProduct( productWithoutImage.id, productWithoutImage, token);
     } catch (error) {
       console.error(error);
       openSnackbar("Feature toggle failed: Reverting Back", "error");
