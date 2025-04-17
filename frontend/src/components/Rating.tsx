@@ -7,37 +7,42 @@ interface StarRatingProps {
   readonly?: boolean;
 }
 
-const StarRating: React.FC<StarRatingProps> = ({ 
-  initialRating = 0, 
+const StarRating: React.FC<StarRatingProps> = ({
+  initialRating = 0,
   onChange,
-  readonly = false 
+  readonly = false,
 }) => {
-    const [rating, setRating] = useState(initialRating);
-    const [hover, setHover] = useState(0);
+  const [rating, setRating] = useState(initialRating);
+  const [hover, setHover] = useState(0);
 
-    const handleRating = (value: number) => {
-        if (readonly) return;
-        setRating(value);
-        onChange?.(value);
-    };
+  const handleRating = (value: number) => {
+    if (readonly) return;
+    setRating(value);
+    onChange?.(value);
+  };
 
-    return ( 
-        <div className="w-full flex lg:gap-2">
-            {[1, 2, 3, 4, 5].map((star) => (
-                <Star
-                    key={star}
-                    className={`cursor-pointer ${
-                        star <= (hover || rating) 
-                            ? "fill-yellow-400 text-yellow-400" 
-                            : "text-gray-300"
-                    }`}
-                    onMouseEnter={() => !readonly && setHover(star)}
-                    onMouseLeave={() => !readonly && setHover(0)}
-                    onClick={() => handleRating(star)}
-                />
-            ))}
-        </div>
-    );
-}
+  return (
+    <div className="w-full flex lg:gap-2">
+      {[1, 2, 3, 4, 5].map((star) => {
+        const isActive = star <= (hover || rating);
+        return (
+          <Star
+            key={star}
+            size={24}
+            fill={isActive ? "#facc15" : "none"}
+            stroke={isActive ? "#facc15" : "#d1d5db"}
+            strokeWidth={2}
+            className={`cursor-pointer transition-colors duration-150 ${
+              readonly ? "pointer-events-none" : ""
+            }`}
+            onMouseEnter={() => !readonly && setHover(star)}
+            onMouseLeave={() => !readonly && setHover(0)}
+            onClick={() => handleRating(star)}
+          />
+        );
+      })}
+    </div>
+  );
+};
 
 export default StarRating;
