@@ -7,13 +7,18 @@ import CheckoutContainer from "@/components/CheckoutContainer";
 import React, { useEffect, useState } from "react";
 import CheckoutPage from "@/components/mobile/CheckoutPage";
 import { useIsMobile } from "@/hooks/use-mobile";
-
+import { useRouter } from "next/navigation";
+import { Button } from "../ui/button";
 const Checkout = () => {
-  const isMobile = useIsMobile(); 
+  const isMobile = useIsMobile();
   const { handleOrdersToCheckout } = useCustomerActions();
-  const [productsWithShops, setProductsWithShops] = useState<ProductWithShop[] | null>(null);
-  const [checkedShops, setCheckedShops] = useState<{ [key: string]: boolean }>({});
-
+  const [productsWithShops, setProductsWithShops] = useState<
+    ProductWithShop[] | null
+  >(null);
+  const [checkedShops, setCheckedShops] = useState<{ [key: string]: boolean }>(
+    {}
+  );
+  const router = useRouter();
   useEffect(() => {
     const fetchProducts = async () => {
       const products = await handleOrdersToCheckout();
@@ -28,7 +33,21 @@ const Checkout = () => {
     fetchProducts();
   }, []);
 
-  if (!productsWithShops) return <div className="w-full h-screen flex justify-center items-center text-2xl">Loading Please Wait</div>;
+  if (!productsWithShops)
+    return (
+      <div className="w-full h-screen flex justify-center items-center text-2xl">
+        Loading Please Wait
+      </div>
+    );
+  if (productsWithShops.length === 0)
+    return (
+      <div className="flex flex-col gap-2 items-center justify-center h-[80vh]">
+        <div className="text-lg font-bold mb-5">Cart is Empty</div>
+        <Button onClick={() => router.push("/home?section=Products")}>
+          Find Products you Fancy
+        </Button>
+      </div>
+    );
 
   return (
     <div className="w-full">
@@ -81,19 +100,13 @@ const Cart: React.FC<CartProps> = ({
   checkedShops,
   setCheckedShops,
 }) => {
-  if (!productsWithShops || productsWithShops.length === 0) {
-    return (
-      <div className="w-[35vw] border-2 h-full p-4">
-        <div className="text-center mt-10">No pending orders.</div>
-      </div>
-    );
-  }
+
 
   return (
     <div className="w-[35vw] border-2 rounded-lg h-full p-4 overflow-y-auto">
       <h2 className="text-xl font-bold mb-4">Shops with Pending Orders</h2>
       <ul>
-        {productsWithShops.map(({ shop }) => (
+        {productsWithShops?.map(({ shop }) => (
           <li
             key={shop.id}
             className="mb-3 border-b pb-2 flex items-center justify-between px-5"
