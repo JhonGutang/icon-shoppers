@@ -21,7 +21,7 @@ const CustomerAuth = () => {
   ];
 
   return (
-    <AuthLayout>
+    <AuthLayout role="customer">
       {defaultAuth === "login" ? (
         <Login fields={loginField} role="customer" setAuth={setDefaultAuth} />
       ) : (
