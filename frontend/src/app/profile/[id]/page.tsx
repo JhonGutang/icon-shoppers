@@ -3,9 +3,11 @@ import Feedback from "@/components/Feedback";
 import { Button } from "@/components/ui/button";
 import useProductAction from "@/hooks/useProductActions";
 import { Product } from "@/types/product";
-import { useEffect, use, useState, ReactNode } from "react";
+import { useEffect, use, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import EditProduct from "@/components/EditProduct";
+import { ChevronLeft } from "lucide-react";
+import useRedirectLink from "@/hooks/useRedirectLink";
 
 const ProductPage = ({ params }: { params: Promise<{ id: number }> }) => {
   const { handleFetchSpecificProduct, product } = useProductAction();
@@ -30,9 +32,13 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
   product,
   id,
 }) => {
-  const { handleDeleteProduct, handleFeatureToggle,  handleFetchSpecificProduct } = useProductAction();
+  const {
+    handleDeleteProduct,
+    handleFeatureToggle,
+    handleFetchSpecificProduct,
+  } = useProductAction();
   const [localProduct, setLocalProduct] = useState(product);
-
+  const { redirectLink } = useRedirectLink();
   useEffect(() => {
     setLocalProduct(product);
   }, [product]);
@@ -40,18 +46,23 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
   const buttons = [
     {
       label: "Featured",
-      onClick: () => localProduct && handleFeatureToggle(localProduct, setLocalProduct),
-      className: localProduct?.is_featured ? "rounded-full bg-green-700 text-white hover:bg-white hover:text-green-700" : "rounded-full text-green-700 bg-white hover:bg-green-700 hover:text-white",
+      onClick: () =>
+        localProduct && handleFeatureToggle(localProduct, setLocalProduct),
+      className: localProduct?.is_featured
+        ? "rounded-full bg-green-700 text-white hover:bg-white hover:text-green-700"
+        : "rounded-full text-green-700 bg-white hover:bg-green-700 hover:text-white",
     },
     {
       label: "Discounted",
-      onClick: () => {}, 
-      className: "rounded-full bg-green-700 text-white hover:bg-white hover:text-green-700"
+      onClick: () => {},
+      className:
+        "rounded-full bg-green-700 text-white hover:bg-white hover:text-green-700",
     },
     {
       label: "Delete",
       onClick: () => handleDeleteProduct(id),
-      className: "rounded-full bg-green-700 text-white hover:bg-white hover:text-green-700"
+      className:
+        "rounded-full bg-red-700 text-white hover:bg-white hover:text-green-700",
     },
   ];
 
@@ -62,14 +73,27 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
 
   return (
     <div className="w-full p-6">
-      <div className="text-xl mb-4">Product Details</div>
+      <div className="w-full flex mb-4 gap-3 items-center">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => redirectLink("profile")}
+        >
+          <ChevronLeft size={30} />
+        </Button>
+        <div className="text-xl">Product Details</div>
+      </div>
       <div className="flex gap-6">
         <div className="flex-1">
           <div className="flex gap-3">
             <Card className="w-[20vw] h-[40vh] p-0">
               <CardContent className="flex items-center justify-center h-full p-0">
                 <img
-                  src={product?.image ?? "https://i.pinimg.com/736x/c5/a0/03/c5a00375d647591a14dd36e31151acb1.jpg"}
+                  src={
+                    product?.image
+                      ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`
+                      : "https://i.pinimg.com/736x/c5/a0/03/c5a00375d647591a14dd36e31151acb1.jpg"
+                  }
                   alt="Product Image"
                   className="object-cover w-full h-full rounded-xl"
                 />
@@ -83,27 +107,33 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
             </div>
           </div>
 
-          <div className="flex mt-5 gap-2">
-            <div className="flex gap-2">
-              {buttons.map((button, index) => (
-                <Button key={index} className={button.className} onClick={button.onClick}>
-                  {button.label}
-                </Button>
-              ))}
+          <div className="mt-5">
+            <div className="text-xl">Actions</div>
+            <div className="flex mt-2  gap-2">
+              <div className="flex gap-2">
+                {buttons.map((button, index) => (
+                  <Button
+                    key={index}
+                    className={button.className}
+                    onClick={button.onClick}
+                  >
+                    {button.label}
+                  </Button>
+                ))}
+              </div>
+              {localProduct && (
+                <EditProduct
+                  product={localProduct}
+                  onSave={handleProductUpdate}
+                />
+              )}
             </div>
-            {localProduct && (
-              <EditProduct 
-                product={localProduct}
-                onSave={handleProductUpdate}
-              />
-            )}
           </div>
         </div>
       </div>
     </div>
   );
 };
-
 
 const FeedbackContainer = () => {
   return (

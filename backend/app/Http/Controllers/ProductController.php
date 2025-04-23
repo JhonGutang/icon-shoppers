@@ -178,8 +178,7 @@ class ProductController extends Controller
         // Handle image upload
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('products', 'public');
-            // Store the full URL in the 'image' field
-            $updateData['image'] = asset('storage/' . $imagePath);
+            $updateData['image'] = $imagePath;
         }
 
         $updateData = array_filter($updateData, fn($value) => !is_null($value));

@@ -23,6 +23,12 @@ const Register: React.FC<RegisterFormProps> = ({ fields, role, setAuth }) => {
     }
   }
 
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      redirectIfSuccessful();
+    }
+  };
+
   return (
     <div>
       <div className="flex flex-col gap-3 lg:h-[20vw] h-[30vh] overflow-y-auto mb-5">
@@ -39,6 +45,7 @@ const Register: React.FC<RegisterFormProps> = ({ fields, role, setAuth }) => {
                 ""
               }
               onChange={(event) => handleInputs(event, "register")}
+              onKeyDown={handleKeyPress}
             />
           </div>
         ))}

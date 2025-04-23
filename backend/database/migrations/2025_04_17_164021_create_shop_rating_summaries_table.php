@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('shop_rating_summaries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('shop_id')->constrained('shops')->=onDelete('cascade');
+            $table->foreignId('shop_id')->constrained('shops')->onDelete('cascade');
             $table->integer('rating_count')->default(0);
             $table->decimal('average_rating_score'. 3, 2)->nullable()->default(null);
         });

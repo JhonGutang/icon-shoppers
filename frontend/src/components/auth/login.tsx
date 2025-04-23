@@ -12,6 +12,12 @@ type LoginFormProps = {
 const Login:React.FC<LoginFormProps> = ({ fields, role, setAuth }) => {
   const { loginFormData, handleInputs, handleLogin } = useAuth();
 
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleLogin(role);
+    }
+  };
+
   return (
     <>
       <div className="w-full flex flex-col gap-7">
@@ -25,6 +31,7 @@ const Login:React.FC<LoginFormProps> = ({ fields, role, setAuth }) => {
               type={field.type}
               value={loginFormData[field.id as keyof typeof loginFormData]}
               onChange={(event) => handleInputs(event, "login")}
+              onKeyDown={handleKeyPress}
             />
           </div>
         ))}
