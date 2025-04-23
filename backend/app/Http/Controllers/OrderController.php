@@ -166,16 +166,15 @@ class OrderController extends Controller
         try {
             $order = Order::findOrFail($id);
 
-            // Update the order status to rejected and completed
             $order->update([
-                'status' => 'completed'
+                'status' => 'rejected'
             ]);
 
             \Log::info('Order rejected successfully:', ['id' => $order->id, 'new_status' => $order->status]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Order rejected and marked as completed',
+                'message' => 'Order rejected.',
                 'order' => $order
             ]);
 

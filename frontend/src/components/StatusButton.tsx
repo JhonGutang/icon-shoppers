@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Check, X, Truck } from "lucide-react"
 
@@ -8,14 +7,9 @@ interface StatusButtonsProps {
   status?: string
 }
 
-export function StatusButtons({ onApprove, onReject, status: initialStatus }: StatusButtonsProps) {
-  const [status, setStatus] = useState(initialStatus)
-
+export function StatusButtons({ onApprove, onReject, status }: StatusButtonsProps) {
   const handleStartDelivery = () => {
-    // Optionally call external logic
     onApprove?.()
-    // Then update local UI status
-    setStatus("delivering")
   }
 
   if (status === 'delivering') {
@@ -27,10 +21,11 @@ export function StatusButtons({ onApprove, onReject, status: initialStatus }: St
     )
   }
 
-  if (status === 'rejected' || status === 'completed') {
+  if (status === 'rejected') {
     return (
-      <div className="flex items-center justify-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md font-medium">
-        <span>Completed</span>
+      <div className="flex items-center justify-center gap-1 px-3 py-1.5 bg-red-100 text-red-700 rounded-md font-medium">
+        <X className="h-4 w-4" />
+        <span>Rejected</span>
       </div>
     )
   }
