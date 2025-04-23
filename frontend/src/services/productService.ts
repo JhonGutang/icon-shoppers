@@ -62,7 +62,24 @@ export const addProduct = async (data: newProduct, token: string) => {
 };
 
 export const updateProduct = async (id: number, data: ProductToUpdate, token: string) => {
-  const response = await axiosInstance.post(`product/${id}`, data, {
+  const form = new FormData();
+  if (data.name) {
+    form.append("name", data.name);
+  }
+  if (data.quantity !== undefined) {
+    form.append("quantity", `${data.quantity}`);
+  }
+  if (data.price !== undefined) {
+    form.append("price", `${data.price}`);
+  }
+  if (data.is_featured !== undefined) {
+    form.append("is_featured", data.is_featured ? "1" : "0");
+  }
+  if (data.image) {
+    form.append("image", data.image);
+  }
+
+  const response = await axiosInstance.post(`product/${id}`, form, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

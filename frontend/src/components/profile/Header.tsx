@@ -1,6 +1,5 @@
 import { ProfileDisplay } from "@/types/auth";
 import { Button } from "../ui/button";
-import StarRating from "../Rating";
 import CreateProduct from "./CreateProduct";
 import useRedirectLink from "@/hooks/useRedirectLink";
 import useAuth from "@/hooks/useAuth";
@@ -53,7 +52,6 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
             <div className="text-sm font-mono">{user?.email}</div>
             <div></div>
             <div className="text-sm font-mono">{user?.contactNumber}</div>
-            <StarRating />
           </div>
         </div>
 

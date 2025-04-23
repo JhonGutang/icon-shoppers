@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Camera } from "lucide-react";
-import { Product } from "@/types/product";
+import { Product, ProductToUpdate } from "@/types/product";
 import { updateProduct } from "@/services/productService";
 import { useSnackbar } from "./context/SnackbarContext";
 import useToken from "@/stores/useAuthStore";
@@ -19,7 +19,7 @@ interface EditProductProps {
 
 const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
   const {openSnackbar} = useSnackbar()
-  const [formData, setFormData] = useState({ name: "", quantity: "", price: "" });
+  const [formData, setFormData] = useState<ProductToUpdate>({ name: "", quantity: 0, price: "", image: undefined });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -33,10 +33,10 @@ const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
   const populateFormFromProduct = (product: Product) => {
     setFormData({
       name: product.name ?? "",
-      quantity: product.quantity?.toString() ?? "",
+      quantity: product.quantity ?? 0,
       price: product.price?.toString() ?? "",
     });
-    setImagePreview(`http://127.0.0.1:8000/storage/${product.image}`);
+    setImagePreview(product.image ?? "");
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,6 +63,7 @@ const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
     const file = e.target.files?.[0];
     if (file && validateImageFile(file)) {
       setImageFile(file);
+      setFormData(prev => ({ ...prev, image: file }))
       setImagePreview(URL.createObjectURL(file));
     }
   };
@@ -73,13 +74,8 @@ const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
 
     setIsLoading(true);
     try {
-      const form = new FormData();
-      form.append("name", formData.name);
-      form.append("quantity", formData.quantity);
-      form.append("price", formData.price);
-      if (imageFile) form.append("image", imageFile);
 
-      const updatedProduct = await updateProduct( product.id, form, accessToken);
+      const updatedProduct = await updateProduct( product.id, formData, accessToken);
       openSnackbar('Product Updated Successfully', 'success')
       setTimeout(() => {
         window.location.reload()
