@@ -10,7 +10,8 @@ import {
 import { Button } from "../ui/button";
 import useCustomerActions from "@/hooks/useCustomerActions";
 import { useState } from "react";
-import useRedirectLink from "@/hooks/useRedirectLink";
+import { useRouter } from "next/navigation";
+
 
 interface CheckoutPageProps {
   shopWithProducts: ProductWithShop[];
@@ -23,7 +24,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
   shopWithProducts,
   setProductsWithShops,
 }) => {
-  const { redirectLink } = useRedirectLink();
+  const router = useRouter()
   return (
     <div className="w-full">
       <div className="flex justify-between items-center px-6">
@@ -38,7 +39,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
       ) : (
         <div className="flex flex-col gap-2 items-center justify-center h-[80vh]">
           <div className="text-lg font-bold mb-5">Cart is Empty</div>
-          <Button onClick={() => redirectLink("/")}>
+          <Button onClick={() => router.push('/home?section=Products')}>
             Find Products you Fancy
           </Button>
         </div>

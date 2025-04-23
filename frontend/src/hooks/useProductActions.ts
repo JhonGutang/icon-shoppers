@@ -17,7 +17,7 @@ const useProductAction = () => {
   const token = useToken.getState().accessToken;
   const { redirectLink } = useRedirectLink();
   const { products, setProducts, deleteProductById, addProduct, updateProductById } = useProducts();
-  const { openSnackbar } = useSnackbar(); // Use Snackbar
+  const { openSnackbar } = useSnackbar(); 
 
   const [newProduct, setNewProduct] = useState<newProduct>({
     name: "",
@@ -60,20 +60,6 @@ const useProductAction = () => {
     }
   };
 
-  const handleUpdateProduct = async (updateData: ProductToUpdate, onLocalUpdate?: (product: Product) => void) => {
-    if (!token) return;
-    try {
-      const updatedProduct = await updateProduct(updateData, token);
-      if (onLocalUpdate) {
-        onLocalUpdate(updatedProduct);
-      }
-      updateProductById(updatedProduct.id, updatedProduct);
-      openSnackbar("Product updated successfully", "success");
-    } catch (error) {
-      console.error(error);
-      openSnackbar("Failed to update product", "error");
-    }
-  };
 
   const handleDeleteProduct = async (id: number) => {
     if (!token) return;
@@ -161,7 +147,6 @@ const useProductAction = () => {
     handleAddProducts,
     handleDeleteProduct,
     handleInputs,
-    handleUpdateProduct,
     handleProductVisibility,
     handleFeatureToggle,
   };

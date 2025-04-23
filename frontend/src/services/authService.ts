@@ -70,7 +70,7 @@ export const getProfile = async (token: string, role: string) => {
       },
     });
   
-    const data = role === 'seller' ? formatSellerProfile(response.data.user) : formatCustomerData(response.data)
+    const data = role === 'seller' ? formatSellerProfile(response.data.user) : formatProfileData(response.data)
     return  data
   } catch (error) {
     console.error(error);

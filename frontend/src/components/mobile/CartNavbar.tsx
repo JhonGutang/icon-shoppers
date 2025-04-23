@@ -11,7 +11,7 @@ const CartNavbar = () => {
       </Button>
       <img src="/logo.png" alt="" className="w-[60px]" onClick={() => redirectLink('/home')}/>
       <div>
-        <UserRound />
+        <div></div>
       </div>
     </div>
   );
