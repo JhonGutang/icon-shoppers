@@ -56,6 +56,8 @@ export const useOrders = () => {
         result = await orderService.rejectOrder(token, orderId);
       } else if (newStatus === 'to_be_delivered') {
         result = await orderService.approveOrder(token, orderId);
+      } else if (newStatus === 'recieved') {
+        result = await orderService.receiveOrder(token, orderId);
       } else {
         result = await orderService.updateOrderStatus(token, Number(orderId), newStatus);
       }

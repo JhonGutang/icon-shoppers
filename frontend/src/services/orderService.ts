@@ -108,4 +108,17 @@ export const orderService = {
       return handleError(error, "Failed to start delivery");
     }
   },
+
+  async receiveOrder(token: string, orderId: string) {
+    try {
+      const response = await axiosInstance.put(
+        `/orders/${orderId}/receive`,
+        {},
+        authHeader(token)
+      );
+      return { success: true, data: response.data };
+    } catch (error) {
+      return handleError(error, "Failed to mark order as received");
+    }
+  },
 };
