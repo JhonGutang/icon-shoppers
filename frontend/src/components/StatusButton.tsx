@@ -1,22 +1,42 @@
 import { Button } from "@/components/ui/button"
-import { Check, X, Truck } from "lucide-react"
+import { Check, X, Truck, Package } from "lucide-react"
 
 interface StatusButtonsProps {
   onApprove?: () => void
   onReject?: () => void
+  onReceive?: () => void
   status?: string
+  isCustomer?: boolean
 }
 
-export function StatusButtons({ onApprove, onReject, status }: StatusButtonsProps) {
-  const handleStartDelivery = () => {
-    onApprove?.()
+export function StatusButtons({ onApprove, onReject, onReceive, status, isCustomer = false }: StatusButtonsProps) {
+  if (status === 'delivering' && isCustomer) {
+    return (
+      <Button 
+        variant="default" 
+        onClick={onReceive}
+        className="bg-green-600 hover:bg-green-700 text-white"
+      >
+        <Package className="mr-1 h-4 w-4" />
+        Receive Order
+      </Button>
+    )
   }
 
-  if (status === 'delivering') {
+  if (status === 'delivering' && !isCustomer) {
     return (
       <div className="flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-md font-medium">
         <Truck className="h-4 w-4" />
         <span>On Delivery</span>
+      </div>
+    )
+  }
+
+  if (status === 'recieved') {
+    return (
+      <div className="flex items-center gap-1 px-3 py-1.5 bg-green-100 text-green-700 rounded-md font-medium">
+        <Package className="h-4 w-4" />
+        <span>Received</span>
       </div>
     )
   }
@@ -30,11 +50,11 @@ export function StatusButtons({ onApprove, onReject, status }: StatusButtonsProp
     )
   }
 
-  if (status === 'to_be_delivered') {
+  if (status === 'to_be_delivered' && !isCustomer) {
     return (
       <Button 
         variant="default" 
-        onClick={handleStartDelivery}
+        onClick={onApprove}
         className="bg-blue-600 hover:bg-blue-700 text-white"
       >
         <Truck className="mr-1 h-4 w-4" />
@@ -43,24 +63,28 @@ export function StatusButtons({ onApprove, onReject, status }: StatusButtonsProp
     )
   }
 
-  return (
-    <div className="flex gap-2">
-      <Button 
-        variant="default" 
-        onClick={onApprove}
-        className="bg-green-600 hover:bg-green-700 text-white"
-      >
-        <Check className="mr-1 h-4 w-4" />
-        Approve
-      </Button>
-      <Button 
-        variant="destructive" 
-        onClick={onReject}
-        className="bg-red-600 hover:bg-red-700 text-white"
-      >
-        <X className="mr-1 h-4 w-4" />
-        Reject
-      </Button>
-    </div>
-  )
+  if (!isCustomer) {
+    return (
+      <div className="flex gap-2">
+        <Button 
+          variant="default" 
+          onClick={onApprove}
+          className="bg-green-600 hover:bg-green-700 text-white"
+        >
+          <Check className="mr-1 h-4 w-4" />
+          Approve
+        </Button>
+        <Button 
+          variant="destructive" 
+          onClick={onReject}
+          className="bg-red-600 hover:bg-red-700 text-white"
+        >
+          <X className="mr-1 h-4 w-4" />
+          Reject
+        </Button>
+      </div>
+    )
+  }
+
+  return null
 }

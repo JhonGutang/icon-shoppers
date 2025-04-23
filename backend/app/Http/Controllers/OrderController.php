@@ -322,5 +322,39 @@ class OrderController extends Controller
         return response()->json($pendings);
     }
 
+    public function receive($id)
+    {
+        try {
+            $order = Order::findOrFail($id);
+
+            if ($order->customer_id !== Auth::guard('customer-api')->id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized to update this order'
+                ], 403);
+            }
+
+            $order->update([
+                'status' => 'recieved'
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order marked as received',
+                'order' => $order
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update order status'
+            ], 500);
+        }
+    }
 
 }
