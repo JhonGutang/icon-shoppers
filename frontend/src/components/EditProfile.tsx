@@ -81,8 +81,6 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
         logo_image: formData.logo_image
       };
 
-      console.log("Sending data:", profileData);
-
       await axiosInstance.put('profile', profileData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -111,7 +109,6 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
       closeButton?.click();
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        console.error("Error data:", err.response?.data);
         toast.error(err.response?.data?.message || "Failed to update profile");
       } else {
         toast.error("Something went wrong");
