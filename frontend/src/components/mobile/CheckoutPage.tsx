@@ -148,7 +148,7 @@ const CartContent: React.FC<CartContentProps> = ({
                         />
                             <div className="w-full flex items-center gap-3">
                               <img
-                                src={`http://192.168.1.6:8000/storage/${product.image}`}
+                            src={`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`}
                                 alt={product.name}
                                 className="w-[80px]"
                               />

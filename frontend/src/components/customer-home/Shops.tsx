@@ -41,7 +41,7 @@ const Shops:React.FC<ShopProps> = ({location}) => {
           />
         )}
       </div>
-      <div className="flex gap-4 px-7">
+      <div className={`flex gap-4  ${location === "Shops" ? "flex-wrap justify-center" : "overflow-x-scroll px-5 pb-2"}`}>
         {loading ? (
           Array.from({ length: 5 }).map((_, index) => (
             <Skeleton key={index} className="lg:w-[40vw] lg:h-[45vh] mb-4" />
