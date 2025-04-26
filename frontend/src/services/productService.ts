@@ -87,6 +87,9 @@ export const updateProduct = async (id: number, data: ProductToUpdate, token: st
   return response.data;
 };
 
+
+
+
 export const deleteProduct = async (id: number, token: string) => {
   await axiosInstance.delete(`/product/${id}`, {
     headers: {
