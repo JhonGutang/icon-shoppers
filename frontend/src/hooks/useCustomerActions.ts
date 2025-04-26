@@ -36,9 +36,9 @@ const useCustomerActions = () => {
     return products;
   };
 
-  const handleOrdersStatus = async () => {
+  const handleOrdersStatus = async (status: string) => {
     if(!token) return
-    const products = await orderService.fetchCustomerOrders(token)
+    const products = await orderService.fetchCustomerOrders(token, status)
     return products
   }
 

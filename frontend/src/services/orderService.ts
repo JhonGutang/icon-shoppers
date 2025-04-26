@@ -48,9 +48,11 @@ export const orderService = {
     }
   },
 
-  async fetchCustomerOrders(token: string): Promise<ProductWithShop[]> {
+  async fetchCustomerOrders(token: string, status?: string): Promise<ProductWithShop[]> {
     try {
-      const response = await axiosInstance.get<ProductWithShop[]>("/customer/orders", authHeader(token));
+      const queryStatus = normalizeStatus(status);
+      const url = queryStatus ? `/customer/orders?status=${queryStatus}` : "/customer/orders";
+      const response = await axiosInstance.get<ProductWithShop[]>(url, authHeader(token));
       return response.data;
     } catch (error) {
       throw handleError(error, "Error fetching customer orders");
