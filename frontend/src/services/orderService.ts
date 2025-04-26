@@ -62,52 +62,13 @@ export const orderService = {
   async updateOrderStatus(token: string, orderId: number, status: string) {
     try {
       const response = await axiosInstance.put(
-        `/orders/${orderId}`,
-        { status },
+        `/status-update/${orderId}`,
+        { status: status },
         authHeader(token)
       );
       return { success: true, data: response.data };
     } catch (error) {
       return handleError(error, "Failed to update order status");
-    }
-  },
-
-  async approveOrder(token: string, orderId: string) {
-    try {
-      const response = await axiosInstance.put(
-        `/orders/${orderId}/approve`,
-        {},
-        authHeader(token)
-      );
-      return { success: true, data: response.data };
-    } catch (error) {
-      return handleError(error, "Failed to approve order");
-    }
-  },
-
-  async rejectOrder(token: string, orderId: string) {
-    try {
-      const response = await axiosInstance.put(
-        `/orders/${orderId}/reject`,
-        {},
-        authHeader(token)
-      );
-      return { success: true, data: response.data };
-    } catch (error) {
-      return handleError(error, "Failed to reject order");
-    }
-  },
-
-  async startDelivery(token: string, orderId: string) {
-    try {
-      const response = await axiosInstance.put(
-        `/orders/${orderId}/deliver`,
-        {},
-        authHeader(token)
-      );
-      return { success: true, data: response.data };
-    } catch (error) {
-      return handleError(error, "Failed to start delivery");
     }
   },
 

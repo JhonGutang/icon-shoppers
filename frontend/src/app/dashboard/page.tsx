@@ -15,12 +15,40 @@ import { toast } from "sonner";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useRedirectLink from "@/hooks/useRedirectLink";
+import { useEffect, useState } from "react";
+import { OrderStatus, Order as OrderType } from "@/types/order";
+
+interface OrderItem {
+  name: string;
+  quantity: number;
+  totalPrice: number;
+}
+
+interface DashboardOrder {
+  id: number;
+  customerName: string;
+  location: string;
+  status: OrderStatus;
+  products: OrderItem[];
+}
 
 const Dashboard = () => {
-  const { orders, error, activeTab, setActiveTab, handleStatusUpdate } =
-    useOrders();
-  const { redirectLink} = useRedirectLink()
+  const [activeTab, setActiveTab] = useState<OrderStatus>("All");
+  const [orders, setOrders] = useState<DashboardOrder[]>([]);
+  const { error, handleStatusUpdate, fetchOrders } = useOrders();
+  const { redirectLink } = useRedirectLink();
   console.log("Orders data:", orders);
+
+  const handleFetchOrder = async () => {
+    const data = await fetchOrders(activeTab);
+    if (data) {
+      setOrders(data as unknown as DashboardOrder[]);
+    }
+  };
+
+  useEffect(() => {
+    handleFetchOrder();
+  }, [activeTab]);
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">

@@ -36,7 +36,7 @@ const useCustomerActions = () => {
     return products;
   };
 
-  const handleOrdersStatus = async (status: string) => {
+  const handleOrders = async (status: string) => {
     if(!token) return
     const products = await orderService.fetchCustomerOrders(token, status)
     return products
@@ -91,7 +91,7 @@ const useCustomerActions = () => {
     handleOrdersInCart,
     handleCheckout,
     handleOrdersToCheckout,
-    handleOrdersStatus
+    handleOrders
   };
 };
 

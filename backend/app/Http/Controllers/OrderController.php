@@ -188,6 +188,32 @@ class OrderController extends Controller
         }
     }
 
+    public function statusUpdate(Request $request, $id) {
+        try {
+            $order = Order::findOrFail($id);
+            
+            $order->update([
+                'status' => $request->status
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order status updated successfully',
+                'order' => $order
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update order status'
+            ], 500);
+        }
+    }
+
 
 
     public function getCustomersOrders(Request $request)
