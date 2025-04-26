@@ -190,60 +190,64 @@ class OrderController extends Controller
 
 
 
-    public function getCustomersOrders()
-{
-    $userId = Auth::guard('customer-api')->user()->id;
+    public function getCustomersOrders(Request $request)
+    {
+        $userId = Auth::guard('customer-api')->user()->id;
+        
+        $query = Order::where('customer_id', $userId)
+            ->where('status', '!=', 'cart')
+            ->with([
+                'orderItems.product:id,name,price,shop_id,image',
+                'orderItems.product.shop:id,name,email,description,contact_number'
+            ]);
 
-    $orders = Order::where('customer_id', $userId)
-        ->where('status', '!=', 'cart')
-        ->with([
-            'orderItems.product:id,name,price,shop_id,image',
-            'orderItems.product.shop:id,name,email,description,contact_number'
-        ])
-        ->get();
+        if ($request->has('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
 
-    if ($orders->isEmpty()) {
-        return response()->json([]);
-    }
+        $orders = $query->get();
 
+        if ($orders->isEmpty()) {
+            return response()->json([]);
+        }
 
-    $grouped = $orders->map(function ($order) {
-        $shopOrders = $order->orderItems->groupBy(function ($item) {
-            return $item->product->shop->id;
-        });
-
-        return $shopOrders->map(function ($items, $shopId) use ($order) {
-            $shop = $items->first()->product->shop;
-
-            $products = $items->map(function ($item) {
-                return [
-                    'id' => $item->product->id,
-                    'order_item_id' => $item->id,
-                    'name' => $item->product->name,
-                    'price' => $item->product->price,
-                    'image' => $item->product->image,
-                    'quantity' => $item->quantity,
-                ];
+        $grouped = $orders->map(function ($order) {
+            $shopOrders = $order->orderItems->groupBy(function ($item) {
+                return $item->product->shop->id;
             });
 
-            return [
-                'order_id' => $order->id,
-                'shop' => [
-                    'id' => $shop->id,
-                    'name' => $shop->name,
-                    'email' => $shop->email,
-                    'description' => $shop->description,
-                    'contact_number' => $shop->contact_number,
-                ],
-                'products' => $products->values(),
-                'status' => $order->status,
-                'total_amount' => number_format($order->total_amount, 2, '.', ''),
-            ];
-        })->values();
-    })->flatten(1);
+            return $shopOrders->map(function ($items, $shopId) use ($order) {
+                $shop = $items->first()->product->shop;
 
-    return response()->json($grouped);
-}
+                $products = $items->map(function ($item) {
+                    return [
+                        'id' => $item->product->id,
+                        'order_item_id' => $item->id,
+                        'name' => $item->product->name,
+                        'price' => $item->product->price,
+                        'image' => $item->product->image,
+                        'quantity' => $item->quantity,
+                    ];
+                });
+
+                return [
+                    'order_id' => $order->id,
+                    'shop' => [
+                        'id' => $shop->id,
+                        'name' => $shop->name,
+                        'email' => $shop->email,
+                        'description' => $shop->description,
+                        'contact_number' => $shop->contact_number,
+                    ],
+                    'products' => $products->values(),
+                    'status' => $order->status,
+                    'total_amount' => number_format($order->total_amount, 2, '.', ''),
+                ];
+            })->values();
+        })->flatten(1);
+
+        return response()->json($grouped);
+    }
 
 
 
