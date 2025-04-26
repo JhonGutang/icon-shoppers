@@ -2,7 +2,6 @@ export interface Order {
     id: string | number;
     customer_id: number;
     product_id: number;
-    shop_id: number;
     quantity: number;
     total_amount: number;
     location: string;
