@@ -118,13 +118,6 @@
   --info: oklch(0.6 0.2 250);
 }
 
-
-
-
-
-
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -132,8 +125,6 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Poppins', sans-serif;
-    
-
   }
 
   .main-text-color {
@@ -146,12 +137,20 @@
   }
 
   .hero-background {
-    background: url('/hero.jpg') no-repeat center;
+    background-image: url('/hero.jpg');
+    background-position: center;
     background-size: cover;
+    background-repeat: no-repeat;
+    @media (max-width: 640px) {
+      background-position: 70% center;
+    }
   }
-  
-  
+}
 
+@layer utilities {
+  .max-w-7xl {
+    max-width: 80rem;
+  }
 }
 
 
