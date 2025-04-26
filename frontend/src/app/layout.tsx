@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 
 import "./globals.css";
 import { SnackbarProvider } from "@/components/context/SnackbarContext";
+import { Toaster } from "@/components/ui/sonner";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function RootLayout({
           {/* Wrap the app in SnackbarProvider */}
           {children}
         </SnackbarProvider>
+        <Toaster />
       </body>
     </html>
   );
