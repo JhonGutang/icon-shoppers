@@ -1,8 +1,7 @@
 import axiosInstance from "@/hooks/useAxios";
-import { Order } from "@/types/product";
 
 export const addToCart = async (productId: number, token: string) => {
-    await axiosInstance.post(`order/${productId}`, {}, {
+    await axiosInstance.post(`cart/${productId}`, {}, {
         headers: {
             Authorization: `Bearer ${token}`
         }

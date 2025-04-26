@@ -32,7 +32,7 @@ const CreateProduct = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Add New Product</Button>
+        <Button className="bg-green-700 text-white hover:bg-white hover:text-green-700">Add New Product</Button>
       </DialogTrigger>
       <DialogContent className="w-[60vw]">
         <DialogHeader>
@@ -47,7 +47,7 @@ const CreateProduct = () => {
               !imagePreview ?
               "https://i.pinimg.com/736x/c5/a0/03/c5a00375d647591a14dd36e31151acb1.jpg" : imagePreview
             }
-            className="w-[40%] rounded-xl object-cover"
+            className="w-[40%] rounded-xl object-contain max-h-[25vh]"
             alt="Product Preview"
           />
           {productFields.map((field) => (

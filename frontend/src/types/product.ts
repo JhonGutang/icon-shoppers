@@ -16,7 +16,7 @@ export interface Product {
 export interface ProductToUpdate {
   id?: number;
   name?: string;
-  image?: string | null;
+  image?: File | null;
   price?: string;
   quantity?: number;
   is_visible?: boolean | number,
@@ -31,6 +31,7 @@ export interface Shop {
   name: string,
   contact_number: number
   email: string,
+  logo_image?: string
   description: string,
   products?: Product[]
 }

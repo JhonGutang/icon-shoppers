@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CarItem extends Model
+class CartItem extends Model
 {
     protected $fillable=[
         'cart_id',
@@ -17,6 +17,6 @@ class CarItem extends Model
     }
 
     public function product(){
-        return $this->belongsTo(Profuct::class);
+        return $this->belongsTo(Product::class);
     }
 }

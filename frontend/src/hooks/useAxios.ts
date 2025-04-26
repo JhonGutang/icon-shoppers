@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api/', 
-  
+  baseURL: `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/`,
 });
 
 export default axiosInstance;

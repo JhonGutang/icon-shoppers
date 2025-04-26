@@ -51,6 +51,7 @@ const useCustomerActions = () => {
       redirectLink("login");
       return;
     }
+    console.log(product);
     addProduct(product);
     addToCart(product.id, token);
     openSnackbar("Product Added to Cart", "success"); 
@@ -74,7 +75,6 @@ const useCustomerActions = () => {
       console.log(products);
       const filteredProducts = products.map((product) => ({
         id: product.id,
-        order_id: product.order_id,
         quantity: product.quantity,
       }));
       checkoutOrder(filteredProducts, token);

@@ -1,17 +1,24 @@
 import React, { ReactNode } from "react";
 import Image from "next/image";
 import { useIsMobile } from "../hooks/use-mobile";
+import { Button } from "@/components/ui/button";
+import useRedirectLink from "@/hooks/useRedirectLink";
 
 interface LayoutProps {
   children: ReactNode;
+  role: string;
 }
 
-const AuthLayout: React.FC<LayoutProps> = ({ children }) => {
+const AuthLayout: React.FC<LayoutProps> = ({ children, role }) => {
+  const { redirectLink} = useRedirectLink()
   const isMobile = useIsMobile();
-
-  return (
+  const sellerLogin = role === 'customer' ? 'Seller' : 'Customer'
+  const authLink = role !== 'customer' ? '/customer-auth' : '/shop-auth'
+  console.log(authLink);
+  return (  
     <div className="w-screen h-screen flex justify-center items-center">
-      <div className="rounded-xl lg:border-2 border-gray-400 w-full h-full lg:w-[70vw] lg:h-[80vh] flex flex-col lg:flex-row gap-4 justify-center lg:justify-between lg:items-center px-10 lg:px-0">
+      <div className="rounded-xl lg:border-2 border-gray-400 w-full h-full lg:w-[70vw] lg:h-[80vh] flex flex-col lg:flex-row gap-4 justify-center lg:justify-between lg:items-center px-10 lg:px-0 relative">
+        <Button className="absolute top-4 right-4 capitalize" variant='ghost' onClick={() => redirectLink(authLink)}>Login as {sellerLogin}</Button>
         {!isMobile && (
           <div className="lg:w-[50%] flex flex-col lg:items-center gap-5">
             <Image

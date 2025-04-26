@@ -7,9 +7,13 @@ import useCustomerActions from "@/hooks/useCustomerActions";
 import useRedirectLink from "@/hooks/useRedirectLink";
 import CartNavbar from "@/components/mobile/CartNavbar";
 import { Button } from "@/components/ui/button";
-import { Loader2, Store } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
+import {
+  Loader2,
+  ShoppingCart,
+} from "lucide-react";
+import { Product } from "@/types/product";
+import Feedback from "@/components/Feedback";
+import Details from "@/components/product/Details";
 
 const ProductPage = () => {
   const { redirectLink } = useRedirectLink();
@@ -22,6 +26,7 @@ const ProductPage = () => {
     : productName?.split(/[\s,_-]+/)[0];
 
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("details");
 
   useEffect(() => {
     if (id) {
@@ -34,100 +39,130 @@ const ProductPage = () => {
 
     setIsLoading(true);
     handleAddToCart(event, product);
-
-    redirectLink("checkout");
+    redirectLink("/home");
     setIsLoading(false);
   };
 
   return (
-    <div>
+    <div className="bg-gray-50 min-h-screen pb-20 md:pb-0">
       <CartNavbar />
-      <div className="px-10 mt-5 pb-[80px] max-h-[80vh] overflow-y-auto">
-        <ProductDetails product={product} />
+
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+          <div className="md:grid md:grid-cols-12 md:gap-8">
+            <div className="md:col-span-5 lg:col-span-4">
+              <ProductImage product={product} />
+            </div>
+
+            <div className="md:col-span-7 lg:col-span-8">
+              <div className="flex border-b mb-6">
+                <button
+                  className={`px-4 py-4 font-medium text-sm cursor-pointer ${
+                    activeTab === "details"
+                      ? "text-green-600 border-b-2 border-green-600"
+                      : "text-gray-500"
+                  }`}
+                  onClick={() => setActiveTab("details")}
+                >
+                  Details
+                </button>
+                <button
+                  className={`px-4 py-4 font-medium text-sm cursor-pointer ${
+                    activeTab === "reviews"
+                      ? "text-green-600 border-b-2 border-green-600"
+                      : "text-gray-500"
+                  }`}
+                  onClick={() => setActiveTab("reviews")}
+                >
+                  Ratings & Reviews
+                </button>
+              </div>
+
+              {activeTab === "details" ? (
+                <Details
+                  product={product}
+                  isLoading={isLoading}
+                  redirectAfterAdd={redirectAfterAdd}
+                />
+              ) : (
+                <ProductReviews />
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <Button
-        className={`w-[90%] fixed bottom-5 left-1/2 transform -translate-x-1/2 h-[60px] z-10 ${
-          isLoading ? "bg-gray-400" : ""
-        }`}
-        onClick={redirectAfterAdd}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <div className="flex items-center gap-2">
-            <Loader2 className="animate-spin" size={30} />
-            <span>Adding to Cart</span>
-          </div>
-        ) : (
-          <span>Checkout</span>
-        )}
-      </Button>
+      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-3 border-t md:hidden">
+        <Button
+          className={`w-full h-14 rounded-lg font-medium text-lg ${
+            isLoading ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+          }`}
+          onClick={redirectAfterAdd}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <div className="flex items-center justify-center gap-3">
+              <Loader2 className="animate-spin" size={24} />
+              <span>Adding to Cart</span>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center gap-3">
+              <ShoppingCart size={20} />
+              <span>Add To Cart</span>
+            </div>
+          )}
+        </Button>
+      </div>
     </div>
   );
 };
 
-const ProductDetails = ({ product }: { product?: any }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const { redirectLink } = useRedirectLink();
-
+const ProductImage = ({ product }: { product?: Product }) => {
   return (
-    <div className="w-full flex flex-col gap-6">
-      <div className="h-[30vh] border-2 px-4 rounded-xl">
+    <div className="relative bg-gray-100 h-80 md:h-full md:min-h-96">
+      <div className="h-full flex items-center justify-center p-4 md:p-8">
         <img
-          src={`http://localhost:8000/storage/${product?.image}`}
+          src={
+            product?.image
+              ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`
+              : "https://i.pinimg.com/736x/fd/3d/8e/fd3d8e2a1dd4f09b4170d31e26913bab.jpg"
+          }
           alt={product?.name || "Product Image"}
-          className="w-full h-full rounded-xl object-contain"
+          className="h-full object-contain md:max-h-96"
         />
       </div>
 
-      <div className="flex flex-col gap-3">
-        <h1 className="capitalize text-2xl font-bold">{product?.name}</h1>
-        <div
-          className={`overflow-hidden transition-all duration-300 ${
-            isExpanded ? "max-h-full" : "max-h-[10vh]"
-          }`}
-        >
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat id
-          ex, dolorum placeat repudiandae nulla dolorem ipsa! Quia quod tempora
-          error quae nesciunt unde culpa iure voluptatum excepturi similique
-          eveniet exercitationem magnam dolorum consequatur eaque, itaque
-          doloribus. Vero, molestias placeat rerum suscipit vel tempora nam
-          reiciendis cumque tenetur velit consectetur.
+      {product?.quantity && product.quantity < 10 && (
+        <div className="absolute top-4 right-4 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
+          Only {product.quantity} left
         </div>
-        <div>
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="text-blue-500"
-          >
-            {isExpanded ? "See less" : "See more"}
-          </button>
-        </div>
+      )}
+    </div>
+  );
+};
 
-        <div>
-          <div className="flex gap-2 items-center">
-            <span className="font-bold text-lg">Price:</span>
-            <span>₱{product?.price}</span>
+
+
+const ProductReviews = () => {
+  return (
+    <div className="w-full p-5 md:p-8 lg:h-[55vh] ">
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="py-4">
+            <div className="space-y-4">
+              {/* <div className="flex items-center gap-3">
+                <span className="text-gray-600">Rate this product:</span>
+                <StarRating
+                  initialRating={2}
+                  onChange={(rating) => console.log(rating)}
+                />
+              </div> */}
+              <div className="pt-2">
+                <Feedback />
+              </div>
+            </div>
           </div>
-          <div>Stocks: {product?.quantity}</div>
         </div>
-
-        <Card className="mt-5">
-          <CardContent>
-            <CardHeader className="px-0">
-              <CardTitle>
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-2">
-                    <Store />
-                    <div className="font-semibold text-xl">
-                      {product?.shop.name}
-                    </div>
-                  </div>
-                  <Button variant="outline" onClick={() => redirectLink(`${product?.shop.name}`)}>View Shop</Button>
-                </div>
-              </CardTitle>
-            </CardHeader>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

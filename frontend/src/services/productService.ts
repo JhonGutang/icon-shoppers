@@ -20,15 +20,21 @@ export const fetchShopProducts = async (token: string) => {
   return formatData(response.data);
 };
 
-export const fetchAllProducts = async () => {
-  const response = await axiosInstance.get("all-products");
+export const fetchAllProducts = async (type: string) => {
+  const response = await axiosInstance.get("all-products", {
+    params: { type },
+  });
   return response.data;
 };
 
-export const fetchFeaturedProducts = async () => {
-  const response = await axiosInstance.get("featured-products");
+
+export const searchProducts = async (search: string) => {
+  const response = await axiosInstance.get("search-products", {
+    params: { search },
+  });
   return response.data;
-};
+}
+
 
 export const fetchSpecificProduct = async (id: number) => {
   const response = await axiosInstance.get(`product/${id}`);
@@ -55,8 +61,25 @@ export const addProduct = async (data: newProduct, token: string) => {
   return response.data;
 };
 
-export const updateProduct = async (data: ProductToUpdate, token: string) => {
-  const response = await axiosInstance.patch(`product/${data.id}`, data, {
+export const updateProduct = async (id: number, data: ProductToUpdate, token: string) => {
+  const form = new FormData();
+  if (data.name) {
+    form.append("name", data.name);
+  }
+  if (data.quantity !== undefined) {
+    form.append("quantity", `${data.quantity}`);
+  }
+  if (data.price !== undefined) {
+    form.append("price", `${data.price}`);
+  }
+  if (data.is_featured !== undefined) {
+    form.append("is_featured", data.is_featured ? "1" : "0");
+  }
+  if (data.image) {
+    form.append("image", data.image);
+  }
+
+  const response = await axiosInstance.post(`product/${id}`, form, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -64,8 +87,11 @@ export const updateProduct = async (data: ProductToUpdate, token: string) => {
   return response.data;
 };
 
+
+
+
 export const deleteProduct = async (id: number, token: string) => {
-  await axiosInstance.delete(`/products/${id}`, {
+  await axiosInstance.delete(`/product/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

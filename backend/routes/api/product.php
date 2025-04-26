@@ -14,11 +14,13 @@ Route::get('/user', function (Request $request) {
 Route::get('/all-products', [ProductController::class, 'fetchAllProducts']);
 Route::get('/featured-products', [ProductController::class, 'fetchFeaturedProducts']);
 Route::get('/product/{id}', [ProductController::class,'fetchSpecificProduct']);
+Route::get('search-products', [ProductController::class, 'searchProducts']);
+
 
 Route::middleware('auth:shop-api')->group(function () {
     Route::get('/products', [ProductController::class,'index']);
     Route::post('/product', [ProductController::class, 'create']);
-    Route::patch('/product/{id}', [ProductController::class,'update']);
+    Route::post('/product/{id}', [ProductController::class,'update']);
     Route::delete('/products/{product}', [ProductController::class, 'destroy']);
 });
 ?>

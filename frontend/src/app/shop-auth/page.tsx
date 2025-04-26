@@ -21,7 +21,7 @@ const ShopAuth = () => {
   ];
 
   return (
-    <AuthLayout>
+    <AuthLayout role="seller">
       {defaultAuth === "login" ? (
         <Login fields={loginField} role="seller" setAuth={setDefaultAuth}  />
       ) : (

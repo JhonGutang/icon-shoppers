@@ -1,3 +1,15 @@
+import { OrderStatus } from "@/types/order";
+
+export const STATUS_OPTIONS: OrderStatus[] = [
+  "All",
+  "approved",
+  "rejected",
+  "to_be_delivered",
+  "recieved",
+  "not_recieved",
+  "completed"
+];
+
 export const formatStatus = (status: string): string => {
     if (status === "All") return "All";
     if (status === "active") return "Approved";
@@ -26,5 +38,3 @@ export const formatStatus = (status: string): string => {
         return "bg-gray-300";
     }
   };
-  
-  export const STATUS_OPTIONS = ["All", "approved", "rejected", "to_be_delivered", "recieved", "not_recieved", "completed"] as const;

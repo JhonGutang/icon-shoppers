@@ -17,7 +17,7 @@ class OrderRequest extends FormRequest
             'quantity' => 'integer|min:1',
             'total_amount' => 'numeric|min:0',
             'location' => 'string|max:255',
-            'status' => 'in:cart,ordered,approved,rejected,to_be_delivered,recieved,not_recieved,completed',
+            'status' => 'in:cart,ordered,approved,rejected,to_be_delivered,delivering,recieved,not_recieved,completed',
         ];
     }
 }
