@@ -3,12 +3,13 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import useAuth from "@/hooks/useAuth";
 import { Button } from "../ui/button";
+import { EditProfile } from "@/types/auth";
 
 const Profile = () => {
   const { handleGetProfile, handleUpdateProfile, handleLogout } = useAuth();
-  const [user, setUser] = useState<any>(null);
-  const [editableUser, setEditableUser] = useState<any>(null);
-  const [isEditing, setIsEditing] = useState<boolean>(false); // State to track editing mode
+  const [user, setUser] = useState<EditProfile>();
+  const [editableUser, setEditableUser] = useState<EditProfile | undefined>();
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const fetchProfile = async () => {
     const data = await handleGetProfile();
@@ -22,7 +23,7 @@ const Profile = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setEditableUser((prev: any) => ({ ...prev, [id]: value }));
+    setEditableUser((prev) => prev ? { ...prev, [id]: value } : undefined);
   };
 
   const handleEditProfile = () => {
@@ -30,10 +31,11 @@ const Profile = () => {
   };
 
   const handleConfirm = async () => {
-    const updatedUser = await handleUpdateProfile(editableUser);
-    console.log(updatedUser);
-    setUser(updatedUser);
-    setIsEditing(false);
+    if(editableUser) {
+      const updatedUser = await handleUpdateProfile(editableUser);
+      setUser(updatedUser);
+      setIsEditing(false);
+    }
   };
 
   const handleCancel = () => {
@@ -41,15 +43,17 @@ const Profile = () => {
     setIsEditing(false);
   };
 
+  if (!user) return <div className="w-full h-screen flex justify-center items-center text-2xl">Loading Please Wait</div>;
+
   return (
     <div className="w-full h-full py-5">
-      <div className="text-center text-xl">Account Information</div>
-      <div className="flex py-5">
-        <div className="rounded-xl flex flex-col items-center w-full">
+      <div className="text-center text-xl lg:mb-0 mb-7">Account Information</div>
+      <div className="flex lg:flex-row flex-col items-center py-5">
+        <div className="rounded-xl flex flex-col items-center w-full lg:mb-0 mb-5">
           <img
             src="https://i.pinimg.com/736x/fd/3d/8e/fd3d8e2a1dd4f09b4170d31e26913bab.jpg"
             alt="Profile"
-            className="rounded-xl w-[30vw]"
+            className="rounded-xl lg:w-[30vw] w-[50vw]"
           />
         </div>
         <div className="w-2/3 space-y-4">
@@ -101,7 +105,12 @@ const Profile = () => {
               >
                 Edit Profile
               </Button>
-              <Button className="w-full bg-red-600 h-[45px]" onClick={handleLogout}>Logout</Button>
+              <Button
+                className="w-full bg-red-600 h-[45px]"
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
             </div>
           )}
           {isEditing && (

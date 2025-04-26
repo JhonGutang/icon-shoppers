@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Register, Login, CustomerProfile } from "@/types/auth";
+import { Register, Login, EditProfile } from "@/types/auth";
 import { login, register, getProfile, logout, updateProfile } from "@/services/authService";
 import { useSnackbar } from "@/components/context/SnackbarContext";
 import useToken from "@/stores/useAuthStore";
@@ -60,17 +60,25 @@ const useAuth = () => {
         redirectLink("/home");
       }
     } catch (error) {
+      console.error(error)
       openSnackbar("Login failed!", "error");
     }
   };
 
   const handleLogout = () => {
     const accessToken = useToken.getState().accessToken;
-    if (accessToken) {
-      logout(accessToken);
+    const role = useToken.getState().userType
+
+    if (accessToken && role) {
+      logout(accessToken, role);
       openSnackbar("Logout successful!", "info");
       store.clearAuth();
-      redirectLink("customer-auth");
+
+      if(role === 'seller') {
+        redirectLink("shop-auth");
+      } else {
+        redirectLink("customer-auth");
+      }
     }
   };
 
@@ -84,7 +92,7 @@ const useAuth = () => {
     }
   }, []);
 
-  const handleUpdateProfile = async (updatedData: CustomerProfile) => {
+  const handleUpdateProfile = async (updatedData: EditProfile) => {
     const accessToken = useToken.getState().accessToken;
     const role = useToken.getState().userType;
 
@@ -94,6 +102,7 @@ const useAuth = () => {
         openSnackbar("Profile updated successfully!", "success");
         return response;
       } catch (error) {
+        console.error(error)
         openSnackbar("Failed to update profile!", "error");
       }
     }

@@ -3,23 +3,6 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import useAuth from "@/hooks/useAuth";
 
-const sellerFields = [
-  { id: "name", label: "Business Name", type: "text" },
-  { id: "shopOwner", label: "Business Owner", type: "text" },
-  { id: "email", label: "Email", type: "text" },
-  { id: "contactNumber", label: "Contact No.", type: "text" },
-  { id: "password", label: "Password", type: "password" },
-];
-
-const customerFields = [
-  { id: "name", label: "Name", type: "text" },
-  { id: "middleName", label: "Middle Name", type: "text" },
-  { id: "email", label: "Email", type: "text" },
-  { id: "contactNumber", label: "Contact No.", type: "text" },
-  { id: "address", label: "Address", type: "text" },
-  { id: "password", label: "Password", type: "password" },
-];
-
 interface RegisterFormProps {
   fields: { id: string; label: string; type: string }[];
   role: string;
@@ -40,6 +23,12 @@ const Register: React.FC<RegisterFormProps> = ({ fields, role, setAuth }) => {
     }
   }
 
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      redirectIfSuccessful();
+    }
+  };
+
   return (
     <div>
       <div className="flex flex-col gap-3 lg:h-[20vw] h-[30vh] overflow-y-auto mb-5">
@@ -56,6 +45,7 @@ const Register: React.FC<RegisterFormProps> = ({ fields, role, setAuth }) => {
                 ""
               }
               onChange={(event) => handleInputs(event, "register")}
+              onKeyDown={handleKeyPress}
             />
           </div>
         ))}

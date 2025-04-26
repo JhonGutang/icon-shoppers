@@ -1,22 +1,18 @@
-import CartNavbar from "./CartNavbar";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../ui/accordion";
+
 import { ProductWithShop } from "@/types/product";
-import { Card } from "../ui/card";
+import { Card, CardContent } from "../ui/card";
 import { Checkbox } from "../ui/checkbox";
 import {
-  MinusSquareIcon,
-  PlusSquareIcon,
+  MinusCircle,
+  PlusCircle,
   Trash,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import useCustomerActions from "@/hooks/useCustomerActions";
 import { useState } from "react";
-import useRedirectLink from "@/hooks/useRedirectLink";
+import { useRouter } from "next/navigation";
+
+
 interface CheckoutPageProps {
   shopWithProducts: ProductWithShop[];
   setProductsWithShops: React.Dispatch<
@@ -28,11 +24,10 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
   shopWithProducts,
   setProductsWithShops,
 }) => {
-  const {redirectLink} = useRedirectLink()
+  const router = useRouter()
   return (
     <div className="w-full">
-      <CartNavbar />
-      <div className="flex justify-between items-center px-10">
+      <div className="flex justify-between items-center px-6">
         <div className="text-xl font-semibold">Cart</div>
         <div>{shopWithProducts?.length || 0}</div>
       </div>
@@ -44,7 +39,9 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
       ) : (
         <div className="flex flex-col gap-2 items-center justify-center h-[80vh]">
           <div className="text-lg font-bold mb-5">Cart is Empty</div>
-          <Button onClick={() => redirectLink('/')}>Find Products you Fancy</Button>
+          <Button onClick={() => router.push('/home?section=Products')}>
+            Find Products you Fancy
+          </Button>
         </div>
       )}
     </div>
@@ -111,6 +108,7 @@ const CartContent: React.FC<CartContentProps> = ({
     });
   };
 
+
   const totalAmount = shopWithProducts
     .flatMap((shopData) => shopData.products)
     .filter((p) => selectedProducts.includes(p.id))
@@ -120,29 +118,25 @@ const CartContent: React.FC<CartContentProps> = ({
     );
 
   return (
-    <div className="w-full px-8 mt-5 pb-[80px]">
-      <Accordion type="single" collapsible>
+    <div className="w-full max-h-[85vh] overflow-y-auto px-8 mt-5 pb-[80px]">
+      <div className="">
         {shopWithProducts.map((shopData) => {
           const { shop, products } = shopData;
-
           return (
-            <AccordionItem
-              key={shop.id}
-              value={`shop-${shop.id}`}
-              className="mb-2"
-            >
-              <Card className="p-0 px-5">
-                <AccordionTrigger className="text-lg font-semibold">
-                  {shop.name}
-                </AccordionTrigger>
-                <AccordionContent>
-                  {products.map((product) => (
-                    <div
-                      key={product.id}
-                      className="flex gap-10 border-2 px-5 py-3 mb-3 rounded-lg shadow-xl"
-                    >
-                      <div className="flex gap-3 items-center w-1/2">
-                        <Checkbox
+            <div key={shop.id}>
+              <div className="flex justify-between mb-3">
+                <div className="text-xl">{shop.name}</div>
+                <div>{products.length}</div>
+              </div>
+
+              <div>
+                {products.map((product) => (
+                  <div key={product.id} className="mb-3">
+                    <Card className="py-5">
+                      <CardContent className="px-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex w-full items-center gap-2 pl-2">
+                          <Checkbox
                           checked={selectedProducts.includes(product.id)}
                           onCheckedChange={(checked) =>
                             setSelectedProducts((prev) =>
@@ -152,60 +146,57 @@ const CartContent: React.FC<CartContentProps> = ({
                             )
                           }
                         />
-                        <img
-                          src={`http://localhost:8000/storage/${product.image}`}
-                          alt={product.name}
-                          className="w-[20vw] rounded-lg"
-                        />
-                      </div>
-                      <div className="w-full">
-                        <div className="flex justify-between items-center">
-                          <div className="text-lg font-semibold">
-                            {product.name}
+                            <div className="w-full flex items-center gap-3">
+                              <img
+                            src={`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`}
+                                alt={product.name}
+                                className="w-[80px]"
+                              />
+
+                              <div className="w-full">
+                                <div className="flex justify-end">
+                                  <Trash
+                                    color="red"
+                                    onClick={() =>
+                                      handleRemoveProduct(shop.id, product.id)
+                                    }
+                                  />
+                                </div>
+                                <div>
+                                  <div>{product.name}</div>
+                                  <div className="text-sm">
+                                    P{product.price}
+                                  </div>
+                                </div>
+                                <div className="flex justify-end items-center  w-full gap-3 mb-3">
+                                  <MinusCircle
+                                    size={33}
+                                    onClick={() =>
+                                      handleQuantityChange(shop.id, product.id, "decrement")
+                                    }
+                                  />
+                                  <div>{product.quantity}</div>
+                                  <PlusCircle
+                                    size={33}
+                                    onClick={() =>
+                                      handleQuantityChange(shop.id, product.id, "increment")
+                                    }
+                                  />
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() =>
-                              handleRemoveProduct(shop.id, product.id)
-                            }
-                          >
-                            <Trash size={15} color="red" />
-                          </Button>
                         </div>
-                        <div className="flex gap-2 items-center mt-2">
-                            <MinusSquareIcon size={20} onClick={() =>
-                              handleQuantityChange(
-                                shop.id,
-                                product.id,
-                                "decrement"
-                              )
-                            } />
-                          <div className="text-lg">{product.quantity}</div>
-                            <PlusSquareIcon size={20}  onClick={() =>
-                              handleQuantityChange(
-                                shop.id,
-                                product.id,
-                                "increment"
-                              )
-                            } />
-                        </div>
-                        <div className="mt-2">Total:</div>
-                        <div className="text-end text-lg font-semibold">
-                          ₱
-                          {(Number(product.price) * product.quantity).toFixed(
-                            2
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </AccordionContent>
-              </Card>
-            </AccordionItem>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            </div>
           );
         })}
-      </Accordion>
+      </div>
+
       {/* Fixed Bottom Section */}
       <div className="fixed bottom-0 left-0 w-full bg-white shadow-md border-t py-4 px-8 flex flex-col justify-between items-center">
         <div className="flex justify-between w-full mb-5">
@@ -230,5 +221,6 @@ const CartContent: React.FC<CartContentProps> = ({
     </div>
   );
 };
+
 
 export default CheckoutPage;

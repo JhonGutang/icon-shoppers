@@ -7,17 +7,29 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Http\Requests\OrderRequest;
+use App\Models\Cart;
+use App\Models\CartItem;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
     public function index(Request $request){
-        $orders = Order::with(['customer', 'product'])->get();
+        try {
+            $query = Order::with(['customer', 'orderItems.product']);
 
-        if($request->has('status')){
-            $orders->where('status', $request->status);
+            if ($request->has('status')) {
+                $query->where('status', $request->status);
+            }
+
+            $orders = $query->get();
+
+            return response()->json($orders);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch orders'
+            ], 500);
         }
-        return response()->json($orders);
     }
     public function show($id){
         $order = Order::find($id);
@@ -29,14 +41,26 @@ class OrderController extends Controller
     }
 
     public function update(OrderRequest $request, $id){
-        $order = Order::find($id);
+        try {
+            $order = Order::findOrFail($id);
+            $order->update($request->validated());
 
-        if(!$order){
-            return response()->json(['message'=>'Order not found.'], 404);
+            return response()->json([
+                'success' => true,
+                'message' => 'Order updated successfully',
+                'order' => $order
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update order'
+            ], 500);
         }
-
-        $order->update($request->validated());
-        return response()->json($order);
     }
 
     public function delete($id){
@@ -51,14 +75,36 @@ class OrderController extends Controller
         ]);
     }
 
-    public function getOrders()
+    public function getOrders(Request $request)
     {
-        // Fetch orders with customer info and related order items (products)
-        $orders = Order::with(['customer', 'orderItems.product'])->get();
+
+        if (!Auth::guard('shop-api')->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $shopId = Auth::guard('shop-api')->id();
+
+        $query = Order::with([
+            'customer',
+            'orderItems.product',
+            'orderItems.product.shop'
+        ])
+        ->whereHas('orderItems.product', function($query) use ($shopId) {
+            $query->where('shop_id', $shopId);
+        });
+
+        // Add status filter if provided
+        if ($request->has('status') && $request->status !== 'All') {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->get();
+
 
         // Format the data in a way the frontend expects
         $formattedOrders = $orders->map(function($order) {
             return [
+                'id' => $order->id,
                 'customerName' => $order->customer->name,
                 'products' => $order->orderItems->map(function($item) {
                     return [
@@ -75,6 +121,74 @@ class OrderController extends Controller
 
         return response()->json($formattedOrders);
     }
+
+
+    public function approve($id)
+    {
+        try {
+            $order = Order::findOrFail($id);
+
+            $order->update([
+                'status' => 'to_be_delivered'
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order approved successfully',
+                'order' => $order
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to approve order'
+            ], 500);
+        }
+    }
+
+    public function reject($id)
+    {
+        \Log::info('Attempting to reject order: ' . $id);
+
+        try {
+            $order = Order::findOrFail($id);
+
+            $order->update([
+                'status' => 'rejected'
+            ]);
+
+            \Log::info('Order rejected successfully:', ['id' => $order->id, 'new_status' => $order->status]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order rejected.',
+                'order' => $order
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::warning('Order not found: ' . $id);
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        } catch (\Exception $e) {
+            \Log::error('Error rejecting order:', [
+                'order_id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reject order'
+            ], 500);
+        }
+    }
+
+
 
     public function getCustomersOrders()
 {
@@ -133,124 +247,48 @@ class OrderController extends Controller
 
 
 
-    public function addToCart($id)
-    {
-        $user = Auth::guard('customer-api')->user();
-        $product = Product::findOrFail($id);
-
-        $order = Order::where('customer_id', $user->id)
-            ->where('status', 'cart')
-            ->first();
-
-            if (!$order) {
-                $order = Order::create([
-                    'customer_id' => $user->id,
-                    'total_amount' => 0,
-                    'status' => 'cart',
-                ]);
-            }
-
-        $orderItem = OrderItem::where('order_id', $order->id)
-            ->where('product_id', $id)
-            ->first();
-
-        if ($orderItem) {
-            $orderItem->quantity += 1;
-            $orderItem->price = $orderItem->quantity * $product->price;
-            $orderItem->save();
-        } else {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $id,
-                'quantity' => 1,
-                'price' => $product->price,
-            ]);
-        }
-
-        // Recalculate total order amount
-        $order->total_amount = $order->orderItems()->sum('price');
-        $order->save();
-
-        return response()->json(['message' => 'Product added to cart successfully']);
-    }
 
 
-    public function removeToCart($id)
-    {
-        $user = Auth::guard('customer-api')->user();
-
-        $order = Order::where('customer_id', $user->id)
-            ->where('status', 'cart')
-            ->first();
-
-        if (!$order) {
-            return response()->json(['message' => 'No active cart found.'], 404);
-        }
-
-        $orderItem = OrderItem::where('order_id', $order->id)
-            ->where('product_id', $id)
-            ->first();
-
-        if (!$orderItem) {
-            return response()->json(['message' => 'Product not found in cart.'], 404);
-        }
-
-        $orderItem->delete();
-
-        if ($order->orderItems()->count() == 0) {
-            $order->delete();
-        } else {
-            $order->total_amount = $order->orderItems()->sum('price');
-            $order->save();
-        }
-
-        return response()->json(['message' => 'Product removed from cart successfully.'], 200);
-    }
 
 
 
     public function checkoutOrder(Request $request)
-{
-    $customerId = Auth::guard('customer-api')->id();
+    {
+        $customerId = Auth::guard('customer-api')->id();
 
-    $order = Order::where('customer_id', $customerId)
-        ->where('status', 'cart')
-        ->first();
+        $order = Order::create([
+            'customer_id' => $customerId,
+            'status' => 'ordered',
+            'total_amount' => 0,
+        ]);
 
-    if (!$order) {
-        return response()->json(['message' => 'No active cart found'], 404);
-    }
+        $totalAmount = 0;
 
-    $totalAmount = 0;
+        $productIds = collect($request->products)->pluck('id');
+        $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
 
-    foreach ($request->products as $productItem) {
-        $orderItem = OrderItem::where('order_id', $order->id)
-            ->where('product_id', $productItem['id'])
-            ->first();
+        foreach ($request->products as $productItem) {
+            $product = $products->get($productItem['id']);
+            if (!$product) {
+                return response()->json(['message' => 'Product not found'], 404);
+            }
 
-        if (!$orderItem) {
-            return response()->json(['message' => 'Product not found in cart'], 404);
+            $orderItem = new OrderItem([
+                'order_id' => $order->id,
+                'product_id' => $productItem['id'],
+                'quantity' => $productItem['quantity'],
+                'price' => $product->price * $productItem['quantity'],
+                'total' => $product->price * $productItem['quantity'],
+            ]);
+            $orderItem->save();
+
+            $totalAmount += $orderItem->total;
         }
 
-        $product = Product::find($productItem['id']);
-        if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
-        }
+        $order->update(['total_amount' => $totalAmount]);
 
-        $orderItem->quantity = $productItem['quantity'];
-        $orderItem->price = $product->price * $productItem['quantity'];
-        $orderItem->save();
-
-        $totalAmount += $orderItem->price;
+        return response()->json(['message' => 'Order created and checked out successfully']);
     }
-
-    $order->total_amount = $totalAmount;
-    $order->status = 'ordered';
-    $order->updated_at = now();
-    $order->save();
-
-    return response()->json(['message' => 'Order checked out successfully']);
-}
 
 
 
@@ -276,62 +314,39 @@ class OrderController extends Controller
         return response()->json($pendings);
     }
 
-
-    public function fetchPendingProductForCheckout()
+    public function receive($id)
     {
-        $userId = Auth::guard('customer-api')->user()->id;
+        try {
+            $order = Order::findOrFail($id);
 
-        // Get the user's cart order
-        $order = Order::where('customer_id', $userId)
-            ->where('status', 'cart')
-            ->first();
+            if ($order->customer_id !== Auth::guard('customer-api')->id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized to update this order'
+                ], 403);
+            }
 
-        if (!$order) {
-            return response()->json([]); // Return empty array if no order exists
+            $order->update([
+                'status' => 'recieved'
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order marked as received',
+                'order' => $order
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update order status'
+            ], 500);
         }
-
-        // Get order items with product & shop details
-        $orderItems = OrderItem::where('order_id', $order->id)
-            ->with([
-                'product:id,name,price,shop_id,image',
-                'product.shop:id,name,email,description,contact_number'
-            ])
-            ->get();
-
-        if ($orderItems->isEmpty()) {
-            return response()->json([]); // Return empty array if no items exist
-        }
-
-        // Group products by shop
-        $grouped = $orderItems->groupBy(function ($orderItem) {
-            return $orderItem->product->shop->id;
-        })->map(function ($items) {
-            $shop = $items->first()->product->shop;
-            $products = $items->map(function ($item) {
-                return [
-                    'id' => $item->product->id,
-                    'order_item_id' => $item->id,
-                    'name' => $item->product->name,
-                    'price' => $item->product->price,
-                    'image' => $item->product->image,
-                    'quantity' => $item->quantity,
-                ];
-            });
-
-            return [
-                'shop' => [
-                    'id' => $shop->id,
-                    'name' => $shop->name,
-                    'email' => $shop->email,
-                    'description' => $shop->description,
-                    'contact_number' => $shop->contact_number,
-                ],
-                'products' => $products->values(),
-            ];
-        })->values();
-
-        return response()->json($grouped);
     }
-
 
 }

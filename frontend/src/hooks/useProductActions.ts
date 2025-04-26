@@ -2,14 +2,13 @@ import {
   addProduct as addProductService,
   deleteProduct,
   fetchAllProducts,
-  fetchFeaturedProducts,
   fetchShopProducts,
   fetchSpecificProduct,
   updateProduct,
 } from "@/services/productService";
 import useToken from "@/stores/useAuthStore";
 import useProducts from "@/stores/useProducts";
-import { newProduct, Product, ProductToUpdate } from "@/types/product";
+import { newProduct, Product } from "@/types/product";
 import { useState } from "react";
 import useRedirectLink from "./useRedirectLink";
 import { useSnackbar } from "@/components/context/SnackbarContext";
@@ -18,7 +17,7 @@ const useProductAction = () => {
   const token = useToken.getState().accessToken;
   const { redirectLink } = useRedirectLink();
   const { products, setProducts, deleteProductById, addProduct, updateProductById } = useProducts();
-  const { openSnackbar } = useSnackbar(); // Use Snackbar
+  const { openSnackbar } = useSnackbar(); 
 
   const [newProduct, setNewProduct] = useState<newProduct>({
     name: "",
@@ -28,13 +27,10 @@ const useProductAction = () => {
   });
   const [product, setProduct] = useState<Product>();
 
-  const handleFetchAllProducts = async () => {
-    return await fetchAllProducts();
+  const handleFetchAllProducts = async (type: string) => {
+    return await fetchAllProducts(type);
   };
 
-  const handleFetchFeaturedProducts = async () => {
-    return await fetchFeaturedProducts();
-  };
 
   const handleFetchShopProducts = async () => {
     if (!token) return;
@@ -64,20 +60,6 @@ const useProductAction = () => {
     }
   };
 
-  const handleUpdateProduct = async (updateData: ProductToUpdate, onLocalUpdate?: (product: Product) => void) => {
-    if (!token) return;
-    try {
-      const updatedProduct = await updateProduct(updateData, token);
-      if (onLocalUpdate) {
-        onLocalUpdate(updatedProduct);
-      }
-      updateProductById(updatedProduct.id, updatedProduct);
-      openSnackbar("Product updated successfully", "success");
-    } catch (error) {
-      console.error(error);
-      openSnackbar("Failed to update product", "error");
-    }
-  };
 
   const handleDeleteProduct = async (id: number) => {
     if (!token) return;
@@ -125,7 +107,7 @@ const useProductAction = () => {
       openSnackbar(`Product visibility is now ${updatedVisibility ? "visible" : "hidden"}`, "info");
 
       const productWithoutImage = { ...updatedProduct, image: null };
-      await updateProduct(productWithoutImage, token);
+      await updateProduct(productWithoutImage.id, productWithoutImage, token);
     } catch (error) {
       console.error(error);
       openSnackbar("Failed to update product visibility", "error");
@@ -147,7 +129,8 @@ const useProductAction = () => {
       }
 
       const productWithoutImage = { ...updatedProductFeature, image: null };
-      await updateProduct(productWithoutImage, token);
+
+      await updateProduct( productWithoutImage.id, productWithoutImage, token);
     } catch (error) {
       console.error(error);
       openSnackbar("Feature toggle failed: Reverting Back", "error");
@@ -160,12 +143,10 @@ const useProductAction = () => {
     newProduct,
     handleFetchAllProducts,
     handleFetchShopProducts,
-    handleFetchFeaturedProducts,
     handleFetchSpecificProduct,
     handleAddProducts,
     handleDeleteProduct,
     handleInputs,
-    handleUpdateProduct,
     handleProductVisibility,
     handleFeatureToggle,
   };

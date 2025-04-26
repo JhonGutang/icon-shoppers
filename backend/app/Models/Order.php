@@ -13,15 +13,14 @@ class Order extends Model
         'customer_id',
         'total_amount',
         'status',
+        'location'
     ];
 
-    // Relationship: An order has many order items
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    // Relationship: An order belongs to a customer
     public function customer()
     {
         return $this->belongsTo(Customer::class);

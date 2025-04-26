@@ -63,7 +63,7 @@ class CustomerController extends Controller
 
     public function update(Request $request)
     {
-        $user = Auth::guard('customer-api')->user(); 
+        $user = Auth::guard('customer-api')->user();
         $customer = Customer::findOrFail($user->id);
 
         $validatedData = $request->validate([
@@ -252,5 +252,14 @@ class CustomerController extends Controller
     public function destroy(Customer $customer)
     {
         //
+    }
+
+    public function logout () {
+        /** @var \App\Models\Customer $user */
+        $user = Auth::guard('customer-api')->user();
+        $user->tokens()->delete();
+        return response()->json([
+            'message' => 'Logged out successfully'
+        ]);
     }
 }

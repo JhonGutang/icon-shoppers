@@ -9,6 +9,7 @@ import useProductAction from "@/hooks/useProductActions";
 import useAuthStore from "@/stores/useAuthStore";
 import useCustomerActions from "@/hooks/useCustomerActions";
 import useRedirectLink from "@/hooks/useRedirectLink";
+
 interface ProductCardProps {
   product: Product;
   location?: string;
@@ -28,21 +29,26 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <Card
-      className="relative w-[42vw] pt-0 pb-3 lg:w-[20vw] lg:gap-3 rounded-xl cursor-pointer shadow-2xl border-2 border-gray-300"
-      onClick={() =>
-        redirectLink(
-          shopName || product.shop_name!,
-          `${product.id} ${product.name}`
-        )
-      }
+      className="relative w-[42vw] pt-0 pb-3 lg:w-[20vw] lg:gap-3 rounded-xl cursor-pointer shadow-2xl border-2 border-gray-300 transition-transform duration-300 hover:scale-105"
+      onClick={() => {
+        if (role === "seller") {
+          window.location.href = `/profile/${product.id}`;
+        } else {
+          redirectLink(shopName || product.shop_name!, `${product.id} ${product.name}`);
+        }
+      }}
     >
       {role === "customer" && <AddToCart product={product} />}
+
+      {Boolean(product.is_featured) && (
+        <div className="absolute top-2 left-2 text-xs text-white bg-green-600 text-center w-20 rounded-full py-1 z-10">Featured</div>
+      )}
 
       <CardContent className="flex flex-col gap-3 items-center justify-center px-0 w-full h-[80%]">
         <img
           src={
             product.image
-              ? `http://localhost:8000/storage/${product.image}`
+              ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`
               : "https://i.pinimg.com/736x/c5/a0/03/c5a00375d647591a14dd36e31151acb1.jpg"
           }
           alt={product.name}

@@ -3,10 +3,10 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchSpecificShop } from "@/services/shopService";
 import { Product, Shop } from "@/types/product";
-import Navbar from "@/components/Header";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import ProductCard from "@/components/ProductCard";
-
+import CartNavbar from "@/components/mobile/CartNavbar";
+import { Button } from "@/components/ui/button";
 const ShopPage = () => {
   const { shopName } = useParams();
   const [shop, setShop] = useState<Shop | null>(null);
@@ -69,29 +69,40 @@ const ShopPage = () => {
 
   return (
     <div className="space-y-5">
-      <Navbar name={shop?.name || ""} />
+      <CartNavbar />
       <div className="w-full px-5">
         {/* Shop Details */}
-        <div className="flex gap-5 items-center mb-5">
-          <div className="w-1/2">
+        <div className="flex flex-col gap-5 lg:items-start items-center mb-5">
+          <div className="w-1/2 lg:w-full lg:h-[40vh]">
             <img
-              src="https://i.pinimg.com/736x/06/6f/79/066f790bcd35c0847b8b6a221fa04a10.jpg"
+              src={`http://192.168.1.6:8000/storage/${shop?.logo_image}`}
               alt={shop?.name || "Shop Image"}
               className="object-cover w-full h-full rounded-xl border-2"
             />
           </div>
 
+          <div className="flex  justify-between w-full items-center lg:gap-0 gap-4 lg:px-10">
+            <div>
+              <h1 className="text-3xl font-semibold">{shop?.name}</h1>
+              <div className="text-sm">
+                <div className="flex gap-2">
+                  <div>Email:</div>
+                  <div>{shop?.email}</div>
+                </div>
+                <div className="flex gap-2">
+                  <div>Contact Number:</div>
+                  <div>{shop?.contact_number}</div>
+                </div>
+              </div>
+            </div>
           <div>
-            <h1 className="text-xl font-semibold">{shop?.name}</h1>
-            <p className="text-sm">
-              <span>{shop?.email}</span> <br />
-              <span>{shop?.contact_number}</span>
-            </p>
+            <Button className="bg-green-600">Rate Shop</Button>
+          </div>
           </div>
         </div>
 
         {/* Shop Description */}
-        <div className="mb-5">
+        <div className="mb-5 lg:px-10">
           <h2 className="font-semibold">Description</h2>
           <p className="mt-2">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore
@@ -101,7 +112,7 @@ const ShopPage = () => {
         </div>
 
         {/* Category Filter */}
-        <div className="mb-5">
+        <div className="mb-5 lg:px-10">
           <ToggleButtonGroup
             size="small"
             value={category}
@@ -119,7 +130,7 @@ const ShopPage = () => {
         </div>
 
         {/* Products List */}
-        <div className="columns-2 gap-1 pb-5">
+        <div className="columns-2 lg:columns-4 gap-1 pb-5 lg:px-10">
           {Array.isArray(productsToDisplay) && productsToDisplay.length ? (
             productsToDisplay.map((product) => (
               <div key={product.id} className="break-inside-avoid mb-3">

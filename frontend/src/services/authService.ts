@@ -1,5 +1,5 @@
 import axiosInstance from "@/hooks/useAxios";
-import { Register, Login, CustomerProfile } from "@/types/auth";
+import { Register, Login, CustomerProfile, EditProfile, SellerProfile } from "@/types/auth";
 
 const formatData = (data: Register | Login, auth: string) => {
   if (auth === "register") {
@@ -50,8 +50,10 @@ export const login = async (credentials: Login, role: string) => {
   return response.data;
 };
 
-export const logout = async (token: string) => {
-  await axiosInstance.delete("/logout", {
+export const logout = async (token: string, role: string) => {
+
+  const API_ENDPOINT = role === 'seller' ?  "/shop-logout" : "/customer-logout"
+  await axiosInstance.delete(API_ENDPOINT, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -67,8 +69,9 @@ export const getProfile = async (token: string, role: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    
-    return formatProfileData(response.data);
+  
+    const data = role === 'seller' ? formatSellerProfile(response.data.user) : formatProfileData(response.data)
+    return  data
   } catch (error) {
     console.error(error);
   }
@@ -81,13 +84,27 @@ const formatProfileData = (data: CustomerProfile) => {
     updatedAt: data.updated_at,
     email: data.email,
     contactNumber: data.contact_number,
+    profileImage: data.logo_image,
     description: data.description,
     middleName: data.middle_name,
     address: data.address,
   };
 };
+const formatSellerProfile = (data: SellerProfile) => {
+  return {
+    name: data.name,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+    email: data.email,
+    contactNumber: data.contact_number,
+    profileImage: data.logo_image,
+    description: data.description,
+    address: data.address,
+    owner: data.owner
+  };
+};
 
-export const updateProfile = async (token: string, updatedData: CustomerProfile, role: string) => {
+export const updateProfile = async (token: string, updatedData: EditProfile, role: string) => {
   const API_ENDPOINT = role === 'seller' ? "/profile" : "/customer-profile";  
   
   try { 
