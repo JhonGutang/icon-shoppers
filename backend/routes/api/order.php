@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 
+Route::get('/orders', [OrderController::class, 'getOrders']);
+
 Route::middleware('auth:shop-api')->group(function () {
     Route::get('/orders', [OrderController::class, 'getOrders']);
     Route::put('/orders/{id}/approve', [OrderController::class, 'approve']);

@@ -77,6 +77,7 @@ class OrderController extends Controller
 
     public function getOrders(Request $request)
     {
+
         if (!Auth::guard('shop-api')->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
@@ -99,7 +100,9 @@ class OrderController extends Controller
 
         $orders = $query->get();
 
-        $formattedOrders = $orders->map(function($order) use ($shopId) {
+
+        // Format the data in a way the frontend expects
+        $formattedOrders = $orders->map(function($order) {
             return [
                 'id' => $order->id,
                 'customerName' => $order->customer->name,
