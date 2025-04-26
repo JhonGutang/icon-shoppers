@@ -28,35 +28,6 @@ const handleError = (error: unknown, message: string) => {
 };
 
 export const orderService = {
-
-  async fetchOrders(status?: string) {
-    let queryStatus = status === "All" ? "" : status?.toLowerCase().replace(/ /g, "_");
-    if (queryStatus === "approved") queryStatus = "active";
-    
-    const url = queryStatus ? `/orders?status=${queryStatus}` : "/orders";
-    const response = await axiosInstance.get<Order[]>(url);
-    return response.data;
-  },
-
-  async updateOrderStatus(orderId: number, status: string) {
-    return await axiosInstance.put(`/orders/${orderId}`, { status });
-  },
-
-  async fetchSellerOrders() {
-    const response = await axiosInstance.get<Order[]>('/seller/orders');
-    return response.data;
-  },
-
-  async fetchCustomerOrders (token: string) {
-    const response = await axiosInstance.get('/customer/orders', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    return response.data
-  }
-}; 
-
   async fetchOrders(token: string, status?: string): Promise<Order[]> {
     try {
       const queryStatus = normalizeStatus(status);
@@ -151,4 +122,3 @@ export const orderService = {
     }
   },
 };
-
