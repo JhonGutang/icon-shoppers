@@ -8,7 +8,7 @@ import {
 } from "@/services/productService";
 import useToken from "@/stores/useAuthStore";
 import useProducts from "@/stores/useProducts";
-import { newProduct, Product, ProductToUpdate } from "@/types/product";
+import { newProduct, Product } from "@/types/product";
 import { useState } from "react";
 import useRedirectLink from "./useRedirectLink";
 import { useSnackbar } from "@/components/context/SnackbarContext";

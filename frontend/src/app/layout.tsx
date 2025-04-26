@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
 import { SnackbarProvider } from "@/components/context/SnackbarContext";
 
 const poppins = Poppins({
@@ -30,7 +29,6 @@ export default function RootLayout({
           {" "}
           {/* Wrap the app in SnackbarProvider */}
           {children}
-          <Toaster />
         </SnackbarProvider>
       </body>
     </html>

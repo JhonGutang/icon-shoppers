@@ -10,7 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Customer extends Authenticatable
 {
-    use HasApiTokens ,HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'customers';
 
@@ -33,7 +33,13 @@ class Customer extends Authenticatable
     ];
 
     public function orders()
-{
-    return $this->hasMany(Order::class);
-}
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function productRatings()
+    {
+        return $this->hasMany(ProductRating::class, 'customer_id');
+    }
+
 }
