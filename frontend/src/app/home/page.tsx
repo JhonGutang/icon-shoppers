@@ -22,11 +22,11 @@ const Home = () => {
   const userType = useAuthStore((state) => state.userType);
 
   useEffect(() => {
-    if (!accessToken || userType !== "customer") {
-      openSnackbar("Please login as a customer to access this page", "error");
-      router.push("/customer-auth");
-      return;
-    }
+    // if (!accessToken || userType !== "customer") {
+    //   openSnackbar("Please login as a customer to access this page", "error");
+    //   router.push("/customer-auth");
+    //   return;
+    // }
 
     const section = searchParams.get("section");
     if (section) {
@@ -43,9 +43,9 @@ const Home = () => {
     setActiveComponent(component);
   };
 
-  if (!accessToken || userType !== "customer") {
-    return null;
-  }
+  // if (!accessToken || userType !== "customer") {
+  //   return null;
+  // }
 
   return (
     <div className="w-full h-screen flex flex-col items-center py-5 lg:px-20">

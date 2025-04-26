@@ -22,11 +22,11 @@ const Profile = () => {
   const userType = useAuthStore((state) => state.userType);
 
   useEffect(() => {
-    if (!accessToken || userType !== "seller") {
-      openSnackbar("Please you your seller account to access this page", "error");
-      redirectLink("shop-auth");
-      return;
-    }
+    // if (!accessToken || userType !== "seller") {
+    //   openSnackbar("Please you your seller account to access this page", "error");
+    //   redirectLink("shop-auth");
+    //   return;
+    // }
 
     fetchUser();
     fetchProducts();
