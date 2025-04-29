@@ -16,7 +16,7 @@ import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useRedirectLink from "@/hooks/useRedirectLink";
 import { useEffect, useState } from "react";
-import { OrderStatus, Order as OrderType } from "@/types/order";
+import { OrderStatus } from "@/types/order";
 import useAuthStore from "@/stores/useAuthStore";
 
 interface OrderItem {
@@ -59,6 +59,7 @@ const Dashboard = () => {
       );
       toast.success(`Order status updated to ${formatStatus(newStatus)}`);
     } catch (error) {
+      console.error(error)
       toast.error("Failed to update order status");
     }
   };

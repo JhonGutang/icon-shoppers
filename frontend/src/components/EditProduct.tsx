@@ -75,6 +75,7 @@ const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
     setIsLoading(true);
     try {
 
+      console.log(imageFile);
       const updatedProduct = await updateProduct( product.id, formData, accessToken);
       openSnackbar('Product Updated Successfully', 'success')
       setTimeout(() => {
@@ -83,6 +84,7 @@ const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
       onSave(updatedProduct);
       setOpen(false);
     } catch (error) {
+      console.error(error)
       openSnackbar('Update Failed', 'error');
     } finally {
       setIsLoading(false);

@@ -22,17 +22,18 @@ export const rateProduct = async (
       });
   
       return response.data; 
-    } catch (error: any) {
-      if (error.response) {
+    } catch (error) {
+      console.error(error)
+      // if (error.response) {
         
-        const status = error.response.status;
-        const data = error.response.data;
+      //   const status = error.response.status;
+      //   const data = error.response.data;
   
-        if (status === 409) {
-          console.error("Duplicate rating:", data.message);
-          return { error: 'conflict', message: data.message };
-        }
-      }
+      //   if (status === 409) {
+      //     console.error("Duplicate rating:", data.message);
+      //     return { error: 'conflict', message: data.message };
+      //   }
+      // }
   
       console.error("Unexpected error:", error);
       return { error: 'unknown', message: 'Something went wrong.' };

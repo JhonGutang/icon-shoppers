@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Order, OrderStatus } from "@/types/order";
+import { useState } from "react";
+import { OrderStatus } from "@/types/order";
 import { orderService } from "@/services/orderService";
 import useAuthStore from "@/stores/useAuthStore";
 

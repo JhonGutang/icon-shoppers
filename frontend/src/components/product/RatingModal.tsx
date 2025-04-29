@@ -17,10 +17,11 @@ interface RatingModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (rating: number, feedback: string) => void;
-  productId: number;
+  productId?: number;
 }
 
 const RatingModal = ({ isOpen, onClose, onSubmit, productId }: RatingModalProps) => {
+  console.log(productId);
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState("");
   const { openSnackbar } = useSnackbar(); 

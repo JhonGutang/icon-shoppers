@@ -8,15 +8,15 @@ import { ShoppingBag } from "lucide-react";
 import { useEffect, useState } from "react";
 import useProductAction from "@/hooks/useProductActions";
 import useAuthStore from "@/stores/useAuthStore";
-import { useSnackbar } from "@/components/context/SnackbarContext";
-import useRedirectLink from "@/hooks/useRedirectLink";
+// import { useSnackbar } from "@/components/context/SnackbarContext";
+// import useRedirectLink from "@/hooks/useRedirectLink";
 
 const Profile = () => {
   const { handleGetProfile } = useAuth();
   const { products, handleFetchShopProducts } = useProductAction();
   const [user, setUser] = useState<ProfileDisplay>();
-  const { openSnackbar } = useSnackbar();
-  const { redirectLink } = useRedirectLink();
+  // const { openSnackbar } = useSnackbar();
+  // const { redirectLink } = useRedirectLink();
 
   const accessToken = useAuthStore((state) => state.accessToken);
   const userType = useAuthStore((state) => state.userType);

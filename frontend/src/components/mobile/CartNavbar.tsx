@@ -1,4 +1,4 @@
-import { ChevronLeft, UserRound } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { Button } from "../ui/button";
 import useRedirectLink from "@/hooks/useRedirectLink";
 const CartNavbar = () => {
