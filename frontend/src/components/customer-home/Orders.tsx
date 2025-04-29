@@ -4,11 +4,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import useCustomerActions from "@/hooks/useCustomerActions";
 import { ProductWithShop } from "@/types/product";
 import { useEffect, useState } from "react";
-
+import { useOrders } from "@/hooks/useOrders";
 const Orders = () => {
-  const { handleOrdersStatus } = useCustomerActions();
+  const { handleOrders } = useCustomerActions();
   const [orders, setOrders] = useState<ProductWithShop[]>();
   const [activeTab, setActiveTab] = useState<string | undefined>("all");
+  const {handleStatusUpdate} = useOrders()
+  const orderTabs = [
+    { id: "all", label: "All" },
+    { id: "ordered", label: "Ordered" },
+    { id: "to_be_delivered", label: "To be Delivered" },
+    { id: "delivered", label: "Delivered" },
+    { id: "completed", label: "Completed" },
+  ];
 
   const getStatusColor = (status: string | undefined) => {
     const statusColors = {
@@ -22,8 +30,10 @@ const Orders = () => {
     );
   };
 
+
+
   const fetchOrders = async (status?: string) => {
-    const products = await handleOrdersStatus(status || "all");
+    const products = await handleOrders(status || "all");
     if (products) setOrders(products);
   };
 
@@ -40,56 +50,21 @@ const Orders = () => {
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-6">
-      <div className="flex flex-col gap-4 mb-6">
+      <div className="flex justify-between gap-4 mb-6">
         <h2 className="text-2xl font-bold">Your Orders</h2>
         <div className="flex gap-2 overflow-x-auto pb-2">
-          <Button
-            variant={activeTab === "all" ? "default" : "outline"}
-            className={`whitespace-nowrap ${
-              activeTab === "all" ? "bg-green-600 hover:bg-green-700" : ""
-            }`}
-            onClick={() => setActiveTab("all")}
-          >
-            All
-          </Button>
-          <Button
-            variant={activeTab === "ordered" ? "default" : "outline"}
-            className={`whitespace-nowrap ${
-              activeTab === "ordered" ? "bg-green-600 hover:bg-green-700" : ""
-            }`}
-            onClick={() => setActiveTab("ordered")}
-          >
-            Ordered
-          </Button>
-          <Button
-            variant={activeTab === "to_be_delivered" ? "default" : "outline"}
-            className={`whitespace-nowrap ${
-              activeTab === "to_be_delivered"
-                ? "bg-green-600 hover:bg-green-700"
-                : ""
-            }`}
-            onClick={() => setActiveTab("to_be_delivered")}
-          >
-            To be Delivered
-          </Button>
-          <Button
-            variant={activeTab === "delivered" ? "default" : "outline"}
-            className={`whitespace-nowrap ${
-              activeTab === "delivered" ? "bg-green-600 hover:bg-green-700" : ""
-            }`}
-            onClick={() => setActiveTab("delivered")}
-          >
-            Delivered
-          </Button>
-          <Button
-            variant={activeTab === "completed" ? "default" : "outline"}
-            className={`whitespace-nowrap ${
-              activeTab === "completed" ? "bg-green-600 hover:bg-green-700" : ""
-            }`}
-            onClick={() => setActiveTab("completed")}
-          >
-            Completed
-          </Button>
+          {orderTabs.map((tab) => (
+            <Button
+              key={tab.id}
+              variant={activeTab === tab.id ? "default" : "outline"}
+              className={`whitespace-nowrap ${
+                activeTab === tab.id ? "bg-green-600 hover:bg-green-700" : ""
+              }`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </Button>
+          ))}
         </div>
       </div>
 
@@ -137,7 +112,7 @@ const Orders = () => {
                   <div>
                     <h4 className="font-semibold mb-2">Items Summary</h4>
                     {order.products.map((product, idx) => (
-                      <div key={idx} className="flex justify-between text-sm">
+                      <div key={idx} className="flex justify-between text-sm lg:pr-10">
                         <span>
                           {product.name} ({product.quantity}x)
                         </span>
@@ -178,6 +153,14 @@ const Orders = () => {
                 </div>
               </div>
             </div>
+            {
+              order.status === 'delivering' &&    <div className="flex justify-end gap-3 mt-4">
+              <Button className="bg-green-600 hover:bg-white hover:text-green-700" onClick={() => handleStatusUpdate(String(order.order_id), 'completed')}>
+                Received Order
+              </Button>
+            </div>
+            }
+         
           </CardContent>
         </Card>
       ))}

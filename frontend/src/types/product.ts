@@ -37,6 +37,7 @@ export interface Shop {
 }
 
 export interface ProductWithShop {
+  order_id?: number,
   products: ProductInCart[],
   shop: Shop,
   status?: string,
@@ -62,5 +63,4 @@ export const productFields: { id: keyof ProductToUpdate; label: string; type: st
 export interface Order {
   id: number,
   quantity: number
-
 }

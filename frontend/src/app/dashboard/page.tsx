@@ -15,12 +15,59 @@ import { toast } from "sonner";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useRedirectLink from "@/hooks/useRedirectLink";
+import { useEffect, useState } from "react";
+import { OrderStatus, Order as OrderType } from "@/types/order";
+import useAuthStore from "@/stores/useAuthStore";
+
+interface OrderItem {
+  name: string;
+  quantity: number;
+  totalPrice: number;
+}
+
+interface DashboardOrder {
+  id: number;
+  customerName: string;
+  location: string;
+  status: OrderStatus;
+  products: OrderItem[];
+}
 
 const Dashboard = () => {
-  const { orders, error, activeTab, setActiveTab, handleStatusUpdate } =
-    useOrders();
-  const { redirectLink} = useRedirectLink()
-  console.log("Orders data:", orders);
+  const [activeTab, setActiveTab] = useState<OrderStatus>("All");
+  const [orders, setOrders] = useState<DashboardOrder[]>([]);
+  const { error, handleStatusUpdate, fetchOrders } = useOrders();
+  const { redirectLink } = useRedirectLink();
+  const hasHydrated = useAuthStore((state) => state.hasHydrated);
+
+  const handleFetchOrder = async () => {
+    const data = await fetchOrders(activeTab);
+    if (data) {
+      setOrders(data as unknown as DashboardOrder[]);
+    }
+  };
+
+  const updateOrderStatus = async (orderId: string, newStatus: OrderStatus) => {
+    try {
+      await handleStatusUpdate(orderId, newStatus);
+      setOrders(prevOrders =>
+        prevOrders.map(order =>
+          order.id.toString() === orderId
+            ? { ...order, status: newStatus }
+            : order
+        )
+      );
+      toast.success(`Order status updated to ${formatStatus(newStatus)}`);
+    } catch (error) {
+      toast.error("Failed to update order status");
+    }
+  };
+
+  useEffect(() => {
+    if (hasHydrated) {
+      handleFetchOrder();
+    }
+  }, [activeTab, hasHydrated]);
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -117,10 +164,7 @@ const Dashboard = () => {
                                 order.status === "to_be_delivered"
                                   ? "delivering"
                                   : "to_be_delivered";
-                              handleStatusUpdate(
-                                order.id.toString(),
-                                nextStatus
-                              );
+                              updateOrderStatus(order.id.toString(), nextStatus);
                             }}
                             onReject={() => {
                               if (!order.id) {
@@ -130,10 +174,7 @@ const Dashboard = () => {
                                 );
                                 return;
                               }
-                              handleStatusUpdate(
-                                order.id.toString(),
-                                "rejected"
-                              );
+                              updateOrderStatus(order.id.toString(), "rejected");
                             }}
                           />
                         </TableCell>
