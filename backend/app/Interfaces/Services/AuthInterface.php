@@ -10,5 +10,6 @@ interface AuthInterface
      * @param array $credentials
      * @return mixed
      */
-    public function authenticateCustomer(array $credentials);
+    public function authenticateUser(array $credentials);
+    public function registerUser(array $userData);
 }

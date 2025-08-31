@@ -2,10 +2,13 @@
 
 namespace App\Services;
 
+use App\Interfaces\Repositories\CustomerRepositoryInterface;
 use App\Interfaces\Services\AuthInterface;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
 use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AuthService implements AuthInterface
 {
@@ -15,7 +18,15 @@ class AuthService implements AuthInterface
      * @param array $credentials
      * @return mixed
      */
-    public function authenticateCustomer(array $credentials)
+    protected $customerRepository;
+
+    public function __construct(CustomerRepositoryInterface $customerRepository)
+    {
+        $this->customerRepository = $customerRepository;
+    }
+
+
+    public function authenticateUser(array $credentials)
     {
         try {
             if (!Auth::guard('customer')->attempt($credentials)) {
@@ -32,4 +43,19 @@ class AuthService implements AuthInterface
             return Response::json(['error' => 'Authentication failed', 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function registerUser(array $validatedData)
+    {
+        DB::beginTransaction();
+        try {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+            $registeredUser = $this->customerRepository->create($validatedData);
+            DB::commit();
+            return $registeredUser;
+        } catch (Exception $e) {
+            DB::rollBack();
+            return Response::json(['error' => 'Registration failed', 'message' => $e->getMessage()], 500);
+        }
+    }
 }
+
