@@ -7,7 +7,7 @@ import Register from "@/components/auth/register";
 const CustomerAuth = () => {
   const [defaultAuth, setDefaultAuth] = useState<string>("login");
   const loginField = [
-    { id: "name", label: "Customer Name", type: "text" },
+    { id: "email", label: "Email", type: "email" },
     { id: "password", label: "Password", type: "password" },
   ];
 

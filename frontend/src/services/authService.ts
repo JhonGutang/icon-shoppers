@@ -14,7 +14,7 @@ const formatData = (data: Register | Login, auth: string) => {
   } else {
     const loginData = data as Login;
     return {
-      name: loginData.name,
+      email: loginData.email,
       password: loginData.password,
     };
   }
