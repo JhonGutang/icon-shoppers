@@ -1,9 +1,6 @@
 <?php
 
 namespace App\Interfaces\Services;
-
-use App\Models\Customer;
-
 interface AuthInterface
 {
     /**
