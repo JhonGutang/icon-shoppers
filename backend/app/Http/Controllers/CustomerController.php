@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CustomerRequest;
 use App\Http\Requests\LoginFormRequest;
+use App\Http\Requests\UpdateFormRequest;
 use App\Interfaces\Services\AuthInterface;
 use App\Models\Customer;
 use App\Models\Order;
@@ -42,9 +43,6 @@ class CustomerController extends Controller
         ;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(CustomerRequest $request)
     {
         $validatedData = $request->validated();
@@ -57,29 +55,14 @@ class CustomerController extends Controller
         ], 201);
     }
 
-    public function update(Request $request)
+    public function update(UpdateFormRequest $request)
     {
         $user = Auth::guard('customer-api')->user();
-        $customer = Customer::findOrFail($user->id);
-
-        $validatedData = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email',
-            'contactNumber' => 'required|string',
-            'address' => 'nullable|string',
-            'middleName' => 'nullable|string',
-        ]);
-
-        $customer->name = $validatedData['name'];
-        $customer->email = $validatedData['email'];
-        $customer->contact_number = $validatedData['contactNumber'];
-        $customer->address = $validatedData['address'];
-        $customer->middle_name = $validatedData['middleName'];
-        $customer->save();
-
+        $validatedData = $request->validated();
+        $updatedCustomer = $this->authService->updateUser($validatedData, $user->id);
         return response()->json([
             'message' => 'Customer updated successfully.',
-            'customer' => $customer,
+            'customer' => $updatedCustomer,
         ]);
     }
 

@@ -2,6 +2,8 @@
 
 namespace App\Interfaces\Services;
 
+use App\Models\Customer;
+
 interface AuthInterface
 {
     /**
@@ -10,5 +12,7 @@ interface AuthInterface
      * @param array $credentials
      * @return mixed
      */
-    public function authenticateCustomer(array $credentials);
+    public function authenticateUser(array $credentials);
+    public function registerUser(array $userData);
+    public function updateUser(array $userData, int $id);
 }
