@@ -21,7 +21,7 @@ const useAuth = () => {
   });
 
   const [loginFormData, setLoginFormData] = useState<Login>({
-    name: "",
+    email: "",
     password: "",
   });
 
