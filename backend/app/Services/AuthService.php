@@ -57,5 +57,11 @@ class AuthService implements AuthInterface
             return Response::json(['error' => 'Registration failed', 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function updateUser(array $validatedData, int $id)
+    {
+        $updatedUser = $this->customerRepository->update($validatedData, $id);
+        return $updatedUser;
+    }
 }
 

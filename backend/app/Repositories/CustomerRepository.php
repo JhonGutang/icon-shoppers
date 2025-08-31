@@ -11,4 +11,11 @@ class CustomerRepository implements CustomerRepositoryInterface
     {
         return Customer::create($data);
     }
+
+    public function update(array $data, $id)
+    {
+        $customer = Customer::findOrFail($id);
+        $customer->update($data);
+        return $customer;
+    }
 }
