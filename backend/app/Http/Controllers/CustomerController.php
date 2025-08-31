@@ -33,7 +33,7 @@ class CustomerController extends Controller
 
     public function login(LoginFormRequest $request) {
         $credentials = $request->validated();
-        $authenticatedUser = $this->authService->authenticateCustomer($credentials);
+        $authenticatedUser = $this->authService->authenticateUser($credentials);
         return response()
             ->json([
                 'user' => $authenticatedUser['user'],
@@ -46,12 +46,10 @@ class CustomerController extends Controller
     public function create(CustomerRequest $request)
     {
         $validatedData = $request->validated();
-        $validatedData['password'] = Hash::make($validatedData['password']);
-
-        $customer = Customer::create($validatedData);
+        $registeredUser = $this->authService->registerUser($validatedData);
         return response()->json([
             'message'  => 'Customer created successfully.',
-            'customer' => $customer,
+            'customer' => $registeredUser,
         ], 201);
     }
 

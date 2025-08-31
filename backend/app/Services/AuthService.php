@@ -2,11 +2,14 @@
 
 namespace App\Services;
 
+use App\Interfaces\Repositories\CustomerRepositoryInterface;
 use App\Interfaces\Services\AuthInterface;
 use App\Models\Customer;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
 use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AuthService implements AuthInterface
 {
@@ -16,7 +19,15 @@ class AuthService implements AuthInterface
      * @param array $credentials
      * @return mixed
      */
-    public function authenticateCustomer(array $credentials)
+    protected $customerRepository;
+
+    public function __construct(CustomerRepositoryInterface $customerRepository)
+    {
+        $this->customerRepository = $customerRepository;
+    }
+
+
+    public function authenticateUser(array $credentials)
     {
         try {
             if (!Auth::guard('customer')->attempt($credentials)) {
