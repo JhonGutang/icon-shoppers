@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Interfaces\Services\CartInterface;
 use App\Models\Cart;
 use App\Models\CartItem;
-use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
-{
+{   
+    protected $cartService;
+    public function __construct(CartInterface $cartService)
+    {
+        $this->cartService = $cartService;
+    }
+
 
     public function index() {
         $userId = Auth::guard('customer-api')->user()->id;
@@ -65,41 +71,8 @@ class CartController extends Controller
     public function store($id)
     {
         $user = Auth::guard('customer-api')->user();
-        $product = Product::findOrFail($id);
-
-        $cart = Cart::where('customer_id', $user->id)->first();
-
-
-        if (!$cart) {
-            $cart = Cart::create([
-                'customer_id' => $user->id,
-            ]);
-        }
-
-
-        $cartItem = CartItem::where('cart_id', $cart->id)
-            ->where('product_id', $id)
-            ->first();
-
-        if ($cartItem) {
-
-            $cartItem->quantity += 1;
-            $cartItem->save();
-        } else {
-
-            CartItem::create([
-                'cart_id' => $cart->id,
-                'product_id' => $id,
-                'quantity' => 1,
-            ]);
-        }
-
-        $totalAmount = 0;
-        foreach ($cart->cartItems as $item) {
-            $totalAmount += $item->quantity * $item->product->price;
-        }
-
-        return response()->json(['message' => 'Product added to cart successfully', 'total_amount' => $totalAmount]);
+        $this->cartService->addToCart($user->id, $id);
+        return response()->json(['message' => 'Product added to cart successfully']);
     }
 
     

@@ -64,44 +64,6 @@ class CustomerController extends Controller
         ]);
     }
 
-    public function addToCart($id)
-    {
-        $user = Auth::guard('customer-api')->user();
-        $product = Product::findOrFail($id);
-
-        $existingOrder = Order::where('customer_id', $user->id)
-            ->where('product_id', $id)
-            ->where('status', '')
-            ->first();
-
-        if ($existingOrder) {
-            $existingOrder->quantity += 1;
-            $existingOrder->total_amount = $existingOrder->quantity * $product->price;
-            $existingOrder->save();
-        } else {
-            Order::create([
-                'customer_id' => $user->id,
-                'product_id' => $id,
-                'quantity' => 1,
-                'total_amount' => $product->price,
-                'status' => 'ordered',
-            ]);
-        }
-
-        return response()->json(['message' => 'Product added to cart successfully']);
-    }
-
-    public function removeToCart($id)
-    {
-        $order = Order::where('product_id',$id);
-        if ($order) {
-            $order->delete();
-            return response()->json(['message' => 'Order removed from cart successfully.'], 200);
-        } else {
-            return response()->json(['message' => 'Order not found.'], 404);
-        }
-    }
-
     public function checkoutOrder(Request $request)
     {
         $customerId = Auth::guard('customer-api')->id();
