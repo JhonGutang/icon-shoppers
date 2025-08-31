@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Interfaces\Repositories\CustomerRepositoryInterface;
 use App\Interfaces\Services\AuthInterface;
-use App\Models\Customer;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
 use Exception;
