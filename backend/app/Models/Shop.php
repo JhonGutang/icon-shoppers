@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 
 class Shop extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -115,7 +115,7 @@ class Shop extends Authenticatable
         return $this->hasMany(Product::class);
     }
 
-    public function ratings(): MorphMany{
-        return $this->morphMany(Rating::class, 'rate');
-    }
+    // public function ratings(): MorphMany{
+    //     return $this->morphMany(Rating::class, 'rate');
+    // }
 }

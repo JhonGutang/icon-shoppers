@@ -6,8 +6,6 @@ use App\Interfaces\Repositories\CustomerRepositoryInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
-use Mockery;
-use Exception;
 
 uses(RefreshDatabase::class);
 
