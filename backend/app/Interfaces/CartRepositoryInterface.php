@@ -11,4 +11,12 @@ interface CartRepositoryInterface
      * @return mixed
      */
     public function create(int $userId, int $productId);
+
+    /**
+     * Get cart items grouped by shop.
+     *
+     * @param int $userId
+     * @return array
+     */
+    public function getItems(int $userId);
 }

@@ -3,10 +3,10 @@
 namespace App\Services;
 
 use App\Interfaces\CartRepositoryInterface;
-use App\Interfaces\Services\CartInterface;
+use App\Interfaces\Services\CartServiceInterface;
 use Illuminate\Support\Facades\DB;
 
-class CartService implements CartInterface
+class CartService implements CartServiceInterface
 {
     protected $cartRepository;
     public function __construct(CartRepositoryInterface $cartRepository)
@@ -29,6 +29,19 @@ class CartService implements CartInterface
         try {
             $this->cartRepository->create($userId, $productId);
             DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function getCartItems(int $userId)
+    {
+        DB::beginTransaction();
+        try {
+            $items = $this->cartRepository->getItems($userId);
+            DB::commit();
+            return $items;
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
