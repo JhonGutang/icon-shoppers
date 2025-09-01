@@ -2,7 +2,7 @@
 
 namespace App\Interfaces\Services;
 
-interface CartInterface
+interface CartServiceInterface
 {
 
     /**
@@ -14,4 +14,5 @@ interface CartInterface
      * @return mixed
      */
 public function addToCart(int $userId, int $productId);
+public function getCartItems(int $userId);
 }
