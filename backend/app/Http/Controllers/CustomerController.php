@@ -28,12 +28,12 @@ class CustomerController extends Controller
 
     public function login(LoginFormRequest $request) {
         $credentials = $request->validated();
-        $authenticatedUser = $this->authService->authenticateUser($credentials);
+        $authenticatedUser = $this->authService->authenticateUser($credentials, 'customer');
         return response()
             ->json([
                 'user' => $authenticatedUser['user'],
                 'token' => $authenticatedUser['token'],
-                'type' => 'seller'
+                'type' => 'customer'
             ])
         ;
     }

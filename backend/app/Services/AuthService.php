@@ -26,14 +26,15 @@ class AuthService implements AuthInterface
     }
 
 
-    public function authenticateUser(array $credentials)
+    public function authenticateUser(array $credentials, string $userType)
     {
         try {
-            if (!Auth::guard('customer')->attempt($credentials)) {
+            if (!Auth::guard($userType)->attempt($credentials)) {
                 return Response::json('Invalid Credentials');
             }
             /** @var \App\Models\Customer $user */
-            $user = Auth::guard('customer')->user();
+            /** @var \App\Models\Shop $user */
+            $user = Auth::guard($userType)->user();
             $token = $user->createToken('auth-token')->plainTextToken;
             return [
                 'user' => $user,
