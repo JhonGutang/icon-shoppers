@@ -5,15 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\Shop;
 use Illuminate\Http\Request;
 use App\Http\Requests\AuthRequest;
+use App\Http\Requests\LoginFormRequest;
+use App\Interfaces\Services\AuthInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 
 class ShopController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $authService;
+    public function __construct(AuthInterface $authService)
+    {
+        $this->authService = $authService;
+    }
+
+
     public function index()
     {
         $user = Auth::guard('shop-api')->user();
@@ -51,25 +57,14 @@ class ShopController extends Controller
 
 
 
-    public function login(Request $request)
+    public function login(LoginFormRequest $request)
     {
-        $credentials = $request->validate([
-            'name' => 'required|string',
-            'password' => 'required',
-        ]);
-
-        if (!Auth::guard('shop')->attempt($credentials)) {
-            return Response::json('Invalid Credentials');
-        }
-
-        /** @var \App\Models\Shop $user */
-        $user = Auth::guard('shop')->user();
-        $token = $user->createToken('auth-token')->plainTextToken;
-
+        $credentials = $request->validated();
+        $authenticatedUser = $this->authService->authenticateUser($credentials, 'shop');
         return response()
             ->json([
-                'user' => $user,
-                'token' => $token,
+                'user' => $authenticatedUser['user'],
+                'token' => $authenticatedUser['token'],
                 'type' => 'shop'
             ])
         ;
@@ -84,9 +79,6 @@ class ShopController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(AuthRequest $request)
     {
         $validatedData = $request->validated();
@@ -100,28 +92,10 @@ class ShopController extends Controller
         return $shop;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Shop $shop)
-    {
-        //
-    }
-
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request)
     {
+        /** @var \App\Models\Shop $shop */
         $shop = Auth::guard('shop-api')->user();
 
         $validatedData = $request->validate([
@@ -142,8 +116,11 @@ class ShopController extends Controller
     /**
      * Handle logo image upload
      */
+    
     public function uploadLogo(Request $request)
     {
+        /** @var \App\Models\Shop $shop */
+
         $shop = Auth::guard('shop-api')->user();
 
         $request->validate([
@@ -177,13 +154,5 @@ class ShopController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Shop $shop)
-    {
-        //
     }
 }

@@ -16,7 +16,7 @@ const ShopAuth = () => {
 
 
   const loginField = [
-    { id: "name", label: "Business Name", type: "text" },
+    { id: "email", label: "Email", type: "email" },
     { id: "password", label: "Password", type: "password" },
   ];
 
