@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Interfaces\Services\CartServiceInterface;
-use App\Models\Cart;
-use App\Models\CartItem;
 use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
@@ -35,27 +33,7 @@ class CartController extends Controller
     public function delete($productId)
     {
         $user = Auth::guard('customer-api')->user();
-
-        $cart = Cart::where('customer_id', $user->id)->first();
-
-        if (!$cart) {
-            return response()->json(['message' => 'No active cart found.'], 404);
-        }
-
-        $cartItem = CartItem::where('cart_id', $cart->id)
-            ->where('product_id', $productId)
-            ->first();
-
-        if (!$cartItem) {
-            return response()->json(['message' => 'Product not found in cart.'], 404);
-        }
-
-        $cartItem->delete();
-
-        if ($cart->cartItems()->count() === 0) {
-            $cart->delete();
-        }
-
+        $this->cartService->removeToCart($user->id, $productId);
         return response()->json(['message' => 'Product removed from cart successfully.'], 200);
     }
 }

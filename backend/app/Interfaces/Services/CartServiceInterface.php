@@ -13,6 +13,7 @@ interface CartServiceInterface
      * @param int $quantity
      * @return mixed
      */
-public function addToCart(int $userId, int $productId);
-public function getCartItems(int $userId);
+    public function addToCart(int $userId, int $productId);
+    public function removeToCart(int $userId, int $productId);
+    public function getCartItems(int $userId);
 }

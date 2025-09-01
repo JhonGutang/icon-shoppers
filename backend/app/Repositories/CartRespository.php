@@ -9,6 +9,14 @@ use App\Models\CartItem;
 
 class CartRespository implements CartRepositoryInterface
 {
+
+    public function getCartWithItems(int $userId, int $productId)
+    {
+        return Cart::with(['cartItems' => function($query) use ($productId) {
+            $query->where('product_id', $productId);
+        }])->where('customer_id', $userId)->first();
+    }
+
     public function create(int $userId, int $productId)
     {
         $cart = Cart::where('customer_id', $userId)->first();
@@ -60,5 +68,12 @@ class CartRespository implements CartRepositoryInterface
         })->values();
 
         return $grouped->toArray();
+    }
+
+    public function removeItems($cartWithItems): void {
+        $cartWithItems->cartItems->first()->delete();
+        if ($cartWithItems->cartItems()->count() === 0) {
+            $cartWithItems->delete();
+        }
     }
 }
