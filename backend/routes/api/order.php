@@ -24,7 +24,6 @@ Route::middleware(['auth:shop-api,customer-api'])->group(function () {
 Route::middleware('auth:customer-api')->group(function () {
     Route::post('order/{id}',[OrderController::class, 'addToCart']);
     Route::patch('checkout', [OrderController::class, 'checkoutOrder']);
-    Route::get('from-cart',[OrderController::class, 'fetchAllPendings']);
     Route::get('/customer/orders', [OrderController::class, 'getCustomersOrders']);
     Route::put('/orders/{id}/receive', [OrderController::class, 'receive']);
 });
