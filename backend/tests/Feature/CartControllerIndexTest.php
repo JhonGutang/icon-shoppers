@@ -300,9 +300,8 @@ describe('Cart Controller Index', function () {
 
     test('returns 403 when using wrong guard', function () {
         $customer = Customer::factory()->create();
-        Sanctum::actingAs($customer, ['web']);
-
-        $response = $this->getJson('/api/to-checkout');
+        Sanctum::actingAs($customer, ['customer-api'], 'customer-api');
+        $response = $this->getJson('/api/profile');
         $response->assertStatus(403);
     });
 
