@@ -2,10 +2,10 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\Repositories\CustomerRepositoryInterface;
+use App\Interfaces\Repositories\UserRepositoryInterface;
 use App\Models\Customer;
 
-class CustomerRepository implements CustomerRepositoryInterface
+class CustomerRepository implements UserRepositoryInterface
 {
     public function create(array $data)
     {

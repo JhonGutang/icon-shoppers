@@ -2,15 +2,15 @@
 
 namespace App\Services;
 
-use App\Interfaces\Repositories\CustomerRepositoryInterface;
-use App\Interfaces\Services\AuthInterface;
+use App\Interfaces\Repositories\UserRepositoryInterface;
+use App\Interfaces\Services\UserServiceInterface;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class AuthService implements AuthInterface
+class UserService implements UserServiceInterface
 {
     /**
      * Authenticate a customer with given credentials.
@@ -20,7 +20,7 @@ class AuthService implements AuthInterface
      */
     protected $customerRepository;
 
-    public function __construct(CustomerRepositoryInterface $customerRepository)
+    public function __construct(UserRepositoryInterface $customerRepository)
     {
         $this->customerRepository = $customerRepository;
     }

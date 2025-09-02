@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CustomerRequest;
 use App\Http\Requests\LoginFormRequest;
 use App\Http\Requests\UpdateFormRequest;
-use App\Interfaces\Services\AuthInterface;
+use App\Interfaces\Services\UserServiceInterface;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
@@ -13,11 +13,11 @@ class CustomerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    protected $authService;
+    protected $userService;
 
-    public function __construct(AuthInterface $authService)
+    public function __construct(UserServiceInterface $userService)
     {
-        $this->authService = $authService;
+        $this->userService = $userService;
     }
 
     public function index()
@@ -28,7 +28,7 @@ class CustomerController extends Controller
 
     public function login(LoginFormRequest $request) {
         $credentials = $request->validated();
-        $authenticatedUser = $this->authService->authenticateUser($credentials, 'customer');
+        $authenticatedUser = $this->userService->authenticateUser($credentials, 'customer');
         return response()
             ->json([
                 'user' => $authenticatedUser['user'],
@@ -41,7 +41,7 @@ class CustomerController extends Controller
     public function create(CustomerRequest $request)
     {
         $validatedData = $request->validated();
-        $registeredUser = $this->authService->registerUser($validatedData);
+        $registeredUser = $this->userService->registerUser($validatedData);
         return response()->json([
             'message'  => 'Customer created successfully.',
             'customer' => $registeredUser,
@@ -52,7 +52,7 @@ class CustomerController extends Controller
     {
         $user = Auth::guard('customer-api')->user();
         $validatedData = $request->validated();
-        $updatedCustomer = $this->authService->updateUser($validatedData, $user->id);
+        $updatedCustomer = $this->userService->updateUser($validatedData, $user->id);
         return response()->json([
             'message' => 'Customer updated successfully.',
             'customer' => $updatedCustomer,

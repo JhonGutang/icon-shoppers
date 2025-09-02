@@ -6,17 +6,16 @@ use App\Models\Shop;
 use Illuminate\Http\Request;
 use App\Http\Requests\AuthRequest;
 use App\Http\Requests\LoginFormRequest;
-use App\Interfaces\Services\AuthInterface;
+use App\Interfaces\Services\UserServiceInterface;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 
 class ShopController extends Controller
 {
-    protected $authService;
-    public function __construct(AuthInterface $authService)
+    protected $userService;
+    public function __construct(UserServiceInterface $userService)
     {
-        $this->authService = $authService;
+        $this->userService = $userService;
     }
 
 
@@ -60,7 +59,7 @@ class ShopController extends Controller
     public function login(LoginFormRequest $request)
     {
         $credentials = $request->validated();
-        $authenticatedUser = $this->authService->authenticateUser($credentials, 'shop');
+        $authenticatedUser = $this->userService->authenticateUser($credentials, 'shop');
         return response()
             ->json([
                 'user' => $authenticatedUser['user'],
@@ -82,14 +81,8 @@ class ShopController extends Controller
     public function create(AuthRequest $request)
     {
         $validatedData = $request->validated();
-        $shop = Shop::create([
-            'name' => $validatedData['name'],
-            'owner' => $validatedData['owner'],
-            'email' => $validatedData['email'],
-            'contact_number' => $validatedData['contact_number'],
-            'password' => bcrypt($validatedData['password']),
-        ]);
-        return $shop;
+        $this->userService->registerUser($validatedData);
+        return response()->json(['message'=> 'Shop created Successfully'], 201);
     }
 
 
