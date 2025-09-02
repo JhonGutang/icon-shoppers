@@ -9,10 +9,12 @@ use Illuminate\Support\ServiceProvider;
 use App\Interfaces\Services\UserServiceInterface;
 use App\Interfaces\Repositories\UserRepositoryInterface;
 use App\Interfaces\Services\CartServiceInterface;
+use App\Interfaces\Services\ImageServiceInterface;
 use App\Repositories\CartRespository;
 use App\Repositories\CustomerRepository;
 use App\Repositories\ShopRepository;
 use App\Services\CartService;
+use App\Services\ImageService;
 use App\Services\UserService;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,18 +28,22 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, CustomerRepository::class);
         $this->app->bind(CartServiceInterface::class, CartService::class);
         $this->app->bind(CartRepositoryInterface::class, CartRespository::class);
+        $this->app->bind(ImageServiceInterface::class, ImageService::class);
+        
+        $this->bindUserService(ShopController::class, ShopRepository::class);
+        $this->bindUserService(CustomerController::class, CustomerRepository::class);
+    }
 
-
-        $this->app->when(ShopController::class)
+    /**
+     * Bind a specific UserService dependency for a given controller and repository.
+     */
+    protected function bindUserService($controller, $repository)
+    {
+        $this->app->when($controller)
             ->needs(UserServiceInterface::class)
-            ->give(function ($app) {
-                return new UserService($app->make(ShopRepository::class));
-            });
-
-        $this->app->when(CustomerController::class)
-            ->needs(UserServiceInterface::class)
-            ->give(function ($app) {
-                return new UserService($app->make(CustomerRepository::class));
+            ->give(function ($app) use ($repository) {
+                $repo = $app->make($repository);
+                return new UserService($repo, new ImageService($repo));
             });
     }
 

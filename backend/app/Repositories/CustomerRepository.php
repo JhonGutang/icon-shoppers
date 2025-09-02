@@ -7,6 +7,11 @@ use App\Models\Customer;
 
 class CustomerRepository implements UserRepositoryInterface
 {
+    public function getUser($userId)
+    {
+        return Customer::findOrFail($userId);
+    }
+
     public function create(array $data)
     {
         return Customer::create($data);

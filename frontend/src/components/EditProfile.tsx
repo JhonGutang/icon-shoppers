@@ -73,32 +73,20 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
     setIsLoading(true);
 
     try {
-      const profileData = {
-        name: formData.name,
-        email: formData.email,
-        contact_number: formData.contact_number,
-        description: formData.description,
-        logo_image: formData.logo_image
-      };
+      const multipartData = new FormData();
+      multipartData.append("name", formData.name);
+      multipartData.append("email", formData.email);
+      multipartData.append("contact_number", formData.contact_number);
+      multipartData.append("description", formData.description ?? null);
+      if (imageFile) {
+        multipartData.append("logo_image", imageFile);
+      }
 
-      await axiosInstance.put('profile', profileData, {
+      await axiosInstance.post('profile', multipartData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
         },
       });
-
-      if (imageFile) {
-        const imageData = new FormData();
-        imageData.append("logo_image", imageFile);
-
-        await axiosInstance.post('/profile/upload-logo', imageData, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
-      }
 
       toast.success("Profile updated successfully");
       onSave?.();
@@ -130,7 +118,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
             <div className="relative w-24 h-24">
               {imagePreview ? (
                 <img
-                  src={imagePreview}
+                  src={imagePreview.startsWith('blob:') || imagePreview.startsWith('http') ? imagePreview : `http://localhost:8000/storage/${imagePreview}`}
                   alt="Profile"
                   className="w-24 h-24 rounded-full object-cover border"
                 />
