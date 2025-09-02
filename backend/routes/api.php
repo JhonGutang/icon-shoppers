@@ -20,7 +20,7 @@ Route::get('/user', function (Request $request) {
 
 Route::middleware('auth:shop-api')->group(function () {
     Route::get('/profile', [ShopController::class, 'index']);
-    Route::put('/profile', [ShopController::class, 'update']);
+    Route::post('/profile', [ShopController::class, 'update']);
     Route::post('/profile/upload-logo', [ShopController::class, 'uploadLogo']);
     Route::get('/seller/orders', [OrderController::class, 'getSellerOrders']);
 });

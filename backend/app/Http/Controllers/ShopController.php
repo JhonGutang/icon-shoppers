@@ -9,7 +9,6 @@ use App\Http\Requests\LoginFormRequest;
 use App\Http\Requests\ShopUpdateFormRequest;
 use App\Interfaces\Services\UserServiceInterface;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class ShopController extends Controller
 {
@@ -92,54 +91,12 @@ class ShopController extends Controller
         /** @var \App\Models\Shop $shop */
         $shop = Auth::guard('shop-api')->user();
         $validatedData = $request->validated();
+        $validatedData['logo_file'] = $request->file('logo_image');
         $updatedCustomer = $this->userService->updateUser($validatedData, $shop->id);
 
         return response()->json([
             'message' => 'Profile updated successfully',
             'shop' => $updatedCustomer,
         ]);
-    }
-
-    /**
-     * Handle logo image upload
-     */
-    
-    public function uploadLogo(Request $request)
-    {
-        /** @var \App\Models\Shop $shop */
-
-        $shop = Auth::guard('shop-api')->user();
-
-        $request->validate([
-            'logo_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
-
-        try {
-            if ($request->hasFile('logo_image')) {
-                if ($shop->logo_image) {
-                    Storage::disk('public')->delete($shop->logo_image);
-                }
-
-                $imagePath = $request->file('logo_image')->store('shop-logos', 'public');
-
-                $shop->update(['logo_image' => $imagePath]);
-
-                return response()->json([
-                    'message' => 'Logo uploaded successfully',
-                    'logo_url' => Storage::url($imagePath),
-                    'shop' => $shop
-                ]);
-            }
-
-            return response()->json([
-                'message' => 'No image file provided'
-            ], 400);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to upload logo',
-                'error' => $e->getMessage()
-            ], 500);
-        }
     }
 }

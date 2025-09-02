@@ -7,6 +7,11 @@ use App\Models\Shop;
 
 class ShopRepository implements UserRepositoryInterface
 {
+    public function getUser(int $userId)
+    {
+        return Shop::findOrFail($userId);
+    }
+
     public function create(array $data)
     {
         return Shop::create($data);

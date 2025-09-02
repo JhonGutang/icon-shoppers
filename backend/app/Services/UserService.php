@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Interfaces\Repositories\UserRepositoryInterface;
+use App\Interfaces\Services\ImageServiceInterface;
 use App\Interfaces\Services\UserServiceInterface;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
@@ -18,11 +19,15 @@ class UserService implements UserServiceInterface
      * @param array $credentials
      * @return mixed
      */
-    protected $userRepository;
+    protected $userRepository, $imageService;
 
-    public function __construct(UserRepositoryInterface $userRepository)
+    public function __construct(
+        UserRepositoryInterface $userRepository,
+        ImageServiceInterface $imageService,
+    )
     {
         $this->userRepository = $userRepository;
+        $this->imageService = $imageService;
     }
 
 
@@ -59,10 +64,26 @@ class UserService implements UserServiceInterface
         }
     }
 
-    public function updateUser(array $validatedData, int $id)
+    public function updateUser(array $validatedData, int $userId)
     {
-        $updatedUser = $this->userRepository->update($validatedData, $id);
-        return $updatedUser;
+        DB::beginTransaction();
+        $uploadedImagePath = null;
+        try {
+            if ($validatedData['logo_file']) {
+                $this->imageService->deleteImageIfExists($validatedData['logo_file'], $userId);
+                $uploadedImagePath = $this->imageService->uploadImage($validatedData['logo_file'], 'shop-logos');
+                $validatedData['logo_image'] = $uploadedImagePath;
+            }
+            $updatedUser = $this->userRepository->update($validatedData, $userId);
+            DB::commit();
+            return $updatedUser;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            if ($uploadedImagePath) {
+                $this->imageService->deleteImageIfExists($validatedData['logo_file']);
+            }
+            return Response::json(['error' => 'Update failed', 'message' => $e->getMessage()], 500);
+        }
     }
 }
 

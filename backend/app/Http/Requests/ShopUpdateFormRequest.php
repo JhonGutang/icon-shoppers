@@ -22,10 +22,11 @@ class ShopUpdateFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:shops,email,' . $this->user()->id,
-            'contact_number' => 'required|string|unique:shops,contact_number,' . $this->user()->id,
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|unique:shops,email,' . $this->user()->id,
+            'contact_number' => 'sometimes|string|unique:shops,contact_number,' . $this->user()->id,
             'description' => 'nullable|string',
+            'logo_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 }
