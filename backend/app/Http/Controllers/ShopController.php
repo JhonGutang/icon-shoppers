@@ -25,13 +25,33 @@ class ShopController extends Controller
         return response()->json(['user' => $user]);
     }
 
+    
+    public function create(AuthRequest $request)
+    {
+        $validatedData = $request->validated();
+        $this->userService->registerUser($validatedData);
+        return response()->json(['message'=> 'Shop created Successfully'], 201);
+    }
+
+
+    public function update(ShopUpdateFormRequest $request)
+    {
+        $shop = Auth::guard('shop-api')->user();
+        $validatedData = $request->validated();
+        $validatedData['logo_file'] = $request->file('logo_image');
+        $updatedCustomer = $this->userService->updateUser($validatedData, $shop->id);
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'shop' => $updatedCustomer,
+        ]);
+    }
+
     public function getAllShops(Request $request) {
         $search = $request->query('search');
         $shops = $search ? Shop::where('name', 'like', "%{$search}%")->get() : Shop::all();
         return response()->json($shops);
     }
-
-    
 
     public function getSpecificShop($name) {
         try {
@@ -53,8 +73,6 @@ class ShopController extends Controller
             ], 500);
         }
     }
-
-
 
     public function login(LoginFormRequest $request)
     {
@@ -78,25 +96,4 @@ class ShopController extends Controller
         ]);
     }
 
-    public function create(AuthRequest $request)
-    {
-        $validatedData = $request->validated();
-        $this->userService->registerUser($validatedData);
-        return response()->json(['message'=> 'Shop created Successfully'], 201);
-    }
-
-
-    public function update(ShopUpdateFormRequest $request)
-    {
-        /** @var \App\Models\Shop $shop */
-        $shop = Auth::guard('shop-api')->user();
-        $validatedData = $request->validated();
-        $validatedData['logo_file'] = $request->file('logo_image');
-        $updatedCustomer = $this->userService->updateUser($validatedData, $shop->id);
-
-        return response()->json([
-            'message' => 'Profile updated successfully',
-            'shop' => $updatedCustomer,
-        ]);
-    }
 }
