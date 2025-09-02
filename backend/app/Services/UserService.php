@@ -18,11 +18,11 @@ class UserService implements UserServiceInterface
      * @param array $credentials
      * @return mixed
      */
-    protected $customerRepository;
+    protected $userRepository;
 
-    public function __construct(UserRepositoryInterface $customerRepository)
+    public function __construct(UserRepositoryInterface $userRepository)
     {
-        $this->customerRepository = $customerRepository;
+        $this->userRepository = $userRepository;
     }
 
 
@@ -50,7 +50,7 @@ class UserService implements UserServiceInterface
         DB::beginTransaction();
         try {
             $validatedData['password'] = Hash::make($validatedData['password']);
-            $registeredUser = $this->customerRepository->create($validatedData);
+            $registeredUser = $this->userRepository->create($validatedData);
             DB::commit();
             return $registeredUser;
         } catch (Exception $e) {
@@ -61,7 +61,7 @@ class UserService implements UserServiceInterface
 
     public function updateUser(array $validatedData, int $id)
     {
-        $updatedUser = $this->customerRepository->update($validatedData, $id);
+        $updatedUser = $this->userRepository->update($validatedData, $id);
         return $updatedUser;
     }
 }
