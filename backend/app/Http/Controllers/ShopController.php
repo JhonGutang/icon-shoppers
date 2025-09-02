@@ -6,6 +6,7 @@ use App\Models\Shop;
 use Illuminate\Http\Request;
 use App\Http\Requests\AuthRequest;
 use App\Http\Requests\LoginFormRequest;
+use App\Http\Requests\ShopUpdateFormRequest;
 use App\Interfaces\Services\UserServiceInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -86,23 +87,16 @@ class ShopController extends Controller
     }
 
 
-    public function update(Request $request)
+    public function update(ShopUpdateFormRequest $request)
     {
         /** @var \App\Models\Shop $shop */
         $shop = Auth::guard('shop-api')->user();
-
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:shops,email,'.$shop->id,
-            'contact_number' => 'required|string|unique:shops,contact_number,' . $shop->id,
-            'description' => 'nullable|string',
-        ]);
-
-        $shop->update($validatedData);
+        $validatedData = $request->validated();
+        $updatedCustomer = $this->userService->updateUser($validatedData, $shop->id);
 
         return response()->json([
             'message' => 'Profile updated successfully',
-            'shop' => $shop,
+            'shop' => $updatedCustomer,
         ]);
     }
 
