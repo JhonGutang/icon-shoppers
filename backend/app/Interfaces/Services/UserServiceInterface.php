@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Interfaces\Services;
-interface AuthInterface
+interface UserServiceInterface
 {
     /**
      * Login a customer with given credentials.

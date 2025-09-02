@@ -2,7 +2,7 @@
 
 namespace App\Interfaces\Repositories;
 
-interface CustomerRepositoryInterface
+interface UserRepositoryInterface
 {
     public function create(array $data);
     public function update(array $data, $id);
