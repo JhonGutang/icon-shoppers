@@ -7,15 +7,22 @@ use Illuminate\Http\Request;
 use App\Http\Requests\AuthRequest;
 use App\Http\Requests\LoginFormRequest;
 use App\Http\Requests\ShopUpdateFormRequest;
+use App\Interfaces\Services\ShopServiceInterface;
 use App\Interfaces\Services\UserServiceInterface;
 use Illuminate\Support\Facades\Auth;
 
 class ShopController extends Controller
 {
     protected $userService;
-    public function __construct(UserServiceInterface $userService)
+    protected $shopService;
+
+    public function __construct(
+        UserServiceInterface $userService,
+        ShopServiceInterface $shopService,
+    )
     {
         $this->userService = $userService;
+        $this->shopService = $shopService;
     }
 
 
@@ -48,30 +55,18 @@ class ShopController extends Controller
     }
 
     public function getAllShops(Request $request) {
-        $search = $request->query('search');
-        $shops = $search ? Shop::where('name', 'like', "%{$search}%")->get() : Shop::all();
+        $searchParams = $request->query('search');
+        $shops = $this->shopService->getAll($searchParams);
         return response()->json($shops);
     }
 
     public function getSpecificShop($name) {
-        try {
-            $shop = Shop::with('products')->where('name', $name)->firstOrFail();
+  
+            $shop = $this->shopService->getShop($name);
             return response()->json([
                 'success' => true,
                 'data' => $shop
             ], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Shop not found'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while fetching the shop',
-                'error' => $e->getMessage()
-            ], 500);
-        }
     }
 
     public function login(LoginFormRequest $request)

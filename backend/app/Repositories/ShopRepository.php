@@ -2,25 +2,17 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\Repositories\UserRepositoryInterface;
+use App\Interfaces\Repositories\ShopRepositoryInterface;
 use App\Models\Shop;
 
-class ShopRepository implements UserRepositoryInterface
+class ShopRepository implements ShopRepositoryInterface
 {
-    public function getUser(int $userId)
-    {
-        return Shop::findOrFail($userId);
+
+    public function getAllShops ($searchParam) {
+        return $searchParam ? Shop::where('name', 'like', "%{$searchParam}%")->get() : Shop::all();
     }
 
-    public function create(array $data)
-    {
-        return Shop::create($data);
-    }
-
-    public function update(array $data, $id)
-    {
-        $shop = Shop::findOrFail($id);
-        $shop->update($data);
-        return $shop;
+    public function getSpecificShop ($shopName) {
+        return Shop::with('products')->where('name', $shopName)->firstOrFail();
     }
 }
