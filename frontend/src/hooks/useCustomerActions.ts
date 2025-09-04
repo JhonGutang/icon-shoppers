@@ -51,7 +51,6 @@ const useCustomerActions = () => {
       redirectLink("login");
       return;
     }
-    console.log(product);
     addProduct(product);
     addToCart(product.id, token);
     openSnackbar("Product Added to Cart", "success"); 
@@ -72,16 +71,15 @@ const useCustomerActions = () => {
     }
 
     if (location === "checkout" && products) {
-      console.log(products);
       const filteredProducts = products.map((product) => ({
         id: product.id,
         quantity: product.quantity,
       }));
       checkoutOrder(filteredProducts, token);
       openSnackbar("Your Order is Now Being Processed", "info"); 
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1500);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     }
   };
 
