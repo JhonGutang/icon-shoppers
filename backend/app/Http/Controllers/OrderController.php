@@ -7,30 +7,17 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Http\Requests\OrderRequest;
-use App\Models\Cart;
-use App\Models\CartItem;
+use App\Interfaces\Services\OrderServiceInterface;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    public function index(Request $request){
-        try {
-            $query = Order::with(['customer', 'orderItems.product']);
-
-            if ($request->has('status')) {
-                $query->where('status', $request->status);
-            }
-
-            $orders = $query->get();
-
-            return response()->json($orders);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch orders'
-            ], 500);
-        }
+    protected $orderService;
+    public function __construct(OrderServiceInterface $orderService)
+    {
+        $this->orderService = $orderService;
     }
+
     public function show($id){
         $order = Order::find($id);
 
@@ -40,40 +27,6 @@ class OrderController extends Controller
         return response()->json($order);
     }
 
-    public function update(OrderRequest $request, $id){
-        try {
-            $order = Order::findOrFail($id);
-            $order->update($request->validated());
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Order updated successfully',
-                'order' => $order
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Order not found'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to update order'
-            ], 500);
-        }
-    }
-
-    public function delete($id){
-        $order = Order::find($id);
-
-        if(!$order){
-            return response()->json(['message'=>'Order not found.'], 404);
-        }
-        $order->delete();
-        return response()->json([
-            'message'=>'Order deleted.'
-        ]);
-    }
 
     public function getOrders(Request $request)
     {
@@ -275,13 +228,6 @@ class OrderController extends Controller
         return response()->json($grouped);
     }
 
-
-
-
-
-
-
-
     public function checkoutOrder(Request $request)
     {
         $customerId = Auth::guard('customer-api')->id();
@@ -318,30 +264,6 @@ class OrderController extends Controller
         $order->update(['total_amount' => $totalAmount]);
 
         return response()->json(['message' => 'Order created and checked out successfully']);
-    }
-
-
-
-    public function fetchAllPendings()
-    {
-        $userId = Auth::guard('customer-api')->user()->id;
-        $pendings = Order::where('status', 'cart')
-            ->where('customer_id', $userId)
-            ->with(['product:id,name,price'])
-            ->get()
-            ->map(function ($order) {
-                return [
-                    'order_id' => $order->id,
-                    'status' => $order->status,
-                    'name' => $order->product->name ?? null,
-                    'price' => $order->product->price ?? null,
-                    'quantity' => $order->quantity,
-                    'id' => $order->product->id,
-                ];
-            });
-
-
-        return response()->json($pendings);
     }
 
     public function receive($id)

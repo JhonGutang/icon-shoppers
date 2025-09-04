@@ -11,11 +11,6 @@ Route::middleware('auth:shop-api')->group(function () {
     Route::put('/orders/{id}/reject', [OrderController::class, 'reject']);
 });
 
-Route::post('/orders', [OrderController::class, 'store']);
-Route::get('/orders/{id}', [OrderController::class, 'show']);
-Route::put('/orders/{id}', [OrderController::class, 'update']);
-Route::delete('/orders/{id}', [OrderController::class, 'delete']);
-
 // Shared status update route for both customers and sellers
 Route::middleware(['auth:shop-api,customer-api'])->group(function () {
     Route::put('status-update/{id}', [OrderController::class, 'statusUpdate']);
