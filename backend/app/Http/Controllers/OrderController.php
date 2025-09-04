@@ -6,7 +6,6 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Order;
-use App\Http\Requests\OrderRequest;
 use App\Interfaces\Services\OrderServiceInterface;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,49 +29,14 @@ class OrderController extends Controller
 
     public function getOrders(Request $request)
     {
-
         if (!Auth::guard('shop-api')->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-
         $shopId = Auth::guard('shop-api')->id();
+        $status = $request->status;
 
-        $query = Order::with([
-            'customer',
-            'orderItems.product',
-            'orderItems.product.shop'
-        ])
-        ->whereHas('orderItems.product', function($query) use ($shopId) {
-            $query->where('shop_id', $shopId);
-        });
-
-        // Add status filter if provided
-        if ($request->has('status') && $request->status !== 'All') {
-            $query->where('status', $request->status);
-        }
-
-        $orders = $query->get();
-
-
-        // Format the data in a way the frontend expects
-        $formattedOrders = $orders->map(function($order) {
-            return [
-                'id' => $order->id,
-                'customerName' => $order->customer->name,
-                'products' => $order->orderItems->map(function($item) {
-                    return [
-                        'name' => $item->product->name,
-                        'quantity' => $item->quantity,
-                        'totalPrice' => $item->quantity * $item->product->price,
-                    ];
-                }),
-                'totalAmount' => $order->total_amount,
-                'status' => $order->status,
-                'shippingAddress' => $order->shipping_address,
-            ];
-        });
-
-        return response()->json($formattedOrders);
+        $orders = $this->orderService->getOrders($status, $shopId);
+        return response()->json($orders);
     }
 
 

@@ -79,9 +79,9 @@ const useCustomerActions = () => {
       }));
       checkoutOrder(filteredProducts, token);
       openSnackbar("Your Order is Now Being Processed", "info"); 
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     }
   };
 
