@@ -5,8 +5,9 @@ export const STATUS_OPTIONS: OrderStatus[] = [
   "approved",
   "rejected",
   "to_be_delivered",
-  "recieved",
-  "not_recieved",
+  "delivering",
+  "received",
+  "not_received",
   "completed"
 ];
 
@@ -28,9 +29,11 @@ export const formatStatus = (status: string): string => {
         return "bg-red-600";
       case "to_be_delivered":
         return "bg-blue-500";
-      case "recieved":
+      case "delivering":
+        return "bg-red-500";
+      case "received":
         return "bg-green-500";
-      case "not_recieved":
+      case "not_received":
         return "bg-red-500";
       case "completed":
         return "bg-gray-500";
