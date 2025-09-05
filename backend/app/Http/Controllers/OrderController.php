@@ -38,100 +38,16 @@ class OrderController extends Controller
         $orders = $this->orderService->getOrders($status, $shopId);
         return response()->json($orders);
     }
-
-
-    public function approve($id)
-    {
-        try {
-            $order = Order::findOrFail($id);
-
-            $order->update([
-                'status' => 'to_be_delivered'
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Order approved successfully',
-                'order' => $order
-            ]);
-
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Order not found'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to approve order'
-            ], 500);
-        }
-    }
-
-    public function reject($id)
-    {
-        \Log::info('Attempting to reject order: ' . $id);
-
-        try {
-            $order = Order::findOrFail($id);
-
-            $order->update([
-                'status' => 'rejected'
-            ]);
-
-            \Log::info('Order rejected successfully:', ['id' => $order->id, 'new_status' => $order->status]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Order rejected.',
-                'order' => $order
-            ]);
-
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            \Log::warning('Order not found: ' . $id);
-            return response()->json([
-                'success' => false,
-                'message' => 'Order not found'
-            ], 404);
-        } catch (\Exception $e) {
-            \Log::error('Error rejecting order:', [
-                'order_id' => $id,
-                'error' => $e->getMessage()
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to reject order'
-            ], 500);
-        }
-    }
-
+    
     public function statusUpdate(Request $request, $id) {
-        try {
-            $order = Order::findOrFail($id);
-            
-            $order->update([
-                'status' => $request->status
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Order status updated successfully',
-                'order' => $order
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Order not found'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to update order status'
-            ], 500);
-        }
+        $statusId = $request->status_id;
+        $order = $this->orderService->updateOrderStatus($statusId, $id);
+        return response()->json([
+            'success' => true,
+            'message' => 'Order status updated successfully',
+            'order' => $order
+        ]);
     }
-
-
 
     public function getCustomersOrders(Request $request)
     {

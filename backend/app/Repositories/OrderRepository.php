@@ -24,4 +24,13 @@ class OrderRepository implements OrderRepositoryInterface
 
         return $orders;
     }
+
+    public function update($statusId, $shopId) {
+        $order = Order::findOrFail($shopId); 
+        $order->update([
+            'status_id' => $statusId
+        ]);
+
+        return $order;
+    }
 }

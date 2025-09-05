@@ -32,4 +32,16 @@ class OrderService implements OrderServiceInterface
             throw $e;
         }
     }
+
+    public function updateOrderStatus($statusId, $shopId) {
+        try {
+            DB::beginTransaction();
+            $orders = $this->orderRepository->update($statusId, $shopId);
+            DB::commit();
+            return $orders;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 }

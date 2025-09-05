@@ -7,9 +7,7 @@ Route::get('/orders', [OrderController::class, 'getOrders']);
 
 Route::middleware('auth:shop-api')->group(function () {
     Route::get('/orders', [OrderController::class, 'getOrders']);
-    Route::put('/orders/{id}/approve', [OrderController::class, 'approve']);
-    Route::put('/orders/{id}/reject', [OrderController::class, 'reject']);
-});
+}); 
 
 // Shared status update route for both customers and sellers
 Route::middleware(['auth:shop-api,customer-api'])->group(function () {
