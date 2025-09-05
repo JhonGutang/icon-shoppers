@@ -34,7 +34,7 @@ interface DashboardOrder {
 }
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState<OrderStatus>("All");
+  const [activeTab, setActiveTab] = useState<OrderStatus>("all");
   const [orders, setOrders] = useState<DashboardOrder[]>([]);
   const { error, handleStatusUpdate, fetchOrders } = useOrders();
   const { redirectLink } = useRedirectLink();
