@@ -20,7 +20,8 @@ class OrderService implements OrderServiceInterface
     {
         try {
             DB::beginTransaction();
-            $orders = $this->orderRepository->all($status, $shopId);
+            $statusId = OrderDTO::getStatusId($status);   
+            $orders = $this->orderRepository->all($statusId, $shopId);
             $result = $orders->map(function ($order) {
                 return OrderDTO::fromOrder($order)->toArray();
             });
@@ -33,9 +34,10 @@ class OrderService implements OrderServiceInterface
         }
     }
 
-    public function updateOrderStatus($statusId, $shopId) {
+    public function updateOrderStatus($status, $shopId) {
         try {
             DB::beginTransaction();
+            $statusId = OrderDTO::getStatusId($status);   
             $orders = $this->orderRepository->update($statusId, $shopId);
             DB::commit();
             return $orders;

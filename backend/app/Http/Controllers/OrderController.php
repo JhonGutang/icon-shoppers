@@ -33,15 +33,15 @@ class OrderController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
         $shopId = Auth::guard('shop-api')->id();
-        $statusId = $request->status_id;
+        $status = $request->status;
 
-        $orders = $this->orderService->getOrders($statusId, $shopId);
+        $orders = $this->orderService->getOrders($status, $shopId);
         return response()->json($orders);
     }
     
     public function statusUpdate(Request $request, $id) {
-        $statusId = $request->status_id;
-        $order = $this->orderService->updateOrderStatus($statusId, $id);
+        $status = $request->status;
+        $order = $this->orderService->updateOrderStatus($status, $id);
         return response()->json([
             'success' => true,
             'message' => 'Order status updated successfully',
