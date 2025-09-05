@@ -30,4 +30,4 @@ export interface Order {
     shippingAddress: string | null;
   }
   
-  export type OrderStatus = "All" | "approved" | "rejected" | "to_be_delivered" | "delivering" | "recieved" | "not_recieved" | "completed";
+  export type OrderStatus = "all" | "approved" | "rejected" | "to_be_delivered" | "delivering" | "received" | "not_received" | "completed";

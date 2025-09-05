@@ -17,7 +17,7 @@ export const useOrders = () => {
       const data = await orderService.fetchOrders(token, status);
 
       const filteredOrders =
-        status === "All"
+        status === "all"
           ? data
           : data.filter((order) => {
               const orderStatus = order.status.toLowerCase();

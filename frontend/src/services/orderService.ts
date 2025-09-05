@@ -11,7 +11,7 @@ const authHeader = (token: string) => ({
 });
 
 const normalizeStatus = (status?: string): string => {
-  if (!status || status === "All") return "";
+  if (!status) return "all";
   const normalized = status.toLowerCase().replace(/ /g, "_");
   return normalized === "approved" ? "active" : normalized;
 };
