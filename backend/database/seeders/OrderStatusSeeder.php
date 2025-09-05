@@ -17,9 +17,12 @@ class OrderStatusSeeder extends Seeder
             ['id' => 2, 'status' => 'approved'],
             ['id' => 3, 'status' => 'rejected'],
             ['id' => 4, 'status' => 'to be delivered'],
-            ['id' => 5, 'status' => 'delivered'],
-            ['id' => 6, 'status' => 'received'],
-            ['id' => 7, 'status' => 'completed']
+            ['id' => 5, 'status' => 'delivering'],
+            ['id' => 6, 'status' => 'delivered'],
+            ['id' => 7, 'status' => 'received'],
+            ['id' => 8, 'status' => 'not_recevied'],
+            ['id' => 9, 'status' => 'completed'],
+            ['id' => 10, 'status' => 'Failed'],
         ];
 
         foreach ($statuses as $statusData) {

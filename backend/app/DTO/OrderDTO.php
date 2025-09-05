@@ -38,6 +38,29 @@ class OrderDTO
 			'shippingAddress' => $this->shipping_address,
 		];
 	}
+
+	/**
+	 * Convert order status string to its corresponding ID
+	 * Case insensitive conversion based on OrderStatusSeeder
+	 */
+	public static function getStatusId(string $status): ?int
+	{
+		$statusMap = [
+			'all' => 0,
+			'ordered' => 1,
+			'approved' => 2,
+			'rejected' => 3,
+			'to_be_delivered' => 4,
+			'delivering' => 5,
+			'delivered' => 6,
+			'received' => 7,
+			'completed' => 8
+		];
+
+		$normalizedStatus = strtolower(trim($status));
+		
+		return $statusMap[$normalizedStatus] ?? null;
+	}
 }
 
 
