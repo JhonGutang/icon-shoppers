@@ -12,6 +12,24 @@ class OrderItemDTO
 		public readonly float $total_price
 	) {}
 
+	/**
+	 * Build a DTO from raw checkout request item and loaded Product model.
+	 */
+	public static function fromCheckoutItem(int $orderId, array $productItem, $product): array
+	{
+		$quantity = (int) ($productItem['quantity'] ?? 0);
+		$unitPrice = (float) $product->price;
+		$total = $unitPrice * $quantity;
+
+		return [
+			'order_id' => $orderId,
+			'product_id' => (int) $productItem['id'],
+			'quantity' => $quantity,
+			'price' => $unitPrice * $quantity,
+			'total' => $total,
+		];
+	}
+
 	public static function fromOrderItem($orderItem): self
 	{
 		$unitPrice = (float) $orderItem->product->price;

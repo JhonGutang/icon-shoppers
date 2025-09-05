@@ -6,6 +6,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ShopController;
 use App\Interfaces\CartRepositoryInterface;
 use App\Interfaces\Repositories\OrderRepositoryInterface;
+use App\Interfaces\Repositories\ProductRepositoryInterface;
 use App\Interfaces\Repositories\ShopRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use App\Interfaces\Services\UserServiceInterface;
@@ -17,6 +18,7 @@ use App\Interfaces\Services\OrderServiceInterface;
 use App\Repositories\CartRespository;
 use App\Repositories\CustomerRepository;
 use App\Repositories\OrderRepository;
+use App\Repositories\ProductRepository;
 use App\Repositories\ShopOwnerRepository;
 use App\Repositories\ShopRepository;
 use App\Services\CartService;
@@ -47,6 +49,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(OrderServiceInterface::class, OrderService::class);
         $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
         
+        $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
     }
 
     /**
