@@ -42,6 +42,7 @@ const Dashboard = () => {
 
   const handleFetchOrder = async () => {
     const data = await fetchOrders(activeTab);
+    console.log(data)
     if (data) {
       setOrders(data as unknown as DashboardOrder[]);
     }
