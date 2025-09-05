@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use App\Interfaces\Repositories\OrderRepositoryInterface;
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Product;
 
 class OrderRepository implements OrderRepositoryInterface
 {
@@ -52,4 +54,28 @@ class OrderRepository implements OrderRepositoryInterface
 
         return $orders;
     }
+
+    public function saveOrder($customerId)
+    {
+        $order = Order::create([
+            'customer_id' => $customerId,
+            'status' => 'ordered',
+            'total_amount' => 0,
+        ]);
+
+        return $order;
+    }
+
+    public function saveOrderItems($items)
+    {
+        $orderItems = OrderItem::create($items);
+        return $orderItems;
+    }
+    
+    public function updateOrderTotalAmount($orderId, $totalAmount)
+    {
+        $order = Order::findOrFail($orderId);
+        $order->update(['total_amount' => $totalAmount]);
+    }
+    
 }

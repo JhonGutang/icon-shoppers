@@ -60,74 +60,9 @@ class OrderController extends Controller
     public function checkoutOrder(Request $request)
     {
         $customerId = Auth::guard('customer-api')->id();
-
-        $order = Order::create([
-            'customer_id' => $customerId,
-            'status' => 'ordered',
-            'total_amount' => 0,
-        ]);
-
-        $totalAmount = 0;
-
+        $products = $request->products;
         $productIds = collect($request->products)->pluck('id');
-        $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
-
-        foreach ($request->products as $productItem) {
-            $product = $products->get($productItem['id']);
-            if (!$product) {
-                return response()->json(['message' => 'Product not found'], 404);
-            }
-
-            $orderItem = new OrderItem([
-                'order_id' => $order->id,
-                'product_id' => $productItem['id'],
-                'quantity' => $productItem['quantity'],
-                'price' => $product->price * $productItem['quantity'],
-                'total' => $product->price * $productItem['quantity'],
-            ]);
-            $orderItem->save();
-
-            $totalAmount += $orderItem->total;
-        }
-
-        $order->update(['total_amount' => $totalAmount]);
-
+        $this->orderService->checkoutOrder($customerId, $products, $productIds);
         return response()->json(['message' => 'Order created and checked out successfully']);
     }
-
-    public function receive($id)
-    {
-        try {
-            $order = Order::findOrFail($id);
-
-            if ($order->customer_id !== Auth::guard('customer-api')->id()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized to update this order'
-                ], 403);
-            }
-
-            $order->update([
-                'status' => 'recieved'
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Order marked as received',
-                'order' => $order
-            ]);
-
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Order not found'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to update order status'
-            ], 500);
-        }
-    }
-
 }
