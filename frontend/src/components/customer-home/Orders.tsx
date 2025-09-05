@@ -25,9 +25,10 @@ const Orders = () => {
       completed: "bg-green-100 text-green-700",
       default: "bg-gray-100 text-gray-700",
     };
-    return (
-      statusColors[status as keyof typeof statusColors] || statusColors.default
-    );
+    const normalized = (status || "")
+      .toLowerCase()
+      .replace(/\s+/g, "_");
+    return statusColors[normalized as keyof typeof statusColors] || statusColors.default;
   };
 
 

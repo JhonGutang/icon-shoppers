@@ -2,6 +2,8 @@
 
 namespace App\DTO;
 
+use Illuminate\Support\Collection;
+
 class OrderDTO
 {
 	public function __construct(
@@ -60,6 +62,58 @@ class OrderDTO
 		$normalizedStatus = strtolower(trim($status));
 		
 		return $statusMap[$normalizedStatus] ?? null;
+	}
+
+	/**
+	 * Build the grouped-by-shop formatted payload from a collection of orders.
+	 * Mirrors the response shape used by customer orders listing.
+	 */
+	public static function formatCustomerOrders(Collection $orders): array
+	{
+		if ($orders->isEmpty()) {
+			return [];
+		}
+
+		$grouped = $orders->map(function ($order) {
+			$shopOrders = $order->orderItems->groupBy(function ($item) {
+				return $item->product->shop->id;
+			});
+
+			return $shopOrders->map(function ($items) use ($order) {
+				$shop = $items->first()->product->shop;
+
+				$products = $items->map(function ($item) {
+					return [
+						'id' => (int) $item->product->id,
+						'order_item_id' => (int) $item->id,
+						'name' => (string) $item->product->name,
+						'price' => (float) $item->product->price,
+						'image' => $item->product->image,
+						'quantity' => (int) $item->quantity,
+					];
+				});
+
+				// Remove underscores from status value if present
+				$statusRaw = (string) ($order->order_status->status ?? $order->orderStatus->status ?? '');
+				$status = str_replace('_', ' ', $statusRaw);
+
+				return [
+					'order_id' => (int) $order->id,
+					'shop' => [
+						'id' => (int) $shop->id,
+						'name' => (string) $shop->name,
+						'email' => (string) $shop->email,
+						'description' => $shop->description,
+						'contact_number' => $shop->contact_number,
+					],
+					'products' => $products->values()->all(),
+					'status' => $status,
+					'total_amount' => number_format((float) $order->total_amount, 2, '.', ''),
+				];
+			})->values();
+		})->flatten(1);
+
+		return $grouped->all();
 	}
 }
 

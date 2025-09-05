@@ -4,6 +4,7 @@ namespace App\Interfaces\Services;
 
 interface OrderServiceInterface
 {
-    public function getOrders($statusId, $shopId);
+    public function getOrders($status, $shopId);
     public function updateOrderStatus($statusId, $shopId);
+    public function getCustomerOrders($status, $customerId);
 }

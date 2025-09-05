@@ -46,4 +46,20 @@ class OrderService implements OrderServiceInterface
             throw $e;
         }
     }
+
+    public function getCustomerOrders($status, $customerId)
+    {
+        try {
+            DB::beginTransaction();
+            $statusId = OrderDTO::getStatusId($status);
+            $orders = $this->orderRepository->getCustomersOrder($statusId, $customerId);
+            $result = OrderDTO::formatCustomerOrders($orders);
+            DB::commit();
+            return $result;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
 }

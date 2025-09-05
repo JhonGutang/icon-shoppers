@@ -6,5 +6,5 @@ interface OrderRepositoryInterface
 {
     public function all($statusId, $shopId);
     public function update($statusId, $shopId);
-
+    public function getCustomersOrder($statusId, $customerId);
 }
