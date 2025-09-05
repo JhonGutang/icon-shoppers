@@ -22,7 +22,7 @@ class OrderDTO
 			customer_name: (string) $order->customer->name,
 			products: $items,
 			total_amount: (float) $order->total_amount,
-			status: (string) $order->status,
+			status: (string) $order->orderStatus->status,
 			shipping_address: $order->shipping_address
 		);
 	}

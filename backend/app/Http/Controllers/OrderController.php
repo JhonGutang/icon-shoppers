@@ -33,9 +33,9 @@ class OrderController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
         $shopId = Auth::guard('shop-api')->id();
-        $status = $request->status;
+        $statusId = $request->status_id;
 
-        $orders = $this->orderService->getOrders($status, $shopId);
+        $orders = $this->orderService->getOrders($statusId, $shopId);
         return response()->json($orders);
     }
     

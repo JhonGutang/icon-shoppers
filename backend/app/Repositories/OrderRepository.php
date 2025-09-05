@@ -7,18 +7,19 @@ use App\Models\Order;
 
 class OrderRepository implements OrderRepositoryInterface
 {
-    public function all($status, $shopId)
+    public function all($statusId, $shopId)
     {
         $orders = Order::with([
             'customer',
+            'orderStatus',
             'orderItems.product',
             'orderItems.product.shop'
         ])
         ->whereHas('orderItems.product', function ($query) use ($shopId) {
             $query->where('shop_id', $shopId);
         })
-        ->when($status && $status !== 'All', function ($query) use ($status) {
-            $query->where('status', $status);
+        ->when($statusId && $statusId !== 1, function ($query) use ($statusId) {
+            $query->where('status_id', $statusId);
         })
         ->get();
 
