@@ -56,7 +56,8 @@ class OrderDTO
 			'delivering' => 5,
 			'delivered' => 6,
 			'received' => 7,
-			'completed' => 8
+			'not_received' => 8,
+			'completed' => 9,
 		];
 
 		$normalizedStatus = strtolower(trim($status));
