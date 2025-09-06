@@ -1,9 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\OrderItem;
-use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Interfaces\Services\OrderServiceInterface;
