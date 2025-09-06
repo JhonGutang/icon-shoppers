@@ -1,4 +1,5 @@
 "use client";
+import PublicLayout from "@/layout/PublicLayout";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchSpecificShop } from "@/services/shopService";
@@ -68,81 +69,83 @@ const ShopPage = () => {
     category === "featured" ? featuredProducts : allProducts;
 
   return (
-    <div className="space-y-5">
-      <CartNavbar />
-      <div className="w-full px-5">
-        {/* Shop Details */}
-        <div className="flex flex-col gap-5 lg:items-start items-center mb-5">
-          <div className="w-1/2 lg:w-full lg:h-[40vh]">
-            <img
-              src={`http://192.168.1.6:8000/storage/${shop?.logo_image}`}
-              alt={shop?.name || "Shop Image"}
-              className="object-cover w-full h-full rounded-xl border-2"
-            />
-          </div>
-
-          <div className="flex  justify-between w-full items-center lg:gap-0 gap-4 lg:px-10">
-            <div>
-              <h1 className="text-3xl font-semibold">{shop?.name}</h1>
-              <div className="text-sm">
-                <div className="flex gap-2">
-                  <div>Email:</div>
-                  <div>{shop?.email}</div>
-                </div>
-                <div className="flex gap-2">
-                  <div>Contact Number:</div>
-                  <div>{shop?.contact_number}</div>
-                </div>
-              </div>
+    <PublicLayout>
+      <div className="space-y-5">
+        <CartNavbar />
+        <div className="w-full px-5">
+          {/* Shop Details */}
+          <div className="flex flex-col gap-5 lg:items-start items-center mb-5">
+            <div className="w-1/2 lg:w-full lg:h-[40vh]">
+              <img
+                src={`http://192.168.1.6:8000/storage/${shop?.logo_image}`}
+                alt={shop?.name || "Shop Image"}
+                className="object-cover w-full h-full rounded-xl border-2"
+              />
             </div>
-          <div>
-            <Button className="bg-green-600">Rate Shop</Button>
-          </div>
-          </div>
-        </div>
 
-        {/* Shop Description */}
-        <div className="mb-5 lg:px-10">
-          <h2 className="font-semibold">Description</h2>
-          <p className="mt-2">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore
-            nesciunt saepe natus? Ullam amet libero eum, repellat eos odit eius
-            sunt veritatis hic praesentium impedit autem iste? Ut, a laudantium.
-          </p>
-        </div>
-
-        {/* Category Filter */}
-        <div className="mb-5 lg:px-10">
-          <ToggleButtonGroup
-            size="small"
-            value={category}
-            exclusive
-            onChange={handleToggleChange}
-            aria-label="category filter"
-          >
-            <ToggleButton value="all" aria-label="all products">
-              All
-            </ToggleButton>
-            <ToggleButton value="featured" aria-label="featured products">
-              Featured
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </div>
-
-        {/* Products List */}
-        <div className="columns-2 lg:columns-4 gap-1 pb-5 lg:px-10">
-          {Array.isArray(productsToDisplay) && productsToDisplay.length ? (
-            productsToDisplay.map((product) => (
-              <div key={product.id} className="break-inside-avoid mb-3">
-                <ProductCard product={product} shopName={shop?.name} />
+            <div className="flex  justify-between w-full items-center lg:gap-0 gap-4 lg:px-10">
+              <div>
+                <h1 className="text-3xl font-semibold">{shop?.name}</h1>
+                <div className="text-sm">
+                  <div className="flex gap-2">
+                    <div>Email:</div>
+                    <div>{shop?.email}</div>
+                  </div>
+                  <div className="flex gap-2">
+                    <div>Contact Number:</div>
+                    <div>{shop?.contact_number}</div>
+                  </div>
+                </div>
               </div>
-            ))
-          ) : (
-            <p className="text-center">No products available</p>
-          )}
+            <div>
+              <Button className="bg-green-600">Rate Shop</Button>
+            </div>
+            </div>
+          </div>
+
+          {/* Shop Description */}
+          <div className="mb-5 lg:px-10">
+            <h2 className="font-semibold">Description</h2>
+            <p className="mt-2">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore
+              nesciunt saepe natus? Ullam amet libero eum, repellat eos odit eius
+              sunt veritatis hic praesentium impedit autem iste? Ut, a laudantium.
+            </p>
+          </div>
+
+          {/* Category Filter */}
+          <div className="mb-5 lg:px-10">
+            <ToggleButtonGroup
+              size="small"
+              value={category}
+              exclusive
+              onChange={handleToggleChange}
+              aria-label="category filter"
+            >
+              <ToggleButton value="all" aria-label="all products">
+                All
+              </ToggleButton>
+              <ToggleButton value="featured" aria-label="featured products">
+                Featured
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </div>
+
+          {/* Products List */}
+          <div className="columns-2 lg:columns-4 gap-1 pb-5 lg:px-10">
+            {Array.isArray(productsToDisplay) && productsToDisplay.length ? (
+              productsToDisplay.map((product) => (
+                <div key={product.id} className="break-inside-avoid mb-3">
+                  <ProductCard product={product} shopName={shop?.name} />
+                </div>
+              ))
+            ) : (
+              <p className="text-center">No products available</p>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </PublicLayout>
   );
 };
 

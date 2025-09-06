@@ -108,6 +108,20 @@ const useAuth = () => {
     }
   };
 
+
+  const handleRedirectIfUserIsAuth = () => {
+    const accessToken = useToken.getState().accessToken;
+    const userType = useToken.getState().userType;
+    
+    if (accessToken) {
+      if (userType === "seller") {
+        redirectLink("/profile");
+      } else {
+        redirectLink("/home");
+      }
+    }
+  }
+
   return {
     registerFormData,
     loginFormData,
@@ -117,6 +131,7 @@ const useAuth = () => {
     handleLogout,
     handleGetProfile,
     handleUpdateProfile,
+    handleRedirectIfUserIsAuth
   };
 };
 

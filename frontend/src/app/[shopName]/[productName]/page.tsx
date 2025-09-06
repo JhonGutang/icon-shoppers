@@ -1,5 +1,6 @@
 "use client";
 
+import PublicLayout from "@/layout/PublicLayout";
 import { useParams } from "next/navigation";
 import { useEffect, useState, MouseEvent } from "react";
 import useProductAction from "@/hooks/useProductActions";
@@ -44,76 +45,78 @@ const ProductPage = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-20 md:pb-0">
-      <CartNavbar />
+    <PublicLayout>
+      <div className="bg-gray-50 min-h-screen pb-20 md:pb-0">
+        <CartNavbar />
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="bg-white shadow-sm rounded-lg overflow-hidden">
-          <div className="md:grid md:grid-cols-12 md:gap-8">
-            <div className="md:col-span-5 lg:col-span-4">
-              <ProductImage product={product} />
-            </div>
-
-            <div className="md:col-span-7 lg:col-span-8">
-              <div className="flex border-b mb-6">
-                <button
-                  className={`px-4 py-4 font-medium text-sm cursor-pointer ${
-                    activeTab === "details"
-                      ? "text-green-600 border-b-2 border-green-600"
-                      : "text-gray-500"
-                  }`}
-                  onClick={() => setActiveTab("details")}
-                >
-                  Details
-                </button>
-                <button
-                  className={`px-4 py-4 font-medium text-sm cursor-pointer ${
-                    activeTab === "reviews"
-                      ? "text-green-600 border-b-2 border-green-600"
-                      : "text-gray-500"
-                  }`}
-                  onClick={() => setActiveTab("reviews")}
-                >
-                  Ratings & Reviews
-                </button>
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+            <div className="md:grid md:grid-cols-12 md:gap-8">
+              <div className="md:col-span-5 lg:col-span-4">
+                <ProductImage product={product} />
               </div>
 
-              {activeTab === "details" ? (
-                <Details
-                  product={product}
-                  isLoading={isLoading}
-                  redirectAfterAdd={redirectAfterAdd}
-                />
-              ) : (
-                <ProductReviews />
-              )}
+              <div className="md:col-span-7 lg:col-span-8">
+                <div className="flex border-b mb-6">
+                  <button
+                    className={`px-4 py-4 font-medium text-sm cursor-pointer ${
+                      activeTab === "details"
+                        ? "text-green-600 border-b-2 border-green-600"
+                        : "text-gray-500"
+                    }`}
+                    onClick={() => setActiveTab("details")}
+                  >
+                    Details
+                  </button>
+                  <button
+                    className={`px-4 py-4 font-medium text-sm cursor-pointer ${
+                      activeTab === "reviews"
+                        ? "text-green-600 border-b-2 border-green-600"
+                        : "text-gray-500"
+                    }`}
+                    onClick={() => setActiveTab("reviews")}
+                  >
+                    Ratings & Reviews
+                  </button>
+                </div>
+
+                {activeTab === "details" ? (
+                  <Details
+                    product={product}
+                    isLoading={isLoading}
+                    redirectAfterAdd={redirectAfterAdd}
+                  />
+                ) : (
+                  <ProductReviews />
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-3 border-t md:hidden">
-        <Button
-          className={`w-full h-14 rounded-lg font-medium text-lg ${
-            isLoading ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
-          }`}
-          onClick={redirectAfterAdd}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <div className="flex items-center justify-center gap-3">
-              <Loader2 className="animate-spin" size={24} />
-              <span>Adding to Cart</span>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center gap-3">
-              <ShoppingCart size={20} />
-              <span>Add To Cart</span>
-            </div>
-          )}
-        </Button>
+        <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-3 border-t md:hidden">
+          <Button
+            className={`w-full h-14 rounded-lg font-medium text-lg ${
+              isLoading ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+            }`}
+            onClick={redirectAfterAdd}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-3">
+                <Loader2 className="animate-spin" size={24} />
+                <span>Adding to Cart</span>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-3">
+                <ShoppingCart size={20} />
+                <span>Add To Cart</span>
+              </div>
+            )}
+          </Button>
+        </div>
       </div>
-    </div>
+    </PublicLayout>
   );
 };
 

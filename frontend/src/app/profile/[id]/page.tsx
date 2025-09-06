@@ -1,4 +1,5 @@
 "use client";
+import SellerLayout from "@/layout/SellerLayout";
 import Feedback from "@/components/Feedback";
 import { Button } from "@/components/ui/button";
 import useProductAction from "@/hooks/useProductActions";
@@ -21,10 +22,12 @@ const ProductPage = ({ params }: { params: Promise<{ id: number }> }) => {
   }, [id]);
 
   return (
-    <div className="w-full h-screen flex">
-      <ProductContainer product={product} id={id} />
-      <FeedbackContainer />
-    </div>
+    <SellerLayout>
+      <div className="w-full h-screen flex">
+        <ProductContainer product={product} id={id} />
+        <FeedbackContainer />
+      </div>
+    </SellerLayout>
   );
 };
 

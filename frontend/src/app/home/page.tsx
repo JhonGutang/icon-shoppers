@@ -1,11 +1,14 @@
 import { Suspense } from "react";
+import CustomerLayout from "@/layout/CustomerLayout";
 import HomeContent from "@/components/customer-home/HomeContent";
 
 const Home = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <HomeContent />
-    </Suspense>
+    <CustomerLayout>
+      <Suspense fallback={<div>Loading...</div>}>
+        <HomeContent />
+      </Suspense>
+    </CustomerLayout>
   );
 };
 
