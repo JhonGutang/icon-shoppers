@@ -19,7 +19,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requireAuth = true,
 }) => {
   const router = useRouter();
-  const { accessToken, userType, hasHydrated } = useAuthStore();
+  const { accessToken, userType, hasHydrated, isLoggingOut, setLoggingOut } = useAuthStore();
   const hasShownToast = useRef(false);
 
   useEffect(() => {
@@ -30,7 +30,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       hasShownToast.current = false;
     }
 
+    // Skip toast if user is logging out
     if (requireAuth && !accessToken) {
+      if (isLoggingOut) {
+        setLoggingOut(false);
+        router.push(redirectTo || "/customer-auth");
+        return; 
+      }
       if (!hasShownToast.current) {
         toast.error("Please login to access this page", {
           style: {
@@ -77,7 +83,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         router.push("/profile");
         return;
       }
-      
+
       if (!hasShownToast.current) {
         toast.error("You don't have permission to access this page", {
           style: {

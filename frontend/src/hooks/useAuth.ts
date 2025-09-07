@@ -65,19 +65,26 @@ const useAuth = () => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     const accessToken = useToken.getState().accessToken;
     const role = useToken.getState().userType
 
-    if (accessToken && role) {
-      logout(accessToken, role);
-      openSnackbar("Logout successful!", "info");
-      store.clearAuth();
-
-      if(role === 'seller') {
-        redirectLink("shop-auth");
-      } else {
-        redirectLink("customer-auth");
+    if (accessToken && role) {    
+      try {
+        await logout(accessToken, role);
+        openSnackbar("Logout successful!", "info");
+      } catch (error) {
+        console.error("Logout failed:", error);
+        openSnackbar("Logout failed!", "error");
+      } finally {
+        store.clearAuth();
+        store.setLoggingOut(true);
+        
+        if(role === 'seller') {
+          redirectLink("shop-auth");
+        } else {
+          redirectLink("customer-auth");
+        }
       }
     }
   };
