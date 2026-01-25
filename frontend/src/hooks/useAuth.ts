@@ -50,7 +50,7 @@ const useAuth = () => {
 
   const handleLogin = async (role: string) => {
     try {
-      const profile = await login(loginFormData, role);
+      const profile = await login(loginFormData);
       openSnackbar("Login successful!", "success");
       store.setAuth(profile.token, profile.user.role, profile.user.id);
 
@@ -66,53 +66,40 @@ const useAuth = () => {
   };
 
   const handleLogout = async () => {
-    const accessToken = useToken.getState().accessToken;
     const role = useToken.getState().userType
 
-    if (accessToken && role) {    
-      try {
-        await logout(accessToken, role);
-        openSnackbar("Logout successful!", "info");
-      } catch (error) {
-        console.error("Logout failed:", error);
-        openSnackbar("Logout failed!", "error");
-      } finally {
-        store.clearAuth();
-        store.setLoggingOut(true);
-        
-        if(role === 'seller') {
-          redirectLink("shop-auth");
-        } else {
-          redirectLink("customer-auth");
-        }
+    try {
+      await logout();
+      openSnackbar("Logout successful!", "info");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      openSnackbar("Logout failed!", "error");
+    } finally {
+      store.clearAuth();
+      store.setLoggingOut(true);
+      
+      if(role === 'merchant') {
+        redirectLink("shop-auth");
+      } else {
+        redirectLink("customer-auth");
       }
     }
   };
 
   const handleGetProfile = useCallback(async () => {
-    const accessToken = useToken.getState().accessToken;
-    const role = useToken.getState().userType;
-
-    if (accessToken && role) {
-      const data = await getProfile(accessToken, role);
+      const data = await getProfile();
       return data;
-    }
   }, []);
 
   const handleUpdateProfile = async (updatedData: EditProfile) => {
-    const accessToken = useToken.getState().accessToken;
-    const role = useToken.getState().userType;
-
-    if (accessToken && role) {
       try {
-        const response = await updateProfile(accessToken, updatedData, role);
+        const response = await updateProfile(updatedData);
         openSnackbar("Profile updated successfully!", "success");
         return response;
       } catch (error) {
         console.error(error)
         openSnackbar("Failed to update profile!", "error");
       }
-    }
   };
 
 

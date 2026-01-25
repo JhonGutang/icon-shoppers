@@ -32,46 +32,30 @@ const formatCustomerData = (data: Register) => {
   }
 }
 
-export const register = async (details: Register, role: string) => {
-  if (role === "seller") {
-    const formattedData = formatData(details, "register");
-    axiosInstance.post("/register", formattedData);
-  } else {
-    const formattedData = formatCustomerData(details);
-    axiosInstance.post("/customer-register", formattedData);
-  }
+export const register = async (details: Register, role: string = "customer") => {
+  const formattedData = {
+    ...formatCustomerData(details),
+    role: role === "seller" ? "merchant" : "customer"
+  };
+  return await axiosInstance.post("/register", formattedData);
 };
 
-export const login = async (credentials: Login, role: string) => {
+export const login = async (credentials: Login) => {
   const formattedData = formatData(credentials, "login");
-  const API_ENDPOINT = role === 'seller' ? "/login" : "/customer-login"
-  
-  const response = await axiosInstance.post(API_ENDPOINT, formattedData);
+  const response = await axiosInstance.post("/login", formattedData);
   return response.data;
 };
 
-export const logout = async (token: string, role: string) => {
-
-  const API_ENDPOINT = role === 'seller' ?  "/shop-logout" : "/customer-logout"
-  await axiosInstance.delete(API_ENDPOINT, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+export const logout = async () => {
+  await axiosInstance.post("/logout");
 };
 
-export const getProfile = async (token: string, role: string) => {
-  const API_ENDPOINT = role === 'seller' ? "/profile" : "/customer-profile";
-  
+export const getProfile = async () => {
   try {
-    const response = await axiosInstance.get(API_ENDPOINT, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axiosInstance.get("/profile");
   
-    const data = role === 'seller' ? formatSellerProfile(response.data.user) : formatProfileData(response.data)
-    return  data
+    const user = response.data.user;
+    return user.role === 'merchant' ? formatSellerProfile(user) : formatProfileData(user);
   } catch (error) {
     console.error(error);
   }
@@ -104,17 +88,11 @@ const formatSellerProfile = (data: SellerProfile) => {
   };
 };
 
-export const updateProfile = async (token: string, updatedData: EditProfile, role: string) => {
-  const API_ENDPOINT = role === 'seller' ? "/profile" : "/customer-profile";  
-  
+export const updateProfile = async (updatedData: EditProfile) => {
   try { 
-    const response = await axiosInstance.put(API_ENDPOINT, updatedData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axiosInstance.post("/profile", updatedData);
     
-    return formatProfileData(response.data.customer)
+    return formatProfileData(response.data.user || response.data.customer)
   } catch (error) {
     console.error("Error updating profile:", error);
     throw error; 

@@ -1,5 +1,6 @@
 import { Product, ProductInCart } from "@/types/product";
 import { create } from "zustand";
+import { fetchPendingOrders } from "@/services/customerService";
 
 // Extend product with quantity
 type CartStore = {
@@ -13,6 +14,7 @@ type CartStore = {
   setProducts: (products: ProductInCart[]) => void;
   setProductsToCheckout: (products: ProductInCart[]) => void;
   clearProductsToCheckout: () => void;
+  fetchCart: () => Promise<void>;
 };
 
 export const useCartStore = create<CartStore>((set) => ({
@@ -63,4 +65,12 @@ export const useCartStore = create<CartStore>((set) => ({
   setProducts: (products) => set({ productsInCart: products }),
   setProductsToCheckout: (products) => set({ productsToCheckout: products }),
   clearProductsToCheckout: () => set({ productsToCheckout: [] }),
+  fetchCart: async () => {
+    try {
+      const orders = await fetchPendingOrders();
+      set({ productsInCart: orders });
+    } catch (error) {
+      console.error("Failed to fetch cart:", error);
+    }
+  }
 }));

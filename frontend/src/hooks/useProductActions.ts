@@ -35,7 +35,7 @@ const useProductAction = () => {
   const handleFetchShopProducts = async () => {
     if (!token) return;
     try {
-      const fetchedProducts = await fetchShopProducts(token);
+      const fetchedProducts = await fetchShopProducts();
       setProducts(fetchedProducts);
     } catch (error) {
       console.error(error);
@@ -50,7 +50,7 @@ const useProductAction = () => {
   const handleAddProducts = async () => {
     if (!token) return;
     try {
-      const newProductData = await addProductService(newProduct, token);
+      const newProductData = await addProductService(newProduct);
       addProduct(newProductData);
       setNewProduct({ name: "", price: 0, quantity: 0 });
       openSnackbar("Product Added Successfully", "success");
@@ -64,7 +64,7 @@ const useProductAction = () => {
   const handleDeleteProduct = async (id: number) => {
     if (!token) return;
     try {
-      await deleteProduct(id, token);
+      await deleteProduct(id);
       deleteProductById(id);
       openSnackbar("Product deleted", "success");
       setTimeout(() => {
@@ -107,7 +107,7 @@ const useProductAction = () => {
       openSnackbar(`Product visibility is now ${updatedVisibility ? "visible" : "hidden"}`, "info");
 
       const productWithoutImage = { ...updatedProduct, image: null };
-      await updateProduct(productWithoutImage.id, productWithoutImage, token);
+      await updateProduct(productWithoutImage.id, productWithoutImage);
     } catch (error) {
       console.error(error);
       openSnackbar("Failed to update product visibility", "error");
@@ -130,7 +130,7 @@ const useProductAction = () => {
 
       const productWithoutImage = { ...updatedProductFeature, image: null };
 
-      await updateProduct( productWithoutImage.id, productWithoutImage, token);
+      await updateProduct( productWithoutImage.id, productWithoutImage);
     } catch (error) {
       console.error(error);
       openSnackbar("Feature toggle failed: Reverting Back", "error");
