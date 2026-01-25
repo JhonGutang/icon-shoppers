@@ -7,7 +7,7 @@ use App\Http\Controllers\ProductRatingController;
 
 
 Route::get('/product-ratings/{product}', [ProductRatingController::class, 'index']);
-Route::middleware('auth:customer-api')->prefix('customer')->group(function () {
+Route::middleware('auth:sanctum')->prefix('customer')->group(function () {
     Route::post('/product-ratings', [ProductRatingController::class, 'store']);
     Route::post('/shop-ratings', [ShopRatingController::class, 'store']);
     Route::get('/shop-ratings/{shop}', [ShopRatingController::class, 'getShopRatings']);

@@ -17,7 +17,7 @@ Route::get('/product/{id}', [ProductController::class,'fetchSpecificProduct']);
 Route::get('search-products', [ProductController::class, 'searchProducts']);
 
 
-Route::middleware('auth:shop-api')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/products', [ProductController::class,'index']);
     Route::post('/product', [ProductController::class, 'create']);
     Route::post('/product/{id}', [ProductController::class,'update']);

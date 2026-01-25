@@ -14,15 +14,15 @@ class CartRespository implements CartRepositoryInterface
     {
         return Cart::with(['cartItems' => function($query) use ($productId) {
             $query->where('product_id', $productId);
-        }])->where('customer_id', $userId)->first();
+        }])->where('user_id', $userId)->first();
     }
 
     public function create(int $userId, int $productId)
     {
-        $cart = Cart::where('customer_id', $userId)->first();
+        $cart = Cart::where('user_id', $userId)->first();
         if (!$cart) {
             $cart = Cart::create([
-                'customer_id' => $userId,
+                'user_id' => $userId,
             ]);
         }
 
@@ -44,7 +44,7 @@ class CartRespository implements CartRepositoryInterface
 
     public function getItems(int $userId): array
     {
-        $cart = Cart::where('customer_id', $userId)->first();
+        $cart = Cart::where('user_id', $userId)->first();
 
         if (!$cart) {
             return [];
@@ -53,7 +53,7 @@ class CartRespository implements CartRepositoryInterface
         $cartItems = CartItem::where('cart_id', $cart->id)
             ->with([
                 'product:id,name,price,shop_id,image',
-                'product.shop:id,name,email,description,contact_number,logo_image'
+                'product.shop:id,name,description,logo_image'
             ])
             ->get();
 

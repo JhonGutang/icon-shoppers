@@ -9,6 +9,7 @@ use App\Http\Requests\LoginFormRequest;
 use App\Http\Requests\ShopUpdateFormRequest;
 use App\Interfaces\Services\ShopServiceInterface;
 use App\Interfaces\Services\UserServiceInterface;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class ShopController extends Controller
@@ -28,7 +29,7 @@ class ShopController extends Controller
 
     public function index()
     {
-        $user = Auth::guard('shop-api')->user();
+        $user = Auth::user();
         return response()->json(['user' => $user]);
     }
 
@@ -36,6 +37,7 @@ class ShopController extends Controller
     public function create(AuthRequest $request)
     {
         $validatedData = $request->validated();
+        $validatedData['role'] = User::ROLE_MERCHANT;
         $this->userService->registerUser($validatedData);
         return response()->json(['message'=> 'Shop created Successfully'], 201);
     }
@@ -43,7 +45,7 @@ class ShopController extends Controller
 
     public function update(ShopUpdateFormRequest $request)
     {
-        $shop = Auth::guard('shop-api')->user();
+        $shop = Auth::user();
         $validatedData = $request->validated();
         $validatedData['logo_file'] = $request->file('logo_image');
         $updatedCustomer = $this->userService->updateUser($validatedData, $shop->id);
@@ -72,7 +74,7 @@ class ShopController extends Controller
     public function login(LoginFormRequest $request)
     {
         $credentials = $request->validated();
-        $authenticatedUser = $this->userService->authenticateUser($credentials, 'shop');
+        $authenticatedUser = $this->userService->authenticateUser($credentials);
         return response()
             ->json([
                 'user' => $authenticatedUser['user'],
@@ -83,8 +85,8 @@ class ShopController extends Controller
     }
 
     public function logout () {
-        /** @var \App\Models\Shop $user */
-        $user = Auth::guard('shop-api')->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         $user->tokens()->delete();
         return response()->json([
             'message' => 'Logged out successfully'

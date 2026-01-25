@@ -24,9 +24,9 @@ class CustomerRequest extends FormRequest
         return [
             'name'            => 'required|string|max:255',
             'middle_name'     => 'nullable|string|max:255',
-            'contact_number'  => 'required|string|unique:customers,contact_number|max:20',
+            'contact_number'  => 'required|string|unique:users,contact_number|max:20',
             'address'         => 'required|string|max:500',
-            'email'           => 'required|email|unique:customers,email|max:255',
+            'email'           => 'required|email|unique:users,email|max:255',
             'password'        => 'required|string|min:4',
         ];
     }

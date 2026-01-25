@@ -6,6 +6,7 @@ use App\Http\Requests\CustomerRequest;
 use App\Http\Requests\LoginFormRequest;
 use App\Http\Requests\UpdateFormRequest;
 use App\Interfaces\Services\UserServiceInterface;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
@@ -22,13 +23,13 @@ class CustomerController extends Controller
 
     public function index()
     {
-        $user = Auth::guard('customer-api')->user();
+        $user = Auth::user();
         return $user;
     }
 
     public function login(LoginFormRequest $request) {
         $credentials = $request->validated();
-        $authenticatedUser = $this->userService->authenticateUser($credentials, 'customer');
+        $authenticatedUser = $this->userService->authenticateUser($credentials);
         return response()
             ->json([
                 'user' => $authenticatedUser['user'],
@@ -41,6 +42,7 @@ class CustomerController extends Controller
     public function create(CustomerRequest $request)
     {
         $validatedData = $request->validated();
+        $validatedData['role'] = User::ROLE_CUSTOMER;
         $registeredUser = $this->userService->registerUser($validatedData);
         return response()->json([
             'message'  => 'Customer created successfully.',
@@ -50,7 +52,7 @@ class CustomerController extends Controller
 
     public function update(UpdateFormRequest $request)
     {
-        $user = Auth::guard('customer-api')->user();
+        $user = Auth::user();
         $validatedData = $request->validated();
         $updatedCustomer = $this->userService->updateUser($validatedData, $user->id);
         return response()->json([
@@ -60,8 +62,8 @@ class CustomerController extends Controller
     }
 
     public function logout () {
-        /** @var \App\Models\Customer $user */
-        $user = Auth::guard('customer-api')->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         $user->tokens()->delete();
         return response()->json([
             'message' => 'Logged out successfully'

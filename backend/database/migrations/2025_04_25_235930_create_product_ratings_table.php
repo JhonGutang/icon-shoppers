@@ -11,12 +11,12 @@ return new class extends Migration
         Schema::create('product_ratings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->unsignedTinyInteger('rating')->comment('Rating from 1 to 5');
             $table->text('feedback')->nullable();
             $table->timestamps();
         
-            $table->unique(['product_id', 'customer_id']); // one rating per customer per product
+            $table->unique(['product_id', 'user_id']); // one rating per user per product
         });
         
     }

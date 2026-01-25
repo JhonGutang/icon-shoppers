@@ -9,10 +9,26 @@ class ShopRepository implements ShopRepositoryInterface
 {
 
     public function getAllShops ($searchParam) {
-        return $searchParam ? Shop::where('name', 'like', "%{$searchParam}%")->get() : Shop::all();
+        return Shop::where('status', Shop::STATUS_ACTIVE)
+            ->when($searchParam, function ($query) use ($searchParam) {
+                $query->where('name', 'like', "%{$searchParam}%");
+            })->get();
     }
 
     public function getSpecificShop ($shopName) {
-        return Shop::with('products')->where('name', $shopName)->firstOrFail();
+        return Shop::with('products')
+            ->where('name', $shopName)
+            ->where('status', Shop::STATUS_ACTIVE)
+            ->firstOrFail();
+    }
+
+    public function createShop(array $data)
+    {
+        return Shop::create($data);
+    }
+
+    public function findByOwner($ownerId)
+    {
+        return Shop::where('owner_id', $ownerId)->first();
     }
 }
