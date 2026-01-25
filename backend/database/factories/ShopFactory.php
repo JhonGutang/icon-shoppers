@@ -27,12 +27,10 @@ class ShopFactory extends Factory
     {
         return [
             'name' => fake()->company(),
-            'owner' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'contact_number' => fake()->phoneNumber(),
-            'logo_image' => fake()->optional()->imageUrl(),
+            'owner_id' => \App\Models\User::factory()->state(['role' => 'merchant']),
             'description' => fake()->optional()->paragraph(),
-            'password' => Hash::make('password'),
+            'logo_image' => fake()->optional()->imageUrl(),
+            'status' => 'active',
         ];
     }
 }

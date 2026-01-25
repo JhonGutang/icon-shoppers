@@ -9,45 +9,40 @@ use App\Models\Product;
 
 class OrderRepository implements OrderRepositoryInterface
 {
-    public function all($statusId, $shopId)
+    public function all($status, $shopId)
     {
         $orders = Order::with([
-            'customer',
-            'orderStatus',
+            'user',
             'orderItems.product',
-            'orderItems.product.shop'
         ])
-            ->whereHas('orderItems.product', function ($query) use ($shopId) {
-                $query->where('shop_id', $shopId);
-            })
-            ->when($statusId && $statusId !== 1, function ($query) use ($statusId) {
-                $query->where('status_id', $statusId);
+            ->where('shop_id', $shopId)
+            ->when($status && $status !== 'ALL', function ($query) use ($status) {
+                $query->where('status', $status);
             })
             ->get();
 
         return $orders;
     }
 
-    public function update($statusId, $shopId)
+    public function update($status, $orderId)
     {
-        $order = Order::findOrFail($shopId);
+        $order = Order::findOrFail($orderId);
         $order->update([
-            'status_id' => $statusId
+            'status' => $status
         ]);
 
         return $order;
     }
 
-    public function getCustomersOrder($statusId, $customerId)
+    public function getCustomersOrder($status, $userId)
     {
         $orders = Order::with([
                 'orderItems.product:id,name,price,shop_id,image',
-                'orderItems.product.shop:id,name,email,description,contact_number',
-                'orderStatus:id,status'
+                'orderItems.product.shop:id,name,description',
             ])
-            ->where('customer_id', $customerId)
-            ->when($statusId && $statusId !== 0, function ($query) use ($statusId) {
-                $query->where('status_id', $statusId);
+            ->where('user_id', $userId)
+            ->when($status && $status !== 'ALL', function ($query) use ($status) {
+                $query->where('status', $status);
             })
             ->orderBy('created_at', 'desc')
             ->get();
@@ -55,12 +50,14 @@ class OrderRepository implements OrderRepositoryInterface
         return $orders;
     }
 
-    public function saveOrder($customerId)
+    public function saveOrder($userId, $shopId, $totalAmount = 0)
     {
         $order = Order::create([
-            'customer_id' => $customerId,
-            'status' => 'ordered',
-            'total_amount' => 0,
+            'user_id' => $userId,
+            'shop_id' => $shopId,
+            'status' => Order::STATUS_PENDING,
+            'total_amount' => $totalAmount,
+            'payment_status' => Order::PAYMENT_STATUS_PENDING,
         ]);
 
         return $order;
@@ -68,8 +65,7 @@ class OrderRepository implements OrderRepositoryInterface
 
     public function saveOrderItems($items)
     {
-        $orderItems = OrderItem::create($items);
-        return $orderItems;
+        return OrderItem::create($items);
     }
     
     public function updateOrderTotalAmount($orderId, $totalAmount)

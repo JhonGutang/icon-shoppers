@@ -14,7 +14,7 @@ export const useOrders = () => {
       setLoading(true);
       if (!token) throw new Error("No authentication token");
 
-      const data = await orderService.fetchOrders(token, status);
+      const data = await orderService.fetchOrders(status);
 
       const filteredOrders =
         status === "all"
@@ -47,7 +47,8 @@ export const useOrders = () => {
   ) => {
     if (!token) return;
     setLoading(true);
-    await orderService.updateOrderStatus(token, Number(orderId), newStatus);
+    await orderService.updateOrderStatus(Number(orderId), newStatus);
+    setLoading(false);
   };
 
 

@@ -11,34 +11,35 @@ import useRedirectLink from "./useRedirectLink";
 import useAuthStore from "@/stores/useAuthStore";
 import { useSnackbar } from "@/components/context/SnackbarContext";
 import { orderService } from "@/services/orderService";
+
 const useCustomerActions = () => {
-  const token = useAuthStore.getState().accessToken;
-  const role = useAuthStore.getState().userType;
+  const token = useAuthStore((state) => state.accessToken);
+  const role = useAuthStore((state) => state.userType);
   const {
     addProduct,
     deleteProduct,
     setProductsToCheckout,
+    fetchCart,
   } = useCartStore();
-  const setProducts = useCartStore((state) => state.setProducts);
+  
   const { redirectLink } = useRedirectLink();
   const { openSnackbar } = useSnackbar(); 
 
   const handleOrdersInCart = async () => {
-    if (role === "seller") return;
+    if (role === "merchant") return;
     if (!token) return;
-    const orders = await fetchPendingOrders(token);
-    setProducts(orders);
+    await fetchCart();
   };
 
   const handleOrdersToCheckout = async () => {
     if (!token) return;
-    const products = await fetchPendingOrdersBasedOnShop(token);
+    const products = await fetchPendingOrdersBasedOnShop();
     return products;
   };
 
   const handleOrders = async (status: string) => {
     if(!token) return
-    const products = await orderService.fetchCustomerOrders(token, status)
+    const products = await orderService.fetchCustomerOrders(status)
     return products
   }
 
@@ -52,18 +53,18 @@ const useCustomerActions = () => {
       return;
     }
     addProduct(product);
-    addToCart(product.id, token);
+    addToCart(product.id);
     openSnackbar("Product Added to Cart", "success"); 
   };
 
-  const handleRemoveToCart = (id: number) => {
+  const handleRemoveToCart = async (id: number) => {
     if (!token) return;
     deleteProduct(id);
-    removeToCart(id, token);
+    await removeToCart(id);
     openSnackbar("Product Removed from Cart", "warning"); 
   };
 
-  const handleCheckout = (location: string, products?: ProductInCart[]) => {
+  const handleCheckout = async (location: string, products?: ProductInCart[]) => {
     if (!token) return;
     if (location === "cart" && products) {
       setProductsToCheckout(products);
@@ -75,7 +76,7 @@ const useCustomerActions = () => {
         id: product.id,
         quantity: product.quantity,
       }));
-      checkoutOrder(filteredProducts, token);
+      await checkoutOrder(filteredProducts);
       openSnackbar("Your Order is Now Being Processed", "info"); 
       setTimeout(() => {
         window.location.reload();

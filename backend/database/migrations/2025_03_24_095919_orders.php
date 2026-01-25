@@ -8,15 +8,16 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->id(); // order_id
-            $table->unsignedBigInteger('customer_id');
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('shop_id')->constrained('shops')->onDelete('cascade');
             $table->decimal('total_amount', 10, 2);
-            $table->unsignedBigInteger('status_id')->default(1);
-            $table->string('location')->nullable();
+            $table->string('status')->default('PENDING'); // PENDING, CONFIRMED, IN_TRANSIT, DELIVERED, COMPLETED, CANCELLED
+            $table->string('payment_method')->default('cash_on_delivery'); // cash_on_delivery, online
+            $table->string('payment_status')->default('pending'); // pending, paid, failed, refunded
+            $table->text('shipping_address')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
-
-            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
-            $table->foreign('status_id')->references('id')->on('order_statuses')->onDelete('restrict');
         });
 
     }

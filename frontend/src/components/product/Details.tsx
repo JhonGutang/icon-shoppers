@@ -49,7 +49,7 @@ export default function Details({
   const handleRatingSubmit = async (rating: number, feedback: string) => {
     console.log("Rating submitted:", rating, feedback);
     if (product?.id && token) {
-      const response = await rateProduct(product.id, rating, feedback, token);
+      const response = await rateProduct(product.id, rating, feedback);
       if (response.message) {
         openSnackbar(response.message, "error");
       }

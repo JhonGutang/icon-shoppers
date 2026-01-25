@@ -70,13 +70,15 @@ const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!accessToken || !product) return;
+    // Removed accessToken check as it's no longer explicitly passed to updateProduct
+    if (!product) return;
 
     setIsLoading(true);
     try {
 
       console.log(imageFile);
-      const updatedProduct = await updateProduct( product.id, formData, accessToken);
+      // accessToken removed from updateProduct call
+      const updatedProduct = await updateProduct( product.id, formData);
       openSnackbar('Product Updated Successfully', 'success')
       setTimeout(() => {
         window.location.reload()

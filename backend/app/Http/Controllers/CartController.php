@@ -16,7 +16,7 @@ class CartController extends Controller
 
     public function index()
     {
-        $userId = Auth::guard('customer-api')->user()->id;
+        $userId = Auth::id();
         $cartItems = $this->cartService->getCartItems($userId);
         return response()->json($cartItems);
     }
@@ -24,16 +24,16 @@ class CartController extends Controller
 
     public function store($id)
     {
-        $user = Auth::guard('customer-api')->user();
-        $this->cartService->addToCart($user->id, $id);
+        $userId = Auth::id();
+        $this->cartService->addToCart($userId, $id);
         return response()->json(['message' => 'Product added to cart successfully']);
     }
 
 
     public function delete($productId)
     {
-        $user = Auth::guard('customer-api')->user();
-        $this->cartService->removeToCart($user->id, $productId);
+        $userId = Auth::id();
+        $this->cartService->removeToCart($userId, $productId);
         return response()->json(['message' => 'Product removed from cart successfully.'], 200);
     }
 }

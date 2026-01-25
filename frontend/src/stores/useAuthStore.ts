@@ -34,7 +34,7 @@ const useAuthStore = create<TokenState>()(
       // Helper methods
       isAuthenticated: () => !!get().accessToken,
       isCustomer: () => get().userType === 'customer',
-      isSeller: () => get().userType === 'seller',
+      isSeller: () => get().userType === 'merchant',
       hasRole: (role) => get().userType === role,
     }),
     {

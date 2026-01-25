@@ -22,72 +22,59 @@ class OrderService implements OrderServiceInterface
 
     public function getOrders($status, $shopId)
     {
-        try {
-            DB::beginTransaction();
-            $statusId = OrderDTO::getStatusId($status);   
-            $orders = $this->orderRepository->all($statusId, $shopId);
-            $result = $orders->map(function ($order) {
-                return OrderDTO::fromOrder($order)->toArray();
-            });
-
-            DB::commit();
-            return $result;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        $orders = $this->orderRepository->all($status, $shopId);
+        return $orders->map(function ($order) {
+            return OrderDTO::fromOrder($order)->toArray();
+        });
     }
 
-    public function updateOrderStatus($status, $shopId) {
-        try {
-            DB::beginTransaction();
-            $statusId = OrderDTO::getStatusId($status);   
-            $orders = $this->orderRepository->update($statusId, $shopId);
-            DB::commit();
-            return $orders;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+    public function updateOrderStatus($status, $orderId) {
+        return $this->orderRepository->update($status, $orderId);
     }
 
-    public function getCustomerOrders($status, $customerId)
+    public function getCustomerOrders($status, $userId)
     {
-        try {
-            DB::beginTransaction();
-            $statusId = OrderDTO::getStatusId($status);
-            $orders = $this->orderRepository->getCustomersOrder($statusId, $customerId);
-            $result = OrderDTO::formatCustomerOrders($orders);
-            DB::commit();
-            return $result;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        $orders = $this->orderRepository->getCustomersOrder($status, $userId);
+        return OrderDTO::formatCustomerOrders($orders);
     }
 
-    public function checkoutOrder($customerId, $productsFromRequest, $productIds)
+    public function checkoutOrder($userId, $productsFromRequest, $productIds)
     {
         try {
             DB::beginTransaction();
 
-            $totalAmount = 0;
-            $order = $this->orderRepository->saveOrder($customerId);
             $products = $this->productRepository->findProducts($productIds);
-            foreach ($productsFromRequest as $productItem) {
-                $product = $products->get($productItem['id']);
-                if (!$product) {
-                    DB::rollBack();
-                    return response()->json(['message' => 'Product not found'], 404);
-                }
-                $formattedOrderItem = OrderItemDTO::fromCheckoutItem($order->id, $productItem, $product);
-                $orderItem = $this->orderRepository->saveOrderItems($formattedOrderItem);
-
-                $totalAmount += $orderItem->total;
+            
+            // Group products by shop since an order belongs to a shop
+            $productsByShop = [];
+            foreach ($productsFromRequest as $item) {
+                $product = $products->get($item['id']);
+                $productsByShop[$product->shop_id][] = [
+                    'item' => $item,
+                    'product' => $product
+                ];
             }
-            $this->orderRepository->updateOrderTotalAmount($order->id, $totalAmount);
+
+            $createdOrders = [];
+            foreach ($productsByShop as $shopId => $items) {
+                $totalAmount = 0;
+                $order = $this->orderRepository->saveOrder($userId, $shopId);
+                
+                foreach ($items as $data) {
+                    $item = $data['item'];
+                    $product = $data['product'];
+                    
+                    $formattedOrderItem = OrderItemDTO::fromCheckoutItem($order->id, $item, $product);
+                    $orderItem = $this->orderRepository->saveOrderItems($formattedOrderItem);
+                    $totalAmount += $orderItem->total;
+                }
+                
+                $this->orderRepository->updateOrderTotalAmount($order->id, $totalAmount);
+                $createdOrders[] = $order;
+            }
 
             DB::commit();
+            return $createdOrders;
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;

@@ -12,20 +12,19 @@ require __DIR__.'/api/shop.php';
 require __DIR__.'/api/cart.php';
 require __DIR__.'/api/rating.php';
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 
-
-
-Route::middleware('auth:shop-api')->group(function () {
-    Route::get('/profile', [ShopController::class, 'index']);
+    // Profile Management (Unified)
+    Route::get('/profile', [ShopController::class, 'index']); // For merchants
     Route::post('/profile', [ShopController::class, 'update']);
     Route::post('/profile/upload-logo', [ShopController::class, 'uploadLogo']);
-    Route::get('/seller/orders', [OrderController::class, 'getSellerOrders']);
-});
 
-Route::middleware('auth:customer-api')->group(function () {
-    Route::get('/customer-profile', [CustomerController::class, 'index']);
-    Route::put('/customer-profile', [CustomerController::class, 'update']);
+    Route::get('/customer-profile', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::get('/seller/orders', [OrderController::class, 'getSellerOrders']);
 });

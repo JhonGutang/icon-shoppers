@@ -10,11 +10,27 @@ class Order extends Model
 {
     use HasFactory;
 
+    const STATUS_PENDING = 'PENDING';
+    const STATUS_CONFIRMED = 'CONFIRMED';
+    const STATUS_IN_TRANSIT = 'IN_TRANSIT';
+    const STATUS_DELIVERED = 'DELIVERED';
+    const STATUS_COMPLETED = 'COMPLETED';
+    const STATUS_CANCELLED = 'CANCELLED';
+
+    const PAYMENT_STATUS_PENDING = 'pending';
+    const PAYMENT_STATUS_PAID = 'paid';
+    const PAYMENT_STATUS_FAILED = 'failed';
+    const PAYMENT_STATUS_REFUNDED = 'refunded';
+
     protected $fillable = [
-        'customer_id',
+        'user_id',
+        'shop_id',
         'total_amount',
-        'status_id',
-        'location'
+        'status',
+        'payment_method',
+        'payment_status',
+        'shipping_address',
+        'notes',
     ];
 
     public function orderItems()
@@ -22,13 +38,13 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function customer()
+    public function user()
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function orderStatus(): BelongsTo
+    public function shop()
     {
-        return $this->belongsTo(OrderStatus::class, 'status_id');
+        return $this->belongsTo(Shop::class);
     }
 }

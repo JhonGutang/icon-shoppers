@@ -16,10 +16,9 @@ use App\Interfaces\Services\ImageServiceInterface;
 use App\Interfaces\Services\ShopServiceInterface;
 use App\Interfaces\Services\OrderServiceInterface;
 use App\Repositories\CartRespository;
-use App\Repositories\CustomerRepository;
+use App\Repositories\UserRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
-use App\Repositories\ShopOwnerRepository;
 use App\Repositories\ShopRepository;
 use App\Services\CartService;
 use App\Services\ImageService;
@@ -35,14 +34,11 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(UserServiceInterface::class, UserService::class);
-        $this->app->bind(UserRepositoryInterface::class, CustomerRepository::class);
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(CartServiceInterface::class, CartService::class);
         $this->app->bind(CartRepositoryInterface::class, CartRespository::class);
         $this->app->bind(ImageServiceInterface::class, ImageService::class);
         
-        $this->bindUserService(ShopController::class, ShopOwnerRepository::class);
-        $this->bindUserService(CustomerController::class, CustomerRepository::class);
-
         $this->app->bind(ShopServiceInterface::class, ShopService::class);
         $this->app->bind(ShopRepositoryInterface::class, ShopRepository::class);
 
@@ -50,19 +46,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
         
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
-    }
-
-    /**
-     * Bind a specific UserService dependency for a given controller and repository.
-     */
-    protected function bindUserService($controller, $repository)
-    {
-        $this->app->when($controller)
-            ->needs(UserServiceInterface::class)
-            ->give(function ($app) use ($repository) {
-                $repo = $app->make($repository);
-                return new UserService($repo, new ImageService($repo));
-            });
     }
 
     /**

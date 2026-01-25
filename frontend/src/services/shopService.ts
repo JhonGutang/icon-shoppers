@@ -14,12 +14,7 @@ export const fetchAllShops = async(search?: string) => {
 }
 
 
-export const updateShopProfile = async (shopId: string, updateData: ShopUpdateData, token: string) => {
-    const response = await axiosInstance.put(`/shop/${shopId}`, updateData, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }
-    });
+export const updateShopProfile = async (shopId: string, updateData: ShopUpdateData) => {
+    const response = await axiosInstance.post(`/shop/${shopId}`, updateData);
     return response.data;
 }

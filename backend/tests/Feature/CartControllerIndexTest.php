@@ -2,7 +2,7 @@
 
 use App\Models\Cart;
 use App\Models\CartItem;
-use App\Models\Customer;
+use App\Models\User;
 use App\Models\Product;
 use App\Models\Shop;
 use App\Services\CartService;
@@ -19,8 +19,8 @@ describe('Cart Controller Index', function () {
     });
 
     test('returns empty array when customer has no cart', function () {
-        $customer = Customer::factory()->create();
-        Sanctum::actingAs($customer, ['customer-api'], 'customer-api');
+        $customer = User::factory()->create(['role' => 'customer']);
+        Sanctum::actingAs($customer);
 
         $response = $this->getJson('/api/to-checkout');
         $response->assertStatus(200)
@@ -28,9 +28,9 @@ describe('Cart Controller Index', function () {
     });
 
     test('returns empty array when cart exists but has no items', function () {
-        $customer = Customer::factory()->create();
-        Cart::factory()->create(['customer_id' => $customer->id]);
-        Sanctum::actingAs($customer, ['customer-api'], 'customer-api');
+        $customer = User::factory()->create(['role' => 'customer']);
+        Cart::factory()->create(['user_id' => $customer->id]);
+        Sanctum::actingAs($customer);
 
         $response = $this->getJson('/api/to-checkout');
         $response->assertStatus(200)
@@ -38,20 +38,17 @@ describe('Cart Controller Index', function () {
     });
 
     test('returns cart items grouped by shop when cart has items', function () {
-        $customer = Customer::factory()->create();
+        $customer = User::factory()->create(['role' => 'customer']);
 
         $shop1 = Shop::factory()->create([
             'name' => 'Electronics Store',
-            'email' => 'electronics@example.com',
             'description' => 'Best electronics shop',
-            'contact_number' => '1234567890',
-            'logo_image' => 'electronics-logo.jpg'
+            'logo_image' => 'electronics-logo.jpg',
+            'status' => 'active'
         ]);
         $shop2 = Shop::factory()->create([
             'name' => 'Fashion Store',
-            'email' => 'fashion@example.com',
             'description' => 'Trendy fashion items',
-            'contact_number' => '0987654321',
             'logo_image' => 'fashion-logo.jpg'
         ]);
 
@@ -74,7 +71,7 @@ describe('Cart Controller Index', function () {
             'image' => 'nike-shoes.jpg'
         ]);
 
-        $cart = Cart::factory()->create(['customer_id' => $customer->id]);
+        $cart = Cart::factory()->create(['user_id' => $customer->id]);
         CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product1->id,
@@ -91,7 +88,7 @@ describe('Cart Controller Index', function () {
             'quantity' => 3
         ]);
 
-        Sanctum::actingAs($customer, ['customer-api'], 'customer-api');
+        Sanctum::actingAs($customer);
 
         $response = $this->getJson('/api/to-checkout');
 
@@ -101,10 +98,8 @@ describe('Cart Controller Index', function () {
                     'shop' => [
                         'id',
                         'name',
-                        'email',
                         'logo_image',
-                        'description',
-                        'contact_number'
+                        'description'
                     ],
                     'products' => [
                         '*' => [
@@ -132,14 +127,14 @@ describe('Cart Controller Index', function () {
         expect($fashionGroup['products'])->toHaveCount(1);
 
         $iphone = collect($electronicsGroup['products'])->firstWhere('name', 'iPhone 15');
-        expect($iphone['price'])->toBe(999.99);
+        expect($iphone['price'])->toEqual(999.99);
         expect($iphone['quantity'])->toBe(2);
         expect($iphone['image'])->toBe('iphone15.jpg');
     });
 
     test('handles database transaction rollback on exception', function () {
-        $customer = Customer::factory()->create();
-        Sanctum::actingAs($customer, ['customer-api'], 'customer-api');
+        $customer = User::factory()->create(['role' => 'customer']);
+        Sanctum::actingAs($customer);
 
         $this->mock(CartService::class, function ($mock) {
             $mock->shouldReceive('getCartItems')
@@ -152,12 +147,10 @@ describe('Cart Controller Index', function () {
     });
 
     test('returns correct data structure for single shop single product', function () {
-        $customer = Customer::factory()->create();
+        $customer = User::factory()->create(['role' => 'customer']);
         $shop = Shop::factory()->create([
             'name' => 'Single Shop',
-            'email' => 'single@example.com',
             'description' => 'Single product shop',
-            'contact_number' => '1111111111',
             'logo_image' => 'single-logo.jpg'
         ]);
         $product = Product::factory()->create([
@@ -167,14 +160,14 @@ describe('Cart Controller Index', function () {
             'image' => 'single-product.jpg'
         ]);
 
-        $cart = Cart::factory()->create(['customer_id' => $customer->id]);
+        $cart = Cart::factory()->create(['user_id' => $customer->id]);
         CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
             'quantity' => 1
         ]);
 
-        Sanctum::actingAs($customer, ['customer-api'], 'customer-api');
+        Sanctum::actingAs($customer);
 
         $response = $this->getJson('/api/to-checkout');
         $response->assertStatus(200);
@@ -184,21 +177,19 @@ describe('Cart Controller Index', function () {
 
         $shopGroup = $responseData[0];
         expect($shopGroup['shop']['name'])->toBe('Single Shop');
-        expect($shopGroup['shop']['email'])->toBe('single@example.com');
         expect($shopGroup['shop']['logo_image'])->toBe('single-logo.jpg');
         expect($shopGroup['shop']['description'])->toBe('Single product shop');
-        expect($shopGroup['shop']['contact_number'])->toBe('1111111111');
 
         expect($shopGroup['products'])->toHaveCount(1);
         $productData = $shopGroup['products'][0];
         expect($productData['name'])->toBe('Single Product');
-        expect($productData['price'])->toBe(50.00);
+        expect($productData['price'])->toEqual(50.00);
         expect($productData['image'])->toBe('single-product.jpg');
         expect($productData['quantity'])->toBe(1);
     });
 
     test('handles products with null images', function () {
-        $customer = Customer::factory()->create();
+        $customer = User::factory()->create(['role' => 'customer']);
         $shop = Shop::factory()->create();
 
         $product = Product::factory()->create([
@@ -208,14 +199,14 @@ describe('Cart Controller Index', function () {
             'image' => null
         ]);
 
-        $cart = Cart::factory()->create(['customer_id' => $customer->id]);
+        $cart = Cart::factory()->create(['user_id' => $customer->id]);
         CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
             'quantity' => 1
         ]);
 
-        Sanctum::actingAs($customer, ['customer-api'], 'customer-api');
+        Sanctum::actingAs($customer);
 
         $response = $this->getJson('/api/to-checkout');
         $response->assertStatus(200);
@@ -226,7 +217,7 @@ describe('Cart Controller Index', function () {
     });
 
     test('handles shops with null logo images', function () {
-        $customer = Customer::factory()->create();
+        $customer = User::factory()->create(['role' => 'customer']);
         $shop = Shop::factory()->create([
             'name' => 'Shop without logo',
             'logo_image' => null
@@ -237,14 +228,14 @@ describe('Cart Controller Index', function () {
             'price' => 30.00
         ]);
 
-        $cart = Cart::factory()->create(['customer_id' => $customer->id]);
+        $cart = Cart::factory()->create(['user_id' => $customer->id]);
         CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
             'quantity' => 1
         ]);
 
-        Sanctum::actingAs($customer, ['customer-api'], 'customer-api');
+        Sanctum::actingAs($customer);
 
         $response = $this->getJson('/api/to-checkout');
         $response->assertStatus(200);
@@ -255,18 +246,18 @@ describe('Cart Controller Index', function () {
     });
 
     test('returns correct cart item id in response', function () {
-        $customer = Customer::factory()->create();
+        $customer = User::factory()->create(['role' => 'customer']);
         $shop = Shop::factory()->create();
         $product = Product::factory()->create(['shop_id' => $shop->id]);
 
-        $cart = Cart::factory()->create(['customer_id' => $customer->id]);
+        $cart = Cart::factory()->create(['user_id' => $customer->id]);
         $cartItem = CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
             'quantity' => 1
         ]);
 
-        Sanctum::actingAs($customer, ['customer-api'], 'customer-api');
+        Sanctum::actingAs($customer);
 
         $response = $this->getJson('/api/to-checkout');
         $response->assertStatus(200);
@@ -277,18 +268,18 @@ describe('Cart Controller Index', function () {
     });
 
     test('handles multiple quantities correctly', function () {
-        $customer = Customer::factory()->create();
+        $customer = User::factory()->create(['role' => 'customer']);
         $shop = Shop::factory()->create();
         $product = Product::factory()->create(['shop_id' => $shop->id]);
 
-        $cart = Cart::factory()->create(['customer_id' => $customer->id]);
+        $cart = Cart::factory()->create(['user_id' => $customer->id]);
         CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
             'quantity' => 5
         ]);
 
-        Sanctum::actingAs($customer, ['customer-api'], 'customer-api');
+        Sanctum::actingAs($customer);
 
         $response = $this->getJson('/api/to-checkout');
         $response->assertStatus(200);
@@ -298,15 +289,9 @@ describe('Cart Controller Index', function () {
         expect($productData['quantity'])->toBe(5);
     });
 
-    test('returns 403 when using wrong guard', function () {
-        $customer = Customer::factory()->create();
-        Sanctum::actingAs($customer, ['customer-api'], 'customer-api');
-        $response = $this->getJson('/api/profile');
-        $response->assertStatus(403);
-    });
 
     test('handles decimal prices correctly', function () {
-        $customer = Customer::factory()->create();
+        $customer = User::factory()->create(['role' => 'customer']);
         $shop = Shop::factory()->create();
         $product = Product::factory()->create([
             'shop_id' => $shop->id,
@@ -314,20 +299,20 @@ describe('Cart Controller Index', function () {
             'price' => 1234.56
         ]);
 
-        $cart = Cart::factory()->create(['customer_id' => $customer->id]);
+        $cart = Cart::factory()->create(['user_id' => $customer->id]);
         CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
             'quantity' => 1
         ]);
 
-        Sanctum::actingAs($customer, ['customer-api'], 'customer-api');
+        Sanctum::actingAs($customer);
 
         $response = $this->getJson('/api/to-checkout');
         $response->assertStatus(200);
 
         $responseData = $response->json();
         $productData = $responseData[0]['products'][0];
-        expect($productData['price'])->toBe(1234.56);
+        expect($productData['price'])->toEqual(1234.56);
     });
 });

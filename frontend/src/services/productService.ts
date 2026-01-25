@@ -11,12 +11,8 @@ const formatData = (data: Product[]) => {
   return formattedData;
 };
 
-export const fetchShopProducts = async (token: string) => {
-  const response = await axiosInstance.get("products", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+export const fetchShopProducts = async () => {
+  const response = await axiosInstance.get("products");
   return formatData(response.data);
 };
 
@@ -41,7 +37,7 @@ export const fetchSpecificProduct = async (id: number) => {
   return response.data;
 };
 
-export const addProduct = async (data: newProduct, token: string) => {
+export const addProduct = async (data: newProduct) => {
   const formData = new FormData();
   formData.append("name", data.name);
   formData.append("price", `${data.price}`);
@@ -53,7 +49,6 @@ export const addProduct = async (data: newProduct, token: string) => {
 
   const response = await axiosInstance.post("product", formData, {
     headers: {
-      Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
     },
   });
@@ -61,7 +56,7 @@ export const addProduct = async (data: newProduct, token: string) => {
   return response.data;
 };
 
-export const updateProduct = async (id: number, data: ProductToUpdate, token: string) => {
+export const updateProduct = async (id: number, data: ProductToUpdate) => {
   const form = new FormData();
   if (data.name) {
     form.append("name", data.name);
@@ -79,21 +74,10 @@ export const updateProduct = async (id: number, data: ProductToUpdate, token: st
     form.append("image", data.image);
   }
 
-  const response = await axiosInstance.post(`product/${id}`, form, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await axiosInstance.post(`product/${id}`, form);
   return response.data;
 };
 
-
-
-
-export const deleteProduct = async (id: number, token: string) => {
-  await axiosInstance.delete(`/product/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+export const deleteProduct = async (id: number) => {
+  await axiosInstance.delete(`/product/${id}`);
 };

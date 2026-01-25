@@ -18,7 +18,7 @@ class ProductRatingController extends Controller
     {
         $product = Product::findOrFail($productId);
     
-        $ratings = $product->ratings()->with('customer')->latest()->get();
+        $ratings = $product->ratings()->with('user')->latest()->get();
     
         $totalRatings = $ratings->count();
         $averageRating = $ratings->avg('rating');
@@ -39,21 +39,21 @@ class ProductRatingController extends Controller
             'feedback' => ['nullable', 'string', 'max:1000'],
         ]);
     
-        $user = Auth::guard('customer-api')->user();
+        $user = Auth::user();
         if (!$user) {
             return response()->json(['message' => 'Unauthorized.'], 401);
         }
-        $customerId = $user->id;
+        $userId = $user->id;
     
         $product = Product::findOrFail($validated['product_id']);
     
-        if ($product->ratings()->where('customer_id', $customerId)->exists()) {
+        if ($product->ratings()->where('user_id', $userId)->exists()) {
             return response()->json(['message' => 'You have already rated this product.'], 409);
         }
     
         try {
             $rating = $product->ratings()->create([
-                'customer_id' => $customerId,
+                'user_id' => $userId,
                 'rating' => $validated['rating'],
                 'feedback' => $validated['feedback'],
             ]);
@@ -74,7 +74,7 @@ class ProductRatingController extends Controller
     public function show(Product $product, ProductRating $rating)
     {
         $this->authorizeRatingAccess($rating, $product);
-        return response()->json($rating->load('customer'));
+        return response()->json($rating->load('user'));
     }
 
     /**
@@ -124,7 +124,7 @@ class ProductRatingController extends Controller
             abort(404, 'Rating does not belong to this product.');
         }
 
-        if ($rating->customer_id !== Auth::guard('customer')->id()) {
+        if ($rating->user_id !== Auth::id()) {
             abort(403, 'Unauthorized.');
         }
     }

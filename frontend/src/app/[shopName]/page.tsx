@@ -77,7 +77,7 @@ const ShopPage = () => {
           <div className="flex flex-col gap-5 lg:items-start items-center mb-5">
             <div className="w-1/2 lg:w-full lg:h-[40vh]">
               <img
-                src={`http://192.168.1.6:8000/storage/${shop?.logo_image}`}
+                src={`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${shop?.logo_image}`}
                 alt={shop?.name || "Shop Image"}
                 className="object-cover w-full h-full rounded-xl border-2"
               />

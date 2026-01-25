@@ -3,17 +3,9 @@ import { Order } from "@/types/order";
 import { ProductWithShop } from "@/types/product";
 import type { AxiosError } from "axios";
 
-const authHeader = (token: string) => ({
-  headers: {
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json',
-  },
-});
-
 const normalizeStatus = (status?: string): string => {
-  if (!status) return "all";
-  const normalized = status.toLowerCase().replace(/ /g, "_");
-  return normalized === "approved" ? "active" : normalized;
+  if (!status) return "ALL";
+  return status.toUpperCase();
 };
 
 const handleError = (error: unknown, message: string) => {
@@ -28,43 +20,42 @@ const handleError = (error: unknown, message: string) => {
 };
 
 export const orderService = {
-  async fetchOrders(token: string, status?: string): Promise<Order[]> {
+  async fetchOrders(status?: string): Promise<Order[]> {
     try {
       const queryStatus = normalizeStatus(status);
       const url = queryStatus ? `/orders?status=${queryStatus}` : "/orders";
-      const response = await axiosInstance.get<Order[]>(url, authHeader(token));
+      const response = await axiosInstance.get<Order[]>(url);
       return response.data;
     } catch (error) {
       throw handleError(error, "Error fetching orders");
     }
   },
 
-  async fetchSellerOrders(token: string): Promise<Order[]> {
+  async fetchSellerOrders(): Promise<Order[]> {
     try {
-      const response = await axiosInstance.get<Order[]>("/seller/orders", authHeader(token));
+      const response = await axiosInstance.get<Order[]>("/seller/orders");
       return response.data;
     } catch (error) {
       throw handleError(error, "Error fetching seller orders");
     }
   },
 
-  async fetchCustomerOrders(token: string, status?: string): Promise<ProductWithShop[]> {
+  async fetchCustomerOrders(status?: string): Promise<ProductWithShop[]> {
     try {
       const queryStatus = normalizeStatus(status);
-      const url = queryStatus ? `/customer/orders?status=${queryStatus}` : "/customer/orders";
-      const response = await axiosInstance.get<ProductWithShop[]>(url, authHeader(token));
+      const url = `/customer/orders?status=${queryStatus}`;
+      const response = await axiosInstance.get<ProductWithShop[]>(url);
       return response.data;
     } catch (error) {
       throw handleError(error, "Error fetching customer orders");
     }
   },
 
-  async updateOrderStatus(token: string, orderId: number, status: string) {
+  async updateOrderStatus(orderId: number, status: string) {
     try {
       const response = await axiosInstance.put(
         `/status-update/${orderId}`,
-        { status: status },
-        authHeader(token)
+        { status: status }
       );
       return { success: true, data: response.data };
     } catch (error) {
@@ -72,12 +63,11 @@ export const orderService = {
     }
   },
 
-  async receiveOrder(token: string, orderId: string) {
+  async receiveOrder(orderId: string) {
     try {
       const response = await axiosInstance.put(
         `/orders/${orderId}/receive`,
-        {},
-        authHeader(token)
+        {}
       );
       return { success: true, data: response.data };
     } catch (error) {

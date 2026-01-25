@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Interfaces\Repositories\UserRepositoryInterface;
+use App\Models\Shop;
+use App\Models\User;
 use App\Interfaces\Services\ImageServiceInterface;
 use App\Interfaces\Services\UserServiceInterface;
 use Illuminate\Support\Facades\Response;
@@ -31,15 +33,21 @@ class UserService implements UserServiceInterface
     }
 
 
-    public function authenticateUser(array $credentials, string $userType)
+    public function authenticateUser(array $credentials)
     {
         try {
-            if (!Auth::guard($userType)->attempt($credentials)) {
-                return Response::json('Invalid Credentials');
+            $user = $this->userRepository->findByEmail($credentials['email']);
+            if (!Auth::attempt($credentials)) {
+                return Response::json('Invalid Credentials', 401);
             }
-            /** @var \App\Models\Customer $user */
-            /** @var \App\Models\Shop $user */
-            $user = Auth::guard($userType)->user();
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+
+            if ($user->status === User::STATUS_SUSPENDED) {
+                Auth::logout();
+                return Response::json('Account is suspended', 403);
+            }
+
             $token = $user->createToken('auth-token')->plainTextToken;
             return [
                 'user' => $user,
@@ -54,8 +62,26 @@ class UserService implements UserServiceInterface
     {
         DB::beginTransaction();
         try {
+            $role = $validatedData['role'] ?? User::ROLE_CUSTOMER;
+            $validatedData['role'] = $role;
             $validatedData['password'] = Hash::make($validatedData['password']);
+            
+            // If it's a merchant registration from ShopController, map 'owner' to 'name'
+            if ($role === User::ROLE_MERCHANT && isset($validatedData['owner'])) {
+                $shopName = $validatedData['name'];
+                $validatedData['name'] = $validatedData['owner'];
+            }
+
             $registeredUser = $this->userRepository->create($validatedData);
+
+            if ($role === User::ROLE_MERCHANT) {
+                Shop::create([
+                    'name' => $shopName ?? $registeredUser->name . "'s Shop",
+                    'owner_id' => $registeredUser->id,
+                    'status' => Shop::STATUS_ACTIVE,
+                ]);
+            }
+
             DB::commit();
             return $registeredUser;
         } catch (Exception $e) {

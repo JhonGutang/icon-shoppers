@@ -68,8 +68,9 @@ Follow this flow strictly:
 2.  **Planning:** Create a detailed implementation plan and get user approval before writing code.
 3.  **Implementation:** Adhere strictly to the rules stated in this document.
 4.  **Testing:** Create comprehensive test cases (Pest for backend, Vitest for frontend). **Do not modify existing test cases** unless absolutely necessary for the fix/feature.
-5.  **Documentation:** Add or update documentation (README, internal docs, comments) after every implementation.
-6.  **Compounding Knowledge:** If a mistake is made, record it in the [Compounding Knowledge](#-compounding-knowledge) section to avoid repetition.
+5.  **Final Type Check & Build Check:** Run a full type check and build process to ensure no regressions or system-wide errors. This must pass before proceeding.
+6.  **Documentation:** Add or update documentation (README, internal docs, comments) after every implementation.
+7.  **Compounding Knowledge:** If a mistake is made, record it in the [Compounding Knowledge](#-compounding-knowledge) section to avoid repetition.
 
 ---
 

@@ -82,11 +82,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
         multipartData.append("logo_image", imageFile);
       }
 
-      await axiosInstance.post('profile', multipartData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      await axiosInstance.post('profile', multipartData);
 
       toast.success("Profile updated successfully");
       onSave?.();
@@ -118,7 +114,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
             <div className="relative w-24 h-24">
               {imagePreview ? (
                 <img
-                  src={imagePreview.startsWith('blob:') || imagePreview.startsWith('http') ? imagePreview : `http://localhost:8000/storage/${imagePreview}`}
+                  src={imagePreview.startsWith('blob:') || imagePreview.startsWith('http') ? imagePreview : `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${imagePreview}`}
                   alt="Profile"
                   className="w-24 h-24 rounded-full object-cover border"
                 />
