@@ -9,7 +9,7 @@ class ProductRepository implements ProductRepositoryInterface
 {
     public function findProducts($ids)
     {
-        $products = Product::whereIn('id', $ids)->get()->keyBy('id');
+        $products = Product::with('shop')->whereIn('id', $ids)->get()->keyBy('id');
         return $products;
     }
 }

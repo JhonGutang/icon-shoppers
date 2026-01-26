@@ -12,7 +12,6 @@ const useAuth = () => {
 
   const [registerFormData, setRegisterFormData] = useState<Register>({
     name: "",
-    shopOwner: "",
     address: "",
     middleName: "",
     email: "",
@@ -38,9 +37,9 @@ const useAuth = () => {
     }
   };
 
-  const handleRegister = async (role: string) => {
+  const handleRegister = async () => {
     try {
-      await register(registerFormData, role);
+      await register(registerFormData);
       openSnackbar("Registered Successfully!", "success");
     } catch (error) {
       console.error(error);
@@ -48,17 +47,16 @@ const useAuth = () => {
     }
   };
 
-  const handleLogin = async (role: string) => {
+  const handleLogin = async () => {
     try {
       const profile = await login(loginFormData);
       openSnackbar("Login successful!", "success");
+      
+      // Store user info
       store.setAuth(profile.token, profile.user.role, profile.user.id);
 
-      if (role === "seller") {
-        redirectLink("profile");
-      } else {
-        redirectLink("/home");
-      }
+      // Always redirect to home in unified account system
+      redirectLink("/home");
     } catch (error) {
       console.error(error)
       openSnackbar("Login failed!", "error");
@@ -66,8 +64,6 @@ const useAuth = () => {
   };
 
   const handleLogout = async () => {
-    const role = useToken.getState().userType
-
     try {
       await logout();
       openSnackbar("Logout successful!", "info");
@@ -77,12 +73,7 @@ const useAuth = () => {
     } finally {
       store.clearAuth();
       store.setLoggingOut(true);
-      
-      if(role === 'merchant') {
-        redirectLink("shop-auth");
-      } else {
-        redirectLink("customer-auth");
-      }
+      redirectLink("customer-auth"); // Unified Auth
     }
   };
 
@@ -105,14 +96,9 @@ const useAuth = () => {
 
   const handleRedirectIfUserIsAuth = () => {
     const accessToken = useToken.getState().accessToken;
-    const userType = useToken.getState().userType;
     
     if (accessToken) {
-      if (userType === "seller") {
-        redirectLink("/profile");
-      } else {
-        redirectLink("/home");
-      }
+       redirectLink("/home");
     }
   }
 

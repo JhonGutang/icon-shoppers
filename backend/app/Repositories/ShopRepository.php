@@ -15,14 +15,14 @@ class ShopRepository implements ShopRepositoryInterface
             })->get();
     }
 
-    public function getSpecificShop ($shopName) {
+    public function getSpecificShop ($shopSlug) {
         return Shop::with('products')
-            ->where('name', $shopName)
+            ->where('slug', $shopSlug)
             ->where('status', Shop::STATUS_ACTIVE)
-            ->firstOrFail();
+            ->first();
     }
 
-    public function createShop(array $data)
+    public function create(array $data)
     {
         return Shop::create($data);
     }

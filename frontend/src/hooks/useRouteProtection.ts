@@ -23,78 +23,40 @@ export const useRouteProtection = ({
   useEffect(() => {
     if (!hasHydrated) return;
 
-    // Reset toast flag when auth state changes
-    if (accessToken && userType) {
+    if (accessToken) {
       hasShownToast.current = false;
     }
 
     if (requireAuth && !accessToken) {
       if (!hasShownToast.current) {
-        toast.error("Please login to access this page", {
-          style: {
-            background: '#ef4444',
-            color: 'white',
-            border: '1px solid #dc2626'
-          }
-        });
+        toast.error("Please login to access this page");
         hasShownToast.current = true;
       }
       router.push(redirectTo || "/customer-auth");
       return;
     }
 
-    if (requireAuth && allowedRoles.length > 0 && !allowedRoles.includes(userType || "")) {
-      // If user is a customer, show toast and redirect to /home
-      if (userType === "customer") {
+    if (requireAuth && allowedRoles.length > 0) {
+      const userRole = userType || "";
+      const EffectiveRoles = allowedRoles.includes("customer") ? [...allowedRoles, "merchant"] : allowedRoles;
+
+      if (!EffectiveRoles.includes(userRole)) {
         if (!hasShownToast.current) {
-          toast.error("This page is for sellers only. Redirecting to your dashboard.", {
-            style: {
-              background: '#ef4444',
-              color: 'white',
-              border: '1px solid #dc2626'
-            }
-          });
+          toast.error("Access Denied: Insufficient Permissions");
           hasShownToast.current = true;
         }
         router.push("/home");
         return;
       }
-      
-      // If user is a seller, show toast and redirect to /profile
-      if (userType === "seller") {
-        if (!hasShownToast.current) {
-          toast.error("This page is for customers only. Redirecting to your profile.", {
-            style: {
-              background: '#ef4444',
-              color: 'white',
-              border: '1px solid #dc2626'
-            }
-          });
-          hasShownToast.current = true;
-        }
-        router.push("/profile");
-        return;
-      }
-      
-      if (!hasShownToast.current) {
-        toast.error("You don't have permission to access this page", {
-          style: {
-            background: '#ef4444',
-            color: 'white',
-            border: '1px solid #dc2626'
-          }
-        });
-        hasShownToast.current = true;
-      }
-      router.push(redirectTo || "/");
-      return;
     }
-  }, [accessToken, userType, hasHydrated, allowedRoles, redirectTo, requireAuth]);
+  }, [accessToken, userType, hasHydrated, allowedRoles, redirectTo, requireAuth, router]);
 
+  const EffectiveRoles = allowedRoles.includes("customer") ? [...allowedRoles, "merchant"] : allowedRoles;
+  
   return {
     isAuthenticated: !!accessToken,
     userType,
     hasHydrated,
-    canAccess: !requireAuth || (!!accessToken && (allowedRoles.length === 0 || allowedRoles.includes(userType || ""))),
+    canAccess: !requireAuth || (!!accessToken && (allowedRoles.length === 0 || EffectiveRoles.includes(userType || ""))),
   };
 };

@@ -1,25 +1,12 @@
 import axiosInstance from "@/hooks/useAxios";
 import { Register, Login, CustomerProfile, EditProfile, SellerProfile } from "@/types/auth";
 
-const formatData = (data: Register | Login, auth: string) => {
-  if (auth === "register") {
-    const registerData = data as Register;
-    return {
-      name: registerData.name,
-      owner: registerData.shopOwner,
-      email: registerData.email,
-      contact_number: registerData.contactNumber,
-      password: registerData.password,
-    };
-  } else {
-    const loginData = data as Login;
-    return {
-      email: loginData.email,
-      password: loginData.password,
-    };
-  }
+const formatData = (data: Login) => {
+  return {
+    email: data.email,
+    password: data.password,
+  };
 };
-
 
 const formatCustomerData = (data: Register) => {
   return {
@@ -32,16 +19,17 @@ const formatCustomerData = (data: Register) => {
   }
 }
 
-export const register = async (details: Register, role: string = "customer") => {
-  const formattedData = {
-    ...formatCustomerData(details),
-    role: role === "seller" ? "merchant" : "customer"
-  };
+/**
+ * Unified Register Service
+ * Everyone registers as a customer by default.
+ */
+export const register = async (details: Register) => {
+  const formattedData = formatCustomerData(details);
   return await axiosInstance.post("/register", formattedData);
 };
 
 export const login = async (credentials: Login) => {
-  const formattedData = formatData(credentials, "login");
+  const formattedData = formatData(credentials);
   const response = await axiosInstance.post("/login", formattedData);
   return response.data;
 };
@@ -74,6 +62,7 @@ const formatProfileData = (data: CustomerProfile) => {
     address: data.address,
   };
 };
+
 const formatSellerProfile = (data: SellerProfile) => {
   return {
     name: data.name,

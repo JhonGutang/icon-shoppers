@@ -2,42 +2,33 @@ import { OrderStatus } from "@/types/order";
 
 export const STATUS_OPTIONS: OrderStatus[] = [
   "all",
-  "approved",
-  "rejected",
-  "to_be_delivered",
-  "delivering",
-  "received",
-  "not_received",
-  "completed"
+  "PENDING",
+  "PROCESSING",
+  "SHIPPED",
+  "DELIVERED",
+  "CANCELLED"
 ];
 
 export const formatStatus = (status: string): string => {
-    if (status === "All") return "All";
-    if (status === "active") return "Approved";
+    if (!status) return "";
+    if (status.toLowerCase() === "all") return "All Orders";
     return status
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+      .charAt(0).toUpperCase() + status.slice(1).toLowerCase();
   };
   
   export const getStatusColor = (status: string): string => {
-    switch (status.toLowerCase().replace(/ /g, "_")) {
-      case "active":
-      case "approved":
-        return "bg-green-600";
-      case "rejected":
-        return "bg-red-600";
-      case "to_be_delivered":
+    switch (status.toUpperCase()) {
+      case "PENDING":
+        return "bg-amber-500";
+      case "PROCESSING":
         return "bg-blue-500";
-      case "delivering":
-        return "bg-red-500";
-      case "received":
-        return "bg-green-500";
-      case "not_received":
-        return "bg-red-500";
-      case "completed":
-        return "bg-gray-500";
+      case "SHIPPED":
+        return "bg-indigo-500";
+      case "DELIVERED":
+        return "bg-green-600";
+      case "CANCELLED":
+        return "bg-red-600";
       default:
-        return "bg-gray-300";
+        return "bg-gray-400";
     }
   };

@@ -50,14 +50,17 @@ class OrderRepository implements OrderRepositoryInterface
         return $orders;
     }
 
-    public function saveOrder($userId, $shopId, $totalAmount = 0)
+    public function saveOrder($userId, $shopId, array $additionalData = [])
     {
         $order = Order::create([
             'user_id' => $userId,
             'shop_id' => $shopId,
             'status' => Order::STATUS_PENDING,
-            'total_amount' => $totalAmount,
+            'total_amount' => $additionalData['total_amount'] ?? 0,
             'payment_status' => Order::PAYMENT_STATUS_PENDING,
+            'payment_method' => $additionalData['payment_method'] ?? 'COD',
+            'shipping_address' => $additionalData['shipping_address'] ?? null,
+            'notes' => $additionalData['notes'] ?? null,
         ]);
 
         return $order;

@@ -7,7 +7,7 @@ use App\Interfaces\CartRepositoryInterface;
 use App\Models\Cart;
 use App\Models\CartItem;
 
-class CartRespository implements CartRepositoryInterface
+class CartRepository implements CartRepositoryInterface
 {
 
     public function getCartWithItems(int $userId, int $productId)

@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Shop;
 use Illuminate\Http\Request;
-use App\Http\Requests\AuthRequest;
-use App\Http\Requests\LoginFormRequest;
 use App\Http\Requests\ShopUpdateFormRequest;
+use App\Http\Requests\ShopCreateRequest;
 use App\Interfaces\Services\ShopServiceInterface;
 use App\Interfaces\Services\UserServiceInterface;
 use App\Models\User;
@@ -34,25 +33,63 @@ class ShopController extends Controller
     }
 
     
-    public function create(AuthRequest $request)
+    public function create(ShopCreateRequest $request)
     {
-        $validatedData = $request->validated();
-        $validatedData['role'] = User::ROLE_MERCHANT;
-        $this->userService->registerUser($validatedData);
-        return response()->json(['message'=> 'Shop created Successfully'], 201);
-    }
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
+        if ($user->hasShop()) {
+            return response()->json(['message' => 'User already has a shop.'], 400);
+        }
+
+        $validatedData = $request->validated();
+        $validatedData['owner_id'] = $user->id;
+        $validatedData['status'] = Shop::STATUS_ACTIVE;
+
+        if ($request->hasFile('logo_image')) {
+            $validatedData['logo_image'] = $request->file('logo_image')->store('shops/logos', 'public');
+        }
+
+        if ($request->hasFile('banner_image')) {
+            $validatedData['banner_image'] = $request->file('banner_image')->store('shops/banners', 'public');
+        }
+
+        $shop = $this->shopService->createShop($validatedData);
+
+        // Transition user to merchant role
+        $user->update(['role' => User::ROLE_MERCHANT]);
+
+        return response()->json([
+            'message' => 'Shop created successfully',
+            'shop' => $shop
+        ], 201);
+    }
 
     public function update(ShopUpdateFormRequest $request)
     {
-        $shop = Auth::user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $shop = $user->shop;
+
+        if (!$shop) {
+            return response()->json(['message' => 'Shop not found.'], 404);
+        }
+
         $validatedData = $request->validated();
-        $validatedData['logo_file'] = $request->file('logo_image');
-        $updatedCustomer = $this->userService->updateUser($validatedData, $shop->id);
+
+        if ($request->hasFile('logo_image')) {
+            $validatedData['logo_image'] = $request->file('logo_image')->store('shops/logos', 'public');
+        }
+
+        if ($request->hasFile('banner_image')) {
+            $validatedData['banner_image'] = $request->file('banner_image')->store('shops/banners', 'public');
+        }
+
+        $shop->update($validatedData);
 
         return response()->json([
-            'message' => 'Profile updated successfully',
-            'shop' => $updatedCustomer,
+            'message' => 'Shop updated successfully',
+            'shop' => $shop,
         ]);
     }
 
@@ -63,26 +100,21 @@ class ShopController extends Controller
     }
 
     public function getSpecificShop($name) {
-  
-            $shop = $this->shopService->getShop($name);
+        $shop = $this->shopService->getShop($name);
+        
+        if (!$shop) {
             return response()->json([
-                'success' => true,
-                'data' => $shop
-            ], 200);
+                'success' => false,
+                'message' => 'Shop not found. The shop may not exist or is inactive.'
+            ], 404);
+        }
+        
+        return response()->json([
+            'success' => true,
+            'data' => $shop
+        ], 200);
     }
 
-    public function login(LoginFormRequest $request)
-    {
-        $credentials = $request->validated();
-        $authenticatedUser = $this->userService->authenticateUser($credentials);
-        return response()
-            ->json([
-                'user' => $authenticatedUser['user'],
-                'token' => $authenticatedUser['token'],
-                'type' => 'shop'
-            ])
-        ;
-    }
 
     public function logout () {
         /** @var \App\Models\User $user */

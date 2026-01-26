@@ -180,16 +180,32 @@ All authenticated requests must include the `Authorization: Bearer <token>` head
 *   **Response (200 OK):** Array of shop objects.
 
 ### Fetch Specific Shop
-*   **URL:** `/shop/{name}`
+*   **URL:** `/shop/{slug}`
 *   **Method:** `GET`
-*   **Description:** Fetch details of a shop by its name.
+*   **Description:** Fetch details of a shop by its URL-friendly slug (auto-generated from shop name).
+*   **URL Parameters:**
+    - `slug`: Shop slug (e.g., `marias-gourmet-delights`)
 *   **Response (200 OK):**
     ```json
     {
       "success": true,
-      "data": { ... }
+      "data": {
+        "id": 1,
+        "name": "Maria's Gourmet Delights",
+        "slug": "marias-gourmet-delights",
+        "description": "...",
+        "products": [...]
+      }
     }
     ```
+*   **Response (404 Not Found):**
+    ```json
+    {
+      "success": false,
+      "message": "Shop not found. The shop may not exist or is inactive."
+    }
+    ```
+*   **Note:** Shop slugs are automatically generated from shop names when created.
 
 ---
 
@@ -210,10 +226,12 @@ All authenticated requests must include the `Authorization: Bearer <token>` head
 *   **Response (200 OK):** `{"message": "Product added to cart successfully"}`
 
 ### Remove from Cart
-*   **URL:** `/order/{id}`
+*   **URL:** `/cart-item/{id}`
 *   **Method:** `DELETE`
 *   **Authentication:** Required (Customer)
-*   **Description:** Remove an item from the cart.
+*   **Description:** Remove a specific item from the cart.
+*   **URL Parameters:**
+    - `id`: Cart item ID
 *   **Response (200 OK):** `{"message": "Product removed from cart successfully."}`
 
 ---

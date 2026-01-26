@@ -6,7 +6,12 @@ import Register from "@/components/auth/register";
 import useAuthStore from "@/stores/useAuthStore";
 import { useRouter } from "next/navigation";
 
-const CustomerAuth = () => {
+/**
+ * Unified Authentication Page
+ * In the new MVP flow, everyone registers as a standard user.
+ * Merchant role is granted upon shop creation.
+ */
+const UnifiedAuth = () => {
   const [defaultAuth, setDefaultAuth] = useState<string>("login");
   const router = useRouter();
   const { accessToken, userType, hasHydrated } = useAuthStore();
@@ -17,28 +22,22 @@ const CustomerAuth = () => {
   ];
 
   const registerField = [
-    { id: "name", label: "Name", type: "text" },
-    { id: "middleName", label: "Middle Name", type: "text" },
-    { id: "email", label: "Email", type: "text" },
+    { id: "name", label: "Full Name", type: "text" },
+    { id: "email", label: "Email Address", type: "email" },
     { id: "contactNumber", label: "Contact No.", type: "text" },
-    { id: "address", label: "Address", type: "text" },
+    { id: "address", label: "Delivery Address", type: "text" },
     { id: "password", label: "Password", type: "password" },
   ];
 
   useEffect(() => {
     if (!hasHydrated) return;
     
-    // If user is authenticated, redirect silently (no toast)
-    if (accessToken && userType) {
-      if (userType === "seller") {
-        router.push("/profile");
-      } else if (userType === "customer") {
-        router.push("/home");
-      }
+    // If user is authenticated, redirect to home
+    if (accessToken) {
+       router.push("/home");
     }
-  }, [accessToken, userType, hasHydrated, router]);
+  }, [accessToken, hasHydrated, router]);
 
-  // Show loading while checking auth
   if (!hasHydrated) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -47,19 +46,28 @@ const CustomerAuth = () => {
     );
   }
 
-  // Don't render if user is authenticated (silent redirect)
   if (accessToken) {
     return null;
   }
 
   return (
-    <AuthLayout role="customer">
+    <AuthLayout>
+      <div className="mb-6 text-center">
+        <h2 className="text-2xl font-bold text-gray-800">
+          {defaultAuth === "login" ? "Welcome Back!" : "Join Icon Shoppers"}
+        </h2>
+        <p className="text-sm text-gray-500 mt-1">
+          {defaultAuth === "login" 
+            ? "Sign in to manage your orders and shop." 
+            : "One account to shop and sell gourmet treats."}
+        </p>
+      </div>
+
       {defaultAuth === "login" ? (
-        <Login fields={loginField} role="customer" setAuth={setDefaultAuth} />
+        <Login fields={loginField} setAuth={setDefaultAuth} />
       ) : (
         <Register
           fields={registerField}
-          role="customer"
           setAuth={setDefaultAuth}
         />
       )}
@@ -67,4 +75,4 @@ const CustomerAuth = () => {
   );
 };
 
-export default CustomerAuth;
+export default UnifiedAuth;

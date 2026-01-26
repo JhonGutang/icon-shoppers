@@ -11,10 +11,9 @@ class Order extends Model
     use HasFactory;
 
     const STATUS_PENDING = 'PENDING';
-    const STATUS_CONFIRMED = 'CONFIRMED';
-    const STATUS_IN_TRANSIT = 'IN_TRANSIT';
+    const STATUS_PROCESSING = 'PROCESSING';
+    const STATUS_SHIPPED = 'SHIPPED';
     const STATUS_DELIVERED = 'DELIVERED';
-    const STATUS_COMPLETED = 'COMPLETED';
     const STATUS_CANCELLED = 'CANCELLED';
 
     const PAYMENT_STATUS_PENDING = 'pending';

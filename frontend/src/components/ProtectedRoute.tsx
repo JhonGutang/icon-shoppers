@@ -12,6 +12,12 @@ interface ProtectedRouteProps {
   requireAuth?: boolean;
 }
 
+/**
+ * ProtectedRoute Component
+ * In the Unified Account model:
+ * - 'customer' pages should be accessible by both 'customer' and 'merchant'.
+ * - 'merchant' pages require the 'merchant' role.
+ */
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   allowedRoles = [],
@@ -23,14 +29,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const hasShownToast = useRef(false);
 
   useEffect(() => {
-    if (!hasHydrated) return; // Wait for hydration
+    if (!hasHydrated) return;
 
     // Reset toast flag when auth state changes
-    if (accessToken && userType) {
+    if (accessToken) {
       hasShownToast.current = false;
     }
 
-    // Skip toast if user is logging out
+    // 1. Check if authentication is required but missing
     if (requireAuth && !accessToken) {
       if (isLoggingOut) {
         setLoggingOut(false);
@@ -39,11 +45,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       }
       if (!hasShownToast.current) {
         toast.error("Please login to access this page", {
-          style: {
-            background: '#ef4444',
-            color: 'white',
-            border: '1px solid #dc2626'
-          }
+          style: { background: '#ef4444', color: 'white', border: 'none' }
         });
         hasShownToast.current = true;
       }
@@ -51,55 +53,38 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       return;
     }
 
-    if (requireAuth && allowedRoles.length > 0 && !allowedRoles.includes(userType || "")) {
-      // If user is a customer, show toast and redirect to /home
-      if (userType === "customer") {
-        if (!hasShownToast.current) {
-          toast.error("This page is for sellers only. Redirecting to your dashboard.", {
-            style: {
-              background: '#ef4444',
-              color: 'white',
-              border: '1px solid #dc2626'
-            }
-          });
-          hasShownToast.current = true;
-        }
-        router.push("/home");
-        return;
-      }
+    // 2. Check role-based access
+    if (requireAuth && allowedRoles.length > 0) {
+      const userRole = userType || "";
       
-      // If user is a seller, show toast and redirect to /profile
-      if (userType === "seller") {
+      // Special logic: Merchant role inherits Customer privileges
+      const EffectiveRoles = allowedRoles.includes("customer") 
+        ? [...allowedRoles, "merchant"] 
+        : allowedRoles;
+
+      if (!EffectiveRoles.includes(userRole)) {
         if (!hasShownToast.current) {
-          toast.error("This page is for customers only. Redirecting to your profile.", {
-            style: {
-              background: '#ef4444',
-              color: 'white',
-              border: '1px solid #dc2626'
-            }
+          const message = userRole === "customer" 
+            ? "This page is for merchants only." 
+            : "You don't have permission to access this page.";
+          
+          toast.error(message, {
+            style: { background: '#ef4444', color: 'white', border: 'none' }
           });
           hasShownToast.current = true;
         }
-        router.push("/profile");
+        
+        // Redirect logic
+        if (userRole === "customer" && allowedRoles.includes("merchant")) {
+             router.push("/home?section=Create Shop"); // Suggest creating a shop
+        } else {
+             router.push("/home");
+        }
         return;
       }
-
-      if (!hasShownToast.current) {
-        toast.error("You don't have permission to access this page", {
-          style: {
-            background: '#ef4444',
-            color: 'white',
-            border: '1px solid #dc2626'
-          }
-        });
-        hasShownToast.current = true;
-      }
-      router.push(redirectTo || "/");
-      return;
     }
-  }, [accessToken, userType, hasHydrated, allowedRoles, redirectTo, requireAuth]);
+  }, [accessToken, userType, hasHydrated, allowedRoles, redirectTo, requireAuth, isLoggingOut, setLoggingOut, router]);
 
-  // Show loading while checking auth
   if (!hasHydrated) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -108,8 +93,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  // Don't render if not authenticated or wrong role
-  if (requireAuth && (!accessToken || (allowedRoles.length > 0 && !allowedRoles.includes(userType || "")))) {
+  // Final check to prevent flashing unauthorized content
+  const userRole = userType || "";
+  const EffectiveRoles = allowedRoles.includes("customer") ? [...allowedRoles, "merchant"] : allowedRoles;
+  
+  if (requireAuth && (!accessToken || (allowedRoles.length > 0 && !EffectiveRoles.includes(userRole)))) {
     return null;
   }
 

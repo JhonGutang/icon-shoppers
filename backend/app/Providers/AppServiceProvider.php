@@ -15,7 +15,7 @@ use App\Interfaces\Services\CartServiceInterface;
 use App\Interfaces\Services\ImageServiceInterface;
 use App\Interfaces\Services\ShopServiceInterface;
 use App\Interfaces\Services\OrderServiceInterface;
-use App\Repositories\CartRespository;
+use App\Repositories\CartRepository;
 use App\Repositories\UserRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserServiceInterface::class, UserService::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(CartServiceInterface::class, CartService::class);
-        $this->app->bind(CartRepositoryInterface::class, CartRespository::class);
+        $this->app->bind(CartRepositoryInterface::class, CartRepository::class);
         $this->app->bind(ImageServiceInterface::class, ImageService::class);
         
         $this->app->bind(ShopServiceInterface::class, ShopService::class);

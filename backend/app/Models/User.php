@@ -80,6 +80,11 @@ class User extends Authenticatable
         return $this->hasOne(Shop::class, 'owner_id');
     }
 
+    public function hasShop(): bool
+    {
+        return $this->shop()->exists();
+    }
+
     public function orders()
     {
         return $this->hasMany(Order::class, 'user_id');

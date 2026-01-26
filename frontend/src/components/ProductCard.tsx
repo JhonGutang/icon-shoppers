@@ -25,13 +25,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const shopId = useAuthStore((state) => state.id);
   const role = useAuthStore((state) => state.userType);
   const isProductOwner =
-    shopId === product.shop_id && location === "profile" && role === "seller";
+    shopId === product.shop_id && location === "profile" && role === "merchant";
 
   return (
     <Card
       className="relative w-[42vw] pt-0 pb-3 lg:w-[20vw] lg:gap-3 rounded-xl cursor-pointer shadow-2xl border-2 border-gray-300 transition-transform duration-300 hover:scale-105"
       onClick={() => {
-        if (role === "seller") {
+        if (role === "merchant") {
           window.location.href = `/profile/${product.id}`;
         } else {
           redirectLink(shopName || product.shop_name!, `${product.id} ${product.name}`);
@@ -73,7 +73,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <div className="text-md font-bold w-full text-end">
             ₱{product.price}
           </div>
-          {role !== "seller" && <AddToCart product={product} />}
+          {role !== "merchant" && <AddToCart product={product} />}
         </div>
       </CardContent>
     </Card>

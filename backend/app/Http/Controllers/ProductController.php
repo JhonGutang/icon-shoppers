@@ -12,8 +12,15 @@ class ProductController extends Controller
 
     public function index()
     {
-        $userid = Auth::guard('shop-api')->user()->id;
-        $products = Product::where('shop_id', $userid)->get()->values();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $shop = $user->shop;
+
+        if (!$shop) {
+            return response()->json([], 404);
+        }
+
+        $products = Product::where('shop_id', $shop->id)->get()->values();
         return response()->json($products);
     }
 
@@ -115,7 +122,14 @@ class ProductController extends Controller
 
     public function create(ProductRequest $request)
     {
-        $userId = Auth::guard('shop-api')->user()->id;
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $shop = $user->shop;
+
+        if (!$shop) {
+            return response()->json(['message' => 'Shop not found'], 404);
+        }
+
         $validatedData = $request->validated();
 
         $imagePath = null;
@@ -124,13 +138,14 @@ class ProductController extends Controller
         }
 
         $product = Product::create([
-            'shop_id' => $userId,
+            'shop_id' => $shop->id,
             'name' => $validatedData['name'],
             'price' => number_format($validatedData['price'], 2, '.', ''),
             'quantity' => $validatedData['quantity'],
             'is_visible' => true,
             'is_featured' => false,
             'image' => $imagePath,
+            'description' => $validatedData['description'] ?? null,
         ]);
 
         return response()->json($product);

@@ -41,5 +41,16 @@ class ShopService implements ShopServiceInterface
         }
     }
 
-
+    public function createShop(array $data)
+    {
+        try {
+            DB::beginTransaction();
+            $shop = $this->shopRepository->create($data);
+            DB::commit();
+            return $shop;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 }

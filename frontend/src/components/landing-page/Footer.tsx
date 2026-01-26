@@ -37,7 +37,7 @@ const Footer = () => {
             </Button>
             <Button
               className="bg-green-600"
-              onClick={() => redirectLink("/shop-auth")}
+              onClick={() => redirectLink("/customer-auth")}
             >
               Sellers Center
             </Button>

@@ -3,8 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 
-Route::get('/orders', [OrderController::class, 'getOrders']);
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orders', [OrderController::class, 'getOrders']);
 }); 
@@ -16,7 +14,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('order/{id}',[OrderController::class, 'addToCart']);
-    Route::patch('checkout', [OrderController::class, 'checkoutOrder']);
+    Route::post('checkout', [OrderController::class, 'checkoutOrder']);
     Route::get('/customer/orders', [OrderController::class, 'getCustomersOrders']);
     Route::put('/orders/{id}/receive', [OrderController::class, 'receive']);
 });

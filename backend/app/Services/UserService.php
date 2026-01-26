@@ -62,25 +62,10 @@ class UserService implements UserServiceInterface
     {
         DB::beginTransaction();
         try {
-            $role = $validatedData['role'] ?? User::ROLE_CUSTOMER;
-            $validatedData['role'] = $role;
+            $validatedData['role'] = User::ROLE_CUSTOMER;
             $validatedData['password'] = Hash::make($validatedData['password']);
             
-            // If it's a merchant registration from ShopController, map 'owner' to 'name'
-            if ($role === User::ROLE_MERCHANT && isset($validatedData['owner'])) {
-                $shopName = $validatedData['name'];
-                $validatedData['name'] = $validatedData['owner'];
-            }
-
             $registeredUser = $this->userRepository->create($validatedData);
-
-            if ($role === User::ROLE_MERCHANT) {
-                Shop::create([
-                    'name' => $shopName ?? $registeredUser->name . "'s Shop",
-                    'owner_id' => $registeredUser->id,
-                    'status' => Shop::STATUS_ACTIVE,
-                ]);
-            }
 
             DB::commit();
             return $registeredUser;

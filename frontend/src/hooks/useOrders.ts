@@ -17,18 +17,10 @@ export const useOrders = () => {
       const data = await orderService.fetchOrders(status);
 
       const filteredOrders =
-        status === "all"
+        !status || status === "all"
           ? data
-          : data.filter((order) => {
-              const orderStatus = order.status.toLowerCase();
-
-              const filterStatus = status?.toLowerCase().replace(/ /g, "_");
-
-              if (status === "approved") {
-                return orderStatus === "active";
-              }
-
-              return orderStatus === filterStatus;
+          : data.filter((order: any) => {
+              return order.status.toUpperCase() === status.toUpperCase();
             });
 
             setError(null);
@@ -47,11 +39,17 @@ export const useOrders = () => {
   ) => {
     if (!token) return;
     setLoading(true);
-    await orderService.updateOrderStatus(Number(orderId), newStatus);
-    setLoading(false);
+    try {
+        await orderService.updateOrderStatus(Number(orderId), newStatus);
+        setError(null);
+    } catch (err) {
+        console.error(err);
+        setError("Failed to update status");
+        throw err;
+    } finally {
+        setLoading(false);
+    }
   };
-
-
 
   return {
     loading,

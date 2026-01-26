@@ -6,9 +6,12 @@ interface TokenState {
   userType: string | null
   id: number | null
   isLoggingOut: boolean;
+  isSellerMode: boolean;
   setAuth: (token: string | null, userType: string | null, id: number | null) => void
   clearAuth: () => void
   setLoggingOut: (loggingOut: boolean) => void
+  toggleSellerMode: () => void
+  setSellerMode: (mode: boolean) => void
   hasHydrated: boolean
   setHasHydrated: (hydrated: boolean) => void
   // Add helper methods
@@ -25,9 +28,12 @@ const useAuthStore = create<TokenState>()(
       userType: null,
       id: null,
       isLoggingOut: false,
-      setAuth: (token, userType, id) => set({ accessToken: token, userType: userType, id: id }),
-      clearAuth: () => set({ accessToken: null, userType: null, id: null }),
+      isSellerMode: false,
+      setAuth: (token, userType, id) => set({ accessToken: token, userType: userType, id: id, isSellerMode: false }),
+      clearAuth: () => set({ accessToken: null, userType: null, id: null, isSellerMode: false }),
       setLoggingOut: (loggingOut) => set({ isLoggingOut: loggingOut }),
+      toggleSellerMode: () => set((state) => ({ isSellerMode: !state.isSellerMode })),
+      setSellerMode: (mode) => set({ isSellerMode: mode }),
       hasHydrated: false,
       setHasHydrated: (hydrated) => set({ hasHydrated: hydrated }),
       

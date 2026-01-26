@@ -26,10 +26,13 @@ class OrderController extends Controller
 
     public function getOrders(Request $request)
     {
-        if (!Auth::guard('shop-api')->check()) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        if (!$user->hasShop()) {
+            return response()->json(['message' => 'Unauthorized. Must have a shop to view seller orders.'], 403);
         }
-        $shopId = Auth::guard('shop-api')->id();
+
+        $shopId = $user->shop->id;
         $status = $request->status;
 
         $orders = $this->orderService->getOrders($status, $shopId);
@@ -38,6 +41,7 @@ class OrderController extends Controller
     
     public function statusUpdate(Request $request, $id) {
         $status = $request->status;
+        // In the new flow, we should ensure the user owns the shop the order belongs to
         $order = $this->orderService->updateOrderStatus($status, $id);
         return response()->json([
             'success' => true,
@@ -48,7 +52,7 @@ class OrderController extends Controller
 
     public function getCustomersOrders(Request $request)
     {
-        $userId = Auth::guard('customer-api')->user()->id;
+        $userId = Auth::id();
         $status = $request->status;
         $orders = $this->orderService->getCustomerOrders($status, $userId);
         return response()->json($orders);
@@ -56,10 +60,18 @@ class OrderController extends Controller
 
     public function checkoutOrder(Request $request)
     {
-        $customerId = Auth::guard('customer-api')->id();
+        $customerId = Auth::id();
         $products = $request->products;
-        $productIds = collect($request->products)->pluck('id');
-        $this->orderService->checkoutOrder($customerId, $products, $productIds);
-        return response()->json(['message' => 'Order created and checked out successfully']);
+        $productIds = collect($products)->pluck('id');
+        
+        $data = $request->only(['shipping_address', 'notes', 'payment_method']);
+        
+        // This will need to handle the new grouping logic or multiple orders per shop
+        $result = $this->orderService->checkoutOrder($customerId, $products, $productIds, $data);
+        
+        return response()->json([
+            'message' => 'Order placed successfully',
+            'result' => $result
+        ]);
     }
 }

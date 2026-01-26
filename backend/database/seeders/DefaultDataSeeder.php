@@ -77,11 +77,13 @@ class DefaultDataSeeder extends Seeder
                 'name' => $m['shop']['name'],
                 'owner_id' => $user->id,
                 'description' => $m['shop']['description'],
+                'category' => $m['category'],
+                'shipping_fee' => 50.00,
+                'status' => Shop::STATUS_ACTIVE,
             ]);
 
-            // Create 20 products for each shop
-            for ($i = 1; $i <= 20; $i++) {
-                Product::create([
+            for ($i = 1; $i <= 10; $i++) {
+                $product = Product::create([
                     'shop_id' => $shop->id,
                     'name' => $m['category'] . " Item " . $i,
                     'price' => rand(100, 5000),
@@ -89,11 +91,61 @@ class DefaultDataSeeder extends Seeder
                     'description' => "Detailed description for " . $m['category'] . " Item " . $i,
                     'image' => "https://picsum.photos/seed/" . md5($shop->name . $i) . "/400/300",
                     'is_visible' => true,
-                    'is_featured' => $i <= 5, // First 5 are featured
+                    'is_featured' => $i <= 3,
                 ]);
+
+                // Simple variants
+                if ($i % 2 == 0) {
+                    \App\Models\ProductVariant::create([
+                        'product_id' => $product->id,
+                        'sku' => 'VAR-' . $product->id . '-S',
+                        'price' => $product->price,
+                        'stock' => 5,
+                        'attributes' => ['Size' => 'Small']
+                    ]);
+                    \App\Models\ProductVariant::create([
+                        'product_id' => $product->id,
+                        'sku' => 'VAR-' . $product->id . '-L',
+                        'price' => $product->price + 50,
+                        'stock' => 10,
+                        'attributes' => ['Size' => 'Large']
+                    ]);
+                }
             }
         }
 
-        $this->command->info('Demo accounts and 60 products seeded successfully!');
+        // Create sample orders for John Doe
+        $customer = User::where('email', 'john1.doe@example.com')->first();
+        $shops = Shop::all();
+        $statuses = [\App\Models\Order::STATUS_PENDING, \App\Models\Order::STATUS_PROCESSING, \App\Models\Order::STATUS_SHIPPED, \App\Models\Order::STATUS_DELIVERED];
+
+        foreach ($shops as $index => $shop) {
+            $order = \App\Models\Order::create([
+                'user_id' => $customer->id,
+                'shop_id' => $shop->id,
+                'status' => $statuses[$index % count($statuses)],
+                'total_amount' => 0,
+                'payment_method' => 'COD',
+                'payment_status' => \App\Models\Order::PAYMENT_STATUS_PENDING,
+                'shipping_address' => 'Sample Address for John Doe',
+                'notes' => 'Please deliver by 5 PM.',
+            ]);
+
+            $products = $shop->products()->limit(2)->get();
+            $total = 0;
+            foreach ($products as $product) {
+                $item = \App\Models\OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $product->id,
+                    'quantity' => rand(1, 3),
+                    'price' => $product->price,
+                    'total' => $product->price * rand(1, 3),
+                ]);
+                $total += $item->total;
+            }
+            $order->update(['total_amount' => $total + $shop->shipping_fee]);
+        }
+
+        $this->command->info('New MVP demo data seeded successfully!');
     }
 }

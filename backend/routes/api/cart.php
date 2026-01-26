@@ -7,5 +7,5 @@ use App\Http\Controllers\CartController;
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('to-checkout',[CartController::class, 'index']);
     Route::post('cart/{id}',[CartController::class, 'store']);
-    Route::delete('order/{id}',[CartController::class, 'delete']);
+    Route::delete('cart-item/{id}',[CartController::class, 'delete']);
 });

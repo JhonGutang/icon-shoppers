@@ -70,6 +70,7 @@ class OrderDTO
                 'products' => $products->values()->all(),
                 'status' => str_replace('_', ' ', $order->status),
                 'total_amount' => number_format((float) $order->total_amount, 2, '.', ''),
+                'shipping_address' => $order->shipping_address,
                 'payment_status' => $order->payment_status,
                 'payment_method' => $order->payment_method,
             ];

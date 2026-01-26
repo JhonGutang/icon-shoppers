@@ -14,7 +14,7 @@ const ShopsCard: React.FC<ShopsProps> = ({ shop }) => {
       <CardContent className="px-0">
         <img
           src={shop.logo_image ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${shop.logo_image}` : 'https://i.pinimg.com/736x/fd/3d/8e/fd3d8e2a1dd4f09b4170d31e26913bab.jpg'}
-          alt=""
+          alt={shop.name}
           className="rounded-t-xl lg:h-[30vh] h-[19vh] w-full"
         />
         <div className="p-3 lg:flex justify-between">

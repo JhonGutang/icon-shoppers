@@ -3,9 +3,8 @@ import { Product, ProductInCart } from "@/types/product";
 import {
   addToCart,
   checkoutOrder,
-  fetchPendingOrders,
   fetchPendingOrdersBasedOnShop,
-  removeToCart,
+  deleteOrderItem,
 } from "@/services/customerService";
 import useRedirectLink from "./useRedirectLink";
 import useAuthStore from "@/stores/useAuthStore";
@@ -59,12 +58,16 @@ const useCustomerActions = () => {
 
   const handleRemoveToCart = async (id: number) => {
     if (!token) return;
-    deleteProduct(id);
-    await removeToCart(id);
-    openSnackbar("Product Removed from Cart", "warning"); 
+    try {
+      deleteProduct(id);
+      await deleteOrderItem(id);
+      openSnackbar("Product Removed from Cart", "warning");
+    } catch (error) {
+      openSnackbar("Failed to remove item from cart", "error");
+    }
   };
 
-  const handleCheckout = async (location: string, products?: ProductInCart[]) => {
+  const handleCheckout = async (location: string, products?: ProductInCart[], data?: any) => {
     if (!token) return;
     if (location === "cart" && products) {
       setProductsToCheckout(products);
@@ -76,7 +79,7 @@ const useCustomerActions = () => {
         id: product.id,
         quantity: product.quantity,
       }));
-      await checkoutOrder(filteredProducts);
+      await checkoutOrder(filteredProducts, data);
       openSnackbar("Your Order is Now Being Processed", "info"); 
       setTimeout(() => {
         window.location.reload();

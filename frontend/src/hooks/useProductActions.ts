@@ -19,6 +19,7 @@ const useProductAction = () => {
   const { products, setProducts, deleteProductById, addProduct, updateProductById } = useProducts();
   const { openSnackbar } = useSnackbar(); 
 
+  const [loading, setLoading] = useState(false);
   const [newProduct, setNewProduct] = useState<newProduct>({
     name: "",
     price: 0,
@@ -28,27 +29,42 @@ const useProductAction = () => {
   const [product, setProduct] = useState<Product>();
 
   const handleFetchAllProducts = async (type: string) => {
-    return await fetchAllProducts(type);
+    setLoading(true);
+    try {
+        const result = await fetchAllProducts(type);
+        return result;
+    } finally {
+        setLoading(false);
+    }
   };
 
 
   const handleFetchShopProducts = async () => {
     if (!token) return;
+    setLoading(true);
     try {
       const fetchedProducts = await fetchShopProducts();
       setProducts(fetchedProducts);
     } catch (error) {
       console.error(error);
+    } finally {
+        setLoading(false);
     }
   };
 
   const handleFetchSpecificProduct = async (id: number) => {
-    const fetchedData = await fetchSpecificProduct(id);
-    setProduct(fetchedData);
+    setLoading(true);
+    try {
+        const fetchedData = await fetchSpecificProduct(id);
+        setProduct(fetchedData);
+    } finally {
+        setLoading(false);
+    }
   };
 
   const handleAddProducts = async () => {
     if (!token) return;
+    setLoading(true);
     try {
       const newProductData = await addProductService(newProduct);
       addProduct(newProductData);
@@ -57,12 +73,15 @@ const useProductAction = () => {
     } catch (error) {
       console.error(error);
       openSnackbar("Attempt to add product failed", "error");
+    } finally {
+        setLoading(false);
     }
   };
 
 
   const handleDeleteProduct = async (id: number) => {
     if (!token) return;
+    setLoading(true);
     try {
       await deleteProduct(id);
       deleteProductById(id);
@@ -73,6 +92,8 @@ const useProductAction = () => {
     } catch (error) {
       console.error(error);
       openSnackbar("Failed to delete product", "error");
+    } finally {
+        setLoading(false);
     }
   };
 
@@ -98,6 +119,7 @@ const useProductAction = () => {
   ) => {
     event.stopPropagation();
     if (!token) return;
+    setLoading(true);
 
     const updatedVisibility = !product.is_visible;
     const updatedProduct = { ...product, is_visible: updatedVisibility };
@@ -111,11 +133,14 @@ const useProductAction = () => {
     } catch (error) {
       console.error(error);
       openSnackbar("Failed to update product visibility", "error");
+    } finally {
+        setLoading(false);
     }
   };
 
   const handleFeatureToggle = async (product: Product, onLocalUpdate?: (product: Product) => void) => {
     if (!token) return;
+    setLoading(true);
 
     const updatedProductFeature = { ...product, is_featured: !product.is_featured };
 
@@ -134,6 +159,8 @@ const useProductAction = () => {
     } catch (error) {
       console.error(error);
       openSnackbar("Feature toggle failed: Reverting Back", "error");
+    } finally {
+        setLoading(false);
     }
   };
 
@@ -141,6 +168,7 @@ const useProductAction = () => {
     products,
     product,
     newProduct,
+    loading,
     handleFetchAllProducts,
     handleFetchShopProducts,
     handleFetchSpecificProduct,

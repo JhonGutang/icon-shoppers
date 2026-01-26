@@ -18,3 +18,8 @@ export const updateShopProfile = async (shopId: string, updateData: ShopUpdateDa
     const response = await axiosInstance.post(`/shop/${shopId}`, updateData);
     return response.data;
 }
+
+export const createShop = async (data: any) => {
+    const response = await axiosInstance.post('/shops', data);
+    return response.data;
+}
