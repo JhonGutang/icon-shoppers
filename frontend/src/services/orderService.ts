@@ -1,77 +1,43 @@
 import axiosInstance from "@/hooks/useAxios";
-import { Order } from "@/types/order";
-import { ProductWithShop } from "@/types/product";
-import type { AxiosError } from "axios";
-
-const normalizeStatus = (status?: string): string => {
-  if (!status) return "ALL";
-  return status.toUpperCase();
-};
-
-const handleError = (error: unknown, message: string) => {
-  const err = error as AxiosError<{ message?: string }>;
-  console.error(`${message}:`, err);
-
-  return {
-    success: false,
-    error: err.response?.data?.message || message,
-    details: err,
-  };
-};
+import { Order, CheckoutPayload, OrderStatus } from "@/types/order";
+import { PaginatedResponse } from "@/types/product";
 
 export const orderService = {
-  async fetchOrders(status?: string): Promise<Order[]> {
-    try {
-      const queryStatus = normalizeStatus(status);
-      const url = queryStatus ? `/orders?status=${queryStatus}` : "/orders";
-      const response = await axiosInstance.get<Order[]>(url);
-      return response.data;
-    } catch (error) {
-      throw handleError(error, "Error fetching orders");
-    }
+  // Customer Operations
+  getCustomerOrders: async (status = 'ALL', page = 1, per_page = 20): Promise<PaginatedResponse<Order>> => {
+    const response = await axiosInstance.get('/customer/orders', { params: { status, page, per_page } });
+    return response.data;
   },
 
-  async fetchSellerOrders(): Promise<Order[]> {
-    try {
-      const response = await axiosInstance.get<Order[]>("/seller/orders");
-      return response.data;
-    } catch (error) {
-      throw handleError(error, "Error fetching seller orders");
-    }
+  getOrderDetails: async (orderNumber: string): Promise<Order> => {
+    const response = await axiosInstance.get(`/orders/${orderNumber}`);
+    return response.data;
   },
 
-  async fetchCustomerOrders(status?: string): Promise<ProductWithShop[]> {
-    try {
-      const queryStatus = normalizeStatus(status);
-      const url = `/customer/orders?status=${queryStatus}`;
-      const response = await axiosInstance.get<ProductWithShop[]>(url);
-      return response.data;
-    } catch (error) {
-      throw handleError(error, "Error fetching customer orders");
-    }
+  checkout: async (payload: CheckoutPayload): Promise<any> => {
+    const response = await axiosInstance.post('/checkout', payload);
+    return response.data;
   },
 
-  async updateOrderStatus(orderId: number, status: string) {
-    try {
-      const response = await axiosInstance.put(
-        `/status-update/${orderId}`,
-        { status: status }
-      );
-      return { success: true, data: response.data };
-    } catch (error) {
-      return handleError(error, "Failed to update order status");
-    }
+  cancelOrder: async (orderId: number, reason: string): Promise<void> => {
+    await axiosInstance.post(`/orders/${orderId}/cancel`, { reason });
   },
 
-  async receiveOrder(orderId: string) {
-    try {
-      const response = await axiosInstance.put(
-        `/orders/${orderId}/receive`,
-        {}
-      );
-      return { success: true, data: response.data };
-    } catch (error) {
-      return handleError(error, "Failed to mark order as received");
-    }
+  // Seller Operations
+  getSellerOrders: async (status = 'ALL', page = 1, per_page = 20): Promise<PaginatedResponse<Order>> => {
+    const response = await axiosInstance.get('/seller/orders', { params: { status, page, per_page } });
+    return response.data;
   },
+
+  updateStatus: async (orderId: number, status: OrderStatus): Promise<void> => {
+    await axiosInstance.put(`/orders/${orderId}/status`, { status });
+  },
+  
+  // Backward compatibility
+  updateOrderStatus: async (orderId: number, status: OrderStatus) => {
+    return orderService.updateStatus(orderId, status);
+  }
 };
+
+export const fetchCustomerOrders = orderService.getCustomerOrders;
+export const fetchSellerOrders = orderService.getSellerOrders;

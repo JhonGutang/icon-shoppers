@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\DTO\CartGroupDTO;
-use App\Interfaces\CartRepositoryInterface;
+use App\Interfaces\Repositories\CartRepositoryInterface;
 use App\Models\Cart;
 use App\Models\CartItem;
 

@@ -40,7 +40,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     if (requireAuth && !accessToken) {
       if (isLoggingOut) {
         setLoggingOut(false);
-        router.push(redirectTo || "/customer-auth");
+        router.push(redirectTo || "/auth");
         return; 
       }
       if (!hasShownToast.current) {
@@ -49,7 +49,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         });
         hasShownToast.current = true;
       }
-      router.push(redirectTo || "/customer-auth");
+      router.push(redirectTo || "/auth");
       return;
     }
 
@@ -76,9 +76,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         
         // Redirect logic
         if (userRole === "customer" && allowedRoles.includes("merchant")) {
-             router.push("/home?section=Create Shop"); // Suggest creating a shop
+             router.push("/?section=Create Shop"); // Suggest creating a shop
         } else {
-             router.push("/home");
+             router.push("/");
         }
         return;
       }

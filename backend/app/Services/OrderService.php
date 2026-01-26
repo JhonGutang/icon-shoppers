@@ -20,22 +20,21 @@ class OrderService implements OrderServiceInterface
         $this->productRepository = $productRepository;
     }
 
-    public function getOrders($status, $shopId)
+    public function getOrders($status, $shopId, $page = 1, $perPage = 20)
     {
-        $orders = $this->orderRepository->all($status, $shopId);
-        return $orders->map(function ($order) {
-            return OrderDTO::fromOrder($order)->toArray();
-        });
+        $paginatedOrders = $this->orderRepository->all($status, $shopId, $page, $perPage);
+        return OrderDTO::formatPaginatedOrders($paginatedOrders);
     }
 
-    public function updateOrderStatus($status, $orderId) {
+    public function updateOrderStatus($status, $orderId)
+    {
         return $this->orderRepository->update($status, $orderId);
     }
 
-    public function getCustomerOrders($status, $userId)
+    public function getCustomerOrders($status, $userId, $page = 1, $perPage = 20)
     {
-        $orders = $this->orderRepository->getCustomersOrder($status, $userId);
-        return OrderDTO::formatCustomerOrders($orders);
+        $paginatedOrders = $this->orderRepository->getCustomersOrder($status, $userId, $page, $perPage);
+        return OrderDTO::formatPaginatedOrders($paginatedOrders);
     }
 
     public function checkoutOrder($userId, $productsFromRequest, $productIds, array $data = [])
@@ -48,7 +47,8 @@ class OrderService implements OrderServiceInterface
             // Group products by shop since an order belongs to a shop
             $productsByShop = [];
             foreach ($productsFromRequest as $item) {
-                $product = $products->get($item['id']);
+                // Find product in the collection
+                $product = $products->firstWhere('id', $item['id']);
                 if (!$product) continue;
                 
                 $productsByShop[$product->shop_id][] = [
@@ -59,14 +59,26 @@ class OrderService implements OrderServiceInterface
 
             $createdOrders = [];
             foreach ($productsByShop as $shopId => $items) {
-                // Fetch shop to get shipping fee
+                // Fetch shop to get shipping fee (eager loaded with products)
                 $shop = $items[0]['product']->shop;
-                $shippingFee = $shop->shipping_fee ?? 0;
+                $shippingFee = (float) ($shop->shipping_fee ?? 0);
                 
-                $totalAmount = 0;
+                $subtotal = 0;
+                
+                // Calculate subtotal first to save with order
+                foreach ($items as $itemData) {
+                    $item = $itemData['item'];
+                    $product = $itemData['product'];
+                    $subtotal += (float) $product->price * (int) $item['quantity'];
+                }
+
                 $orderData = array_merge($data, [
-                    'total_amount' => 0, // Will update later
+                    'subtotal' => $subtotal,
+                    'shipping_fee' => $shippingFee,
+                    'total_amount' => $subtotal + $shippingFee,
+                    'delivery_method' => $data['delivery_method'] ?? 'Standard Delivery',
                 ]);
+                
                 $order = $this->orderRepository->saveOrder($userId, $shopId, $orderData);
                 
                 foreach ($items as $itemData) {
@@ -74,14 +86,12 @@ class OrderService implements OrderServiceInterface
                     $product = $itemData['product'];
                     
                     $formattedOrderItem = OrderItemDTO::fromCheckoutItem($order->id, $item, $product);
-                    $orderItem = $this->orderRepository->saveOrderItems($formattedOrderItem);
-                    $totalAmount += $orderItem->total;
+                    $this->orderRepository->saveOrderItems($formattedOrderItem);
+                    
+                    // Increment sales count for each product
+                    $this->productRepository->incrementSalesCount($product->id, (int) $item['quantity']);
                 }
                 
-                // Add shipping fee to total
-                $totalAmount += $shippingFee;
-                
-                $this->orderRepository->updateOrderTotalAmount($order->id, $totalAmount);
                 $createdOrders[] = $order;
             }
 
@@ -93,4 +103,14 @@ class OrderService implements OrderServiceInterface
         }
     }
 
+    public function getOrderDetails($orderNumber)
+    {
+        $order = $this->orderRepository->getOrderByNumber($orderNumber);
+        return OrderDTO::fromOrder($order)->toArray();
+    }
+
+    public function cancelOrder($orderId, $reason)
+    {
+        return $this->orderRepository->cancelOrder($orderId, $reason);
+    }
 }

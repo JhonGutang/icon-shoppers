@@ -31,7 +31,7 @@ const Footer = () => {
           <div className="flex gap-3">
             <Button
               className="bg-green-600"
-              onClick={() => redirectLink("/customer-auth")}
+              onClick={() => redirectLink("/auth")}
             >
               Join Icon Shoppers
             </Button>

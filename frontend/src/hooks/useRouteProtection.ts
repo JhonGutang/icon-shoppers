@@ -32,7 +32,7 @@ export const useRouteProtection = ({
         toast.error("Please login to access this page");
         hasShownToast.current = true;
       }
-      router.push(redirectTo || "/customer-auth");
+      router.push(redirectTo || "/auth");
       return;
     }
 
@@ -45,7 +45,7 @@ export const useRouteProtection = ({
           toast.error("Access Denied: Insufficient Permissions");
           hasShownToast.current = true;
         }
-        router.push("/home");
+        router.push("/");
         return;
       }
     }

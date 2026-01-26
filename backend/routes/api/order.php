@@ -4,17 +4,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/orders', [OrderController::class, 'getOrders']);
-}); 
-
-// Shared status update route for both customers and sellers
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::put('status-update/{id}', [OrderController::class, 'statusUpdate']);
-});
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('order/{id}',[OrderController::class, 'addToCart']);
-    Route::post('checkout', [OrderController::class, 'checkoutOrder']);
+    // Seller Routes
+    Route::get('/seller/orders', [OrderController::class, 'getOrders']);
+    Route::put('/orders/{id}/status', [OrderController::class, 'statusUpdate']);
+    
+    // Customer Routes
     Route::get('/customer/orders', [OrderController::class, 'getCustomersOrders']);
-    Route::put('/orders/{id}/receive', [OrderController::class, 'receive']);
+    Route::post('/checkout', [OrderController::class, 'checkoutOrder']);
+    Route::get('/orders/{orderNumber}', [OrderController::class, 'show']);
+    Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel']);
+    
+    // Compatibility route for status update
+    Route::put('/status-update/{id}', [OrderController::class, 'statusUpdate']);
 });

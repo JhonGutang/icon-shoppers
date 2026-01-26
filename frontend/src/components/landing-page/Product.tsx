@@ -24,7 +24,7 @@ const Product = () => {
                 <Carousel>
                     <CarouselContent>
                         {products.map(product => (
-                            <CarouselItem key={product.id} className="md:basis-1/2 lg:basis-1/3 cursor-pointer" onClick={() => redirectLink('/customer-auth')}>
+                            <CarouselItem key={product.id} className="md:basis-1/2 lg:basis-1/3 cursor-pointer" onClick={() => redirectLink('/auth')}>
                                 <Card className="shadow-lg rounded-lg py-0 h-[40vh] flex items-center justify-center relative group">
                                     <CardContent className="flex flex-col items-center px-0 w-full h-full">
                                         <img

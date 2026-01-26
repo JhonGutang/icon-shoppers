@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Interfaces\CartRepositoryInterface;
+use App\Interfaces\Repositories\CartRepositoryInterface;
 use App\Interfaces\Services\CartServiceInterface;
 use Illuminate\Support\Facades\DB;
 

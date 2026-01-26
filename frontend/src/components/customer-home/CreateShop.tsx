@@ -13,6 +13,7 @@ import { Store, Loader2, ArrowRight } from "lucide-react";
 import useAuthStore from "@/stores/useAuthStore";
 
 const CreateShop = () => {
+  const router = useRouter();
   const { openSnackbar } = useSnackbar();
   const { setAuth, setSellerMode, accessToken, id } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
@@ -41,9 +42,9 @@ const CreateShop = () => {
 
       openSnackbar("Shop created successfully! You are now a merchant. Switching to Seller Mode...", "success");
       
-      // Redirect to Home which will now render as SellerDashboard
+      // Redirect to Root which will now show user status
       setTimeout(() => {
-          window.location.href = "/home?section=Home";
+          router.push("/");
       }, 1000);
     } catch (error: any) {
       console.error(error);

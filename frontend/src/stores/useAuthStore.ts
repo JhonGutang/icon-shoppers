@@ -9,6 +9,7 @@ interface TokenState {
   isSellerMode: boolean;
   setAuth: (token: string | null, userType: string | null, id: number | null) => void
   clearAuth: () => void
+  logout: () => void
   setLoggingOut: (loggingOut: boolean) => void
   toggleSellerMode: () => void
   setSellerMode: (mode: boolean) => void
@@ -31,6 +32,7 @@ const useAuthStore = create<TokenState>()(
       isSellerMode: false,
       setAuth: (token, userType, id) => set({ accessToken: token, userType: userType, id: id, isSellerMode: false }),
       clearAuth: () => set({ accessToken: null, userType: null, id: null, isSellerMode: false }),
+      logout: () => set({ accessToken: null, userType: null, id: null, isSellerMode: false }),
       setLoggingOut: (loggingOut) => set({ isLoggingOut: loggingOut }),
       toggleSellerMode: () => set((state) => ({ isSellerMode: !state.isSellerMode })),
       setSellerMode: (mode) => set({ isSellerMode: mode }),

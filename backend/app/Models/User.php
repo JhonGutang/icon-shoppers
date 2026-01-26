@@ -29,11 +29,17 @@ class User extends Authenticatable
         'name',
         'middle_name',
         'email',
+        'phone',
         'contact_number',
         'address',
+        'street',
+        'barangay',
+        'city',
+        'postal_code',
         'role',
         'status',
         'avatar',
+        'profile_picture',
         'password',
     ];
 
@@ -93,5 +99,25 @@ class User extends Authenticatable
     public function cart()
     {
         return $this->hasOne(Cart::class, 'user_id');
+    }
+
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
+
+    public function followedShops()
+    {
+        return $this->belongsToMany(Shop::class, 'shop_followers');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(ProductRating::class);
     }
 }

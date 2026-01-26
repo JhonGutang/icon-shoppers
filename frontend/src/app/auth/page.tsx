@@ -34,7 +34,7 @@ const UnifiedAuth = () => {
     
     // If user is authenticated, redirect to home
     if (accessToken) {
-       router.push("/home");
+       router.push("/");
     }
   }, [accessToken, hasHydrated, router]);
 

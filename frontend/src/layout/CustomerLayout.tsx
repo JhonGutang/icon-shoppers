@@ -12,7 +12,7 @@ interface CustomerLayoutProps {
  */
 const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
   return (
-    <ProtectedRoute allowedRoles={["customer", "merchant"]} redirectTo="/customer-auth">
+    <ProtectedRoute allowedRoles={["customer", "merchant"]} redirectTo="/auth">
       <div className="min-h-screen bg-gray-50">
         {children}
       </div>

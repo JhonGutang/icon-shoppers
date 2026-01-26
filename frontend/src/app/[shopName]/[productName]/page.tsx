@@ -40,7 +40,7 @@ const ProductPage = () => {
 
     setIsLoading(true);
     handleAddToCart(event, product);
-    redirectLink("/home");
+    redirectLink("/");
     setIsLoading(false);
   };
 

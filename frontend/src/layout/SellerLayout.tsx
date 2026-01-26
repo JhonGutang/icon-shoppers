@@ -12,7 +12,7 @@ interface SellerLayoutProps {
  */
 const SellerLayout: React.FC<SellerLayoutProps> = ({ children }) => {
   return (
-    <ProtectedRoute allowedRoles={["merchant"]} redirectTo="/home">
+    <ProtectedRoute allowedRoles={["merchant"]} redirectTo="/">
       <div className="min-h-screen bg-gray-50">
         {children}
       </div>

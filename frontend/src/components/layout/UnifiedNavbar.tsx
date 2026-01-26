@@ -27,7 +27,7 @@ const UnifiedNavbar = () => {
 
   const handleLogout = () => {
     clearAuth();
-    router.push("/");
+    router.push("/auth");
   };
 
   return (
@@ -53,7 +53,7 @@ const UnifiedNavbar = () => {
         {/* Action Icons */}
         <div className="flex items-center space-x-4">
           {/* Cart */}
-          <Link href="/home?section=Cart" className="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
+          <Link href="/cart" className="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
             <ShoppingCart className="h-6 w-6 text-gray-700" />
             {cartCount > 0 && (
               <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white leading-none">
@@ -82,12 +82,12 @@ const UnifiedNavbar = () => {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 
-                <DropdownMenuItem onClick={() => router.push("/home?section=Check Orders")}>
+                <DropdownMenuItem onClick={() => router.push("/orders")}>
                   <Package className="mr-2 h-4 w-4" />
                   <span>My Orders</span>
                 </DropdownMenuItem>
                 
-                <DropdownMenuItem onClick={() => router.push("/home?section=My Account")}>
+                <DropdownMenuItem onClick={() => router.push("/profile")}>
                   <User className="mr-2 h-4 w-4" />
                   <span>My Account</span>
                 </DropdownMenuItem>
@@ -98,7 +98,7 @@ const UnifiedNavbar = () => {
                         <span>{isSellerMode ? "Switch to Customer Mode" : "Switch to Seller Mode"}</span>
                     </DropdownMenuItem>
                 ) : (
-                    <DropdownMenuItem onClick={() => router.push("/home?section=Create Shop")}>
+                    <DropdownMenuItem onClick={() => router.push("/dashboard")}>
                         <Store className="mr-2 h-4 w-4" />
                         <span>Create Shop</span>
                     </DropdownMenuItem>
@@ -112,7 +112,7 @@ const UnifiedNavbar = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button onClick={() => router.push("/customer-auth")} className="bg-green-600 hover:bg-green-700">
+            <Button onClick={() => router.push("/auth")} className="bg-green-600 hover:bg-green-700">
               Login
             </Button>
           )}

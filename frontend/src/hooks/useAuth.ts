@@ -44,6 +44,7 @@ const useAuth = () => {
     } catch (error) {
       console.error(error);
       openSnackbar("Registration Failed!", "error");
+      throw error; // Propagate error to prevent UI progression
     }
   };
 
@@ -55,11 +56,12 @@ const useAuth = () => {
       // Store user info
       store.setAuth(profile.token, profile.user.role, profile.user.id);
 
-      // Always redirect to home in unified account system
-      redirectLink("/home");
+      // Always redirect to root discovery page in unified account system
+      redirectLink("/");
     } catch (error) {
       console.error(error)
       openSnackbar("Login failed!", "error");
+      throw error; // Propagate error
     }
   };
 
@@ -73,7 +75,7 @@ const useAuth = () => {
     } finally {
       store.clearAuth();
       store.setLoggingOut(true);
-      redirectLink("customer-auth"); // Unified Auth
+      redirectLink("landing"); // Landing page for guests
     }
   };
 
@@ -98,7 +100,7 @@ const useAuth = () => {
     const accessToken = useToken.getState().accessToken;
     
     if (accessToken) {
-       redirectLink("/home");
+       redirectLink("/");
     }
   }
 
