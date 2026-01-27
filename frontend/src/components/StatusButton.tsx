@@ -8,18 +8,18 @@ interface StatusButtonsProps {
 }
 
 export function StatusButtons({ onStatusUpdate, status, isCustomer = false }: StatusButtonsProps) {
-  const currentStatus = status?.toUpperCase();
+  const currentStatus = status?.toLowerCase();
 
   const handleUpdate = (newStatus: string) => {
     if (onStatusUpdate) onStatusUpdate(newStatus);
   };
 
   if (isCustomer) {
-    if (currentStatus === 'SHIPPED') {
+    if (currentStatus === 'delivering' || currentStatus === 'shipped') {
       return (
         <Button 
           variant="default" 
-          onClick={() => handleUpdate('DELIVERED')}
+          onClick={() => handleUpdate('received')}
           className="bg-green-600 hover:bg-green-700 text-white"
         >
           <Package className="mr-1 h-4 w-4" />
@@ -32,20 +32,21 @@ export function StatusButtons({ onStatusUpdate, status, isCustomer = false }: St
 
   // Merchant Actions
   switch (currentStatus) {
-    case 'PENDING':
+    case 'ordered':
+    case 'pending':
       return (
         <div className="flex gap-2">
           <Button 
             variant="default" 
-            onClick={() => handleUpdate('PROCESSING')}
+            onClick={() => handleUpdate('approved')}
             className="bg-blue-600 hover:bg-blue-700 text-white"
           >
             <PlayCircle className="mr-1 h-4 w-4" />
-            Process
+            Approve
           </Button>
           <Button 
             variant="destructive" 
-            onClick={() => handleUpdate('CANCELLED')}
+            onClick={() => handleUpdate('rejected')}
             className="bg-red-600 hover:bg-red-700 text-white"
           >
             <X className="mr-1 h-4 w-4" />
@@ -53,36 +54,51 @@ export function StatusButtons({ onStatusUpdate, status, isCustomer = false }: St
           </Button>
         </div>
       );
-    case 'PROCESSING':
+    case 'approved':
       return (
         <Button 
           variant="default" 
-          onClick={() => handleUpdate('SHIPPED')}
+          onClick={() => handleUpdate('processing')}
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          <PlayCircle className="mr-1 h-4 w-4" />
+          Process
+        </Button>
+      );
+    case 'processing':
+      return (
+        <Button 
+          variant="default" 
+          onClick={() => handleUpdate('delivering')}
           className="bg-indigo-600 hover:bg-indigo-700 text-white"
         >
           <Truck className="mr-1 h-4 w-4" />
           Ship Order
         </Button>
       );
-    case 'SHIPPED':
+    case 'delivering':
+    case 'shipped':
       return (
         <div className="flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-md font-medium">
           <Truck className="h-4 w-4" />
-          <span>In Transit</span>
+          <span>In Transit / Shipped</span>
         </div>
       );
-    case 'DELIVERED':
+    case 'delivered':
+    case 'received':
+    case 'completed':
       return (
         <div className="flex items-center gap-1 px-3 py-1.5 bg-green-100 text-green-700 rounded-md font-medium">
           <Check className="h-4 w-4" />
           <span>Completed</span>
         </div>
       );
-    case 'CANCELLED':
+    case 'rejected':
+    case 'cancelled':
       return (
         <div className="flex items-center justify-center gap-1 px-3 py-1.5 bg-red-100 text-red-700 rounded-md font-medium">
           <X className="h-4 w-4" />
-          <span>Cancelled</span>
+          <span>Rejected / Cancelled</span>
         </div>
       );
     default:

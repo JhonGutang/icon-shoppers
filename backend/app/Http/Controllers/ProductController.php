@@ -36,7 +36,7 @@ class ProductController extends Controller
      */
     public function fetchAllProducts(Request $request)
     {
-        $query = $request->query('query');
+        $query = $request->query('query') ?? $request->query('search');
         $filters = $request->only(['category_id', 'min_price', 'max_price', 'rating', 'sort', 'type']);
         $page = $request->query('page', 1);
         $perPage = $request->query('per_page', 20);
@@ -139,13 +139,20 @@ class ProductController extends Controller
             'description' => $validatedData['description'] ?? null,
         ]);
 
-        return response()->json($product);
+        return response()->json($product, 201);
     }
 
     public function update(ProductRequest $request, $id)
     {
-        $validatedData = $request->validated();
         $product = Product::findOrFail($id);
+        
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        if ($product->shop_id !== $user->shop->id) {
+            return response()->json(['message' => 'Unauthorized. This product does not belong to your shop.'], 403);
+        }
+
+        $validatedData = $request->validated();
 
         $updateData = [
             'category_id' => $validatedData['category_id'] ?? $product->category_id,
@@ -171,6 +178,13 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
+        
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        if ($product->shop_id !== $user->shop->id) {
+            return response()->json(['message' => 'Unauthorized. This product does not belong to your shop.'], 403);
+        }
+
         $product->delete();
 
         return response()->json(['message' => 'Product deleted successfully']);

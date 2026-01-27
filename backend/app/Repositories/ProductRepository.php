@@ -29,6 +29,7 @@ class ProductRepository implements ProductRepositoryInterface
         
         $queryBuilder = $this->model->query()
             ->published()
+            ->where('is_visible', true)
             ->with(['shop', 'category', 'ratings']);
 
         // Search by name or description

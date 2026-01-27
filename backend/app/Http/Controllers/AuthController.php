@@ -28,8 +28,10 @@ class AuthController extends Controller
         return response()->json([
             'user' => $result['user'],
             'token' => $result['token'],
-            'role' => $result['user']->role
+            'role' => $result['user']->role,
+            'has_shop' => $result['has_shop'] ?? false
         ]);
+
     }
 
     public function register(CustomerRequest $request)

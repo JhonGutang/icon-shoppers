@@ -125,4 +125,16 @@ class ShopController extends Controller
         ]);
     }
 
+    public function getAnalytics()
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        if (!$user->hasShop()) {
+            return response()->json(['message' => 'Shop not found.'], 404);
+        }
+
+        $analytics = $this->shopService->getAnalytics($user->shop->id);
+        return response()->json($analytics);
+    }
+
 }

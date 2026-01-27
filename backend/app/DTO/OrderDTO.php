@@ -89,6 +89,7 @@ class OrderDTO
                     'id' => (int) $shop->id,
                     'name' => (string) $shop->name,
                 ],
+                'userName' => (string) $order->user->name,
                 'products' => $products->values()->all(),
                 'status' => $order->status,
                 'statusLabel' => str_replace('_', ' ', $order->status),

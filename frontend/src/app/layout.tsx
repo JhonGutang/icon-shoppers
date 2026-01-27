@@ -6,6 +6,8 @@ import { SnackbarProvider } from "@/components/context/SnackbarContext";
 import { Toaster } from "@/components/ui/sonner";
 import QueryProvider from "@/components/QueryProvider";
 import CartInitializer from "@/components/CartInitializer";
+import { AuthInitializer } from "@/components/auth/AuthInitializer";
+
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -30,11 +32,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.variable}`}>
         <QueryProvider>
-          <CartInitializer />
           <SnackbarProvider>
+            <CartInitializer />
+            <AuthInitializer />
             {children}
           </SnackbarProvider>
         </QueryProvider>
+
+
         <Toaster 
           position="top-right"
           toastOptions={{

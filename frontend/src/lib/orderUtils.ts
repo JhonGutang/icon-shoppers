@@ -1,12 +1,12 @@
 import { OrderStatus } from "@/types/order";
 
 export const STATUS_OPTIONS: OrderStatus[] = [
-  "all",
-  "PENDING",
-  "PROCESSING",
-  "SHIPPED",
-  "DELIVERED",
-  "CANCELLED"
+  "ordered",
+  "approved",
+  "processing",
+  "delivering",
+  "delivered",
+  "cancelled"
 ];
 
 export const formatStatus = (status: string): string => {
@@ -17,16 +17,22 @@ export const formatStatus = (status: string): string => {
   };
   
   export const getStatusColor = (status: string): string => {
-    switch (status.toUpperCase()) {
-      case "PENDING":
+    switch (status.toLowerCase()) {
+      case "ordered":
+      case "pending":
         return "bg-amber-500";
-      case "PROCESSING":
+      case "approved":
+      case "processing":
         return "bg-blue-500";
-      case "SHIPPED":
+      case "shipped":
+      case "delivering":
         return "bg-indigo-500";
-      case "DELIVERED":
+      case "delivered":
+      case "received":
+      case "completed":
         return "bg-green-600";
-      case "CANCELLED":
+      case "rejected":
+      case "cancelled":
         return "bg-red-600";
       default:
         return "bg-gray-400";

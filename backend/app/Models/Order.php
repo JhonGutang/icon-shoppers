@@ -31,6 +31,24 @@ class Order extends Model
     const PAYMENT_STATUS_FAILED = 'failed';
     const PAYMENT_STATUS_REFUNDED = 'refunded';
 
+    /**
+     * Map common status aliases to valid database status values
+     */
+    public static function normalizeStatus($status): string
+    {
+        $status = strtolower($status);
+        
+        $map = [
+            'pending' => self::STATUS_ORDERED,
+            'shipped' => self::STATUS_DELIVERING,
+            'to_be_delivered' => self::STATUS_PROCESSING,
+            'recieved' => self::STATUS_RECEIVED, // handle common typo
+            'not_recieved' => self::STATUS_REJECTED,
+        ];
+
+        return $map[$status] ?? $status;
+    }
+    
     protected $fillable = [
         'user_id',
         'shop_id',

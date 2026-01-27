@@ -50,19 +50,35 @@ const useAuth = () => {
 
   const handleLogin = async () => {
     try {
-      const profile = await login(loginFormData);
+      const response = await login(loginFormData);
+      const { token, user, has_shop } = response;
+      
       openSnackbar("Login successful!", "success");
       
-      // Store user info
-      store.setAuth(profile.token, profile.user.role, profile.user.id);
+      // Store user info and set needsRoleSelection if they have a shop
+      store.setAuth(token, user.role, user.id, has_shop, has_shop);
 
-      // Always redirect to root discovery page in unified account system
+      // Always redirect to root discovery page first
       redirectLink("/");
     } catch (error) {
       console.error(error)
       openSnackbar("Login failed!", "error");
       throw error; // Propagate error
     }
+  };
+
+  const handleRoleSelect = (role: "customer" | "seller") => {
+    if (role === "seller") {
+      store.setSellerMode(true);
+      openSnackbar("Welcome back, Seller!", "success");
+      redirectLink("/shop");
+    } else {
+      store.setSellerMode(false);
+      openSnackbar("Continuing as Customer", "info");
+      // Already on home or wherever redirectLink("/") sent them
+    }
+    
+    store.setNeedsRoleSelection(false);
   };
 
   const handleLogout = async () => {
@@ -113,7 +129,8 @@ const useAuth = () => {
     handleLogout,
     handleGetProfile,
     handleUpdateProfile,
-    handleRedirectIfUserIsAuth
+    handleRedirectIfUserIsAuth,
+    handleRoleSelect
   };
 };
 

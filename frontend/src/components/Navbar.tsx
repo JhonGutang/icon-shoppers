@@ -101,7 +101,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
                   <>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link href="/profile">Seller Dashboard</Link>
+                      <Link href="/shop">Your Shop</Link>
                     </DropdownMenuItem>
                   </>
                 )}

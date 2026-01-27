@@ -7,12 +7,15 @@ interface TokenState {
   id: number | null
   isLoggingOut: boolean;
   isSellerMode: boolean;
-  setAuth: (token: string | null, userType: string | null, id: number | null) => void
+  hasShop: boolean;
+  needsRoleSelection: boolean;
+  setAuth: (token: string | null, userType: string | null, id: number | null, hasShop: boolean, needsRoleSelection?: boolean) => void
   clearAuth: () => void
   logout: () => void
   setLoggingOut: (loggingOut: boolean) => void
   toggleSellerMode: () => void
   setSellerMode: (mode: boolean) => void
+  setNeedsRoleSelection: (needs: boolean) => void
   hasHydrated: boolean
   setHasHydrated: (hydrated: boolean) => void
   // Add helper methods
@@ -30,12 +33,16 @@ const useAuthStore = create<TokenState>()(
       id: null,
       isLoggingOut: false,
       isSellerMode: false,
-      setAuth: (token, userType, id) => set({ accessToken: token, userType: userType, id: id, isSellerMode: false }),
-      clearAuth: () => set({ accessToken: null, userType: null, id: null, isSellerMode: false }),
-      logout: () => set({ accessToken: null, userType: null, id: null, isSellerMode: false }),
+      hasShop: false,
+      needsRoleSelection: false,
+      setAuth: (token, userType, id, hasShop, needsRoleSelection = false) => 
+        set({ accessToken: token, userType: userType, id: id, hasShop: hasShop, needsRoleSelection: needsRoleSelection, isSellerMode: false }),
+      clearAuth: () => set({ accessToken: null, userType: null, id: null, hasShop: false, needsRoleSelection: false, isSellerMode: false }),
+      logout: () => set({ accessToken: null, userType: null, id: null, hasShop: false, needsRoleSelection: false, isSellerMode: false }),
       setLoggingOut: (loggingOut) => set({ isLoggingOut: loggingOut }),
       toggleSellerMode: () => set((state) => ({ isSellerMode: !state.isSellerMode })),
       setSellerMode: (mode) => set({ isSellerMode: mode }),
+      setNeedsRoleSelection: (needs) => set({ needsRoleSelection: needs }),
       hasHydrated: false,
       setHasHydrated: (hydrated) => set({ hasHydrated: hydrated }),
       

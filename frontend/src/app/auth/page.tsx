@@ -6,6 +6,7 @@ import Register from "@/components/auth/register";
 import useAuthStore from "@/stores/useAuthStore";
 import { useRouter } from "next/navigation";
 
+
 /**
  * Unified Authentication Page
  * In the new MVP flow, everyone registers as a standard user.
@@ -14,8 +15,8 @@ import { useRouter } from "next/navigation";
 const UnifiedAuth = () => {
   const [defaultAuth, setDefaultAuth] = useState<string>("login");
   const router = useRouter();
-  const { accessToken, userType, hasHydrated } = useAuthStore();
-  
+  const { accessToken, hasHydrated } = useAuthStore();
+
   const loginField = [
     { id: "email", label: "Email", type: "email" },
     { id: "password", label: "Password", type: "password" },
@@ -72,6 +73,8 @@ const UnifiedAuth = () => {
         />
       )}
     </AuthLayout>
+
+
   );
 };
 

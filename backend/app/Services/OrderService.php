@@ -22,18 +22,21 @@ class OrderService implements OrderServiceInterface
 
     public function getOrders($status, $shopId, $page = 1, $perPage = 20)
     {
-        $paginatedOrders = $this->orderRepository->all($status, $shopId, $page, $perPage);
+        $normalizedStatus = $status !== 'ALL' ? \App\Models\Order::normalizeStatus($status) : 'ALL';
+        $paginatedOrders = $this->orderRepository->all($normalizedStatus, $shopId, $page, $perPage);
         return OrderDTO::formatPaginatedOrders($paginatedOrders);
     }
 
     public function updateOrderStatus($status, $orderId)
     {
-        return $this->orderRepository->update($status, $orderId);
+        $normalizedStatus = \App\Models\Order::normalizeStatus($status);
+        return $this->orderRepository->update($normalizedStatus, $orderId);
     }
 
     public function getCustomerOrders($status, $userId, $page = 1, $perPage = 20)
     {
-        $paginatedOrders = $this->orderRepository->getCustomersOrder($status, $userId, $page, $perPage);
+        $normalizedStatus = $status !== 'ALL' ? \App\Models\Order::normalizeStatus($status) : 'ALL';
+        $paginatedOrders = $this->orderRepository->getCustomersOrder($normalizedStatus, $userId, $page, $perPage);
         return OrderDTO::formatPaginatedOrders($paginatedOrders);
     }
 

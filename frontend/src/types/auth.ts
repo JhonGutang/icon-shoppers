@@ -3,6 +3,18 @@ export interface Login {
     password: string;
 }
 
+export interface LoginResponse {
+    token: string;
+    user: {
+        id: number;
+        name: string;
+        email: string;
+        role: string;
+    };
+    has_shop: boolean;
+}
+
+
 export interface Register {
     name: string;
     middleName?: string;

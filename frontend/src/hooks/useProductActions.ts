@@ -164,6 +164,22 @@ const useProductAction = () => {
     }
   };
 
+  const handleUpdateProduct = async (id: number, updatedData: any) => {
+    if (!token) return;
+    setLoading(true);
+    try {
+      await updateProduct(id, updatedData);
+      updateProductById(id, updatedData);
+      openSnackbar("Product updated successfully", "success");
+    } catch (error) {
+      console.error(error);
+      openSnackbar("Failed to update product", "error");
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     products,
     product,
@@ -177,6 +193,8 @@ const useProductAction = () => {
     handleInputs,
     handleProductVisibility,
     handleFeatureToggle,
+    handleUpdateProduct,
+    updateProductById,
   };
 };
 

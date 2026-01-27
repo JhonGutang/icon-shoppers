@@ -9,6 +9,10 @@ use Illuminate\Support\Str;
 class Product extends Model
 {
     use HasFactory;
+
+    const STATUS_PUBLISHED = 'published';
+    const STATUS_DRAFT = 'draft';
+    const STATUS_ARCHIVED = 'archived';
     
     protected $fillable = [
         'shop_id',

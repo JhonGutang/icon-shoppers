@@ -51,9 +51,11 @@ class UserService implements UserServiceInterface
             $token = $user->createToken('auth-token')->plainTextToken;
             return [
                 'user' => $user,
-                'token' => $token
+                'token' => $token,
+                'has_shop' => $user->hasShop()
             ];
         } catch (Exception $e) {
+
             return Response::json(['error' => 'Authentication failed', 'message' => $e->getMessage()], 500);
         }
     }

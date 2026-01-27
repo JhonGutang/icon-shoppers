@@ -31,4 +31,33 @@ class ShopRepository implements ShopRepositoryInterface
     {
         return Shop::where('owner_id', $ownerId)->first();
     }
+
+    public function getAnalytics($shopId)
+    {
+        $shop = Shop::findOrFail($shopId);
+        
+        $totalRevenue = $shop->orders()
+            ->where('status', \App\Models\Order::STATUS_DELIVERED)
+            ->sum('total_amount');
+            
+        $pendingOrders = $shop->orders()
+            ->where('status', \App\Models\Order::STATUS_ORDERED)
+            ->count();
+            
+        $totalProducts = $shop->products()->count();
+        
+        $totalOrders = $shop->orders()->count();
+        
+        // Average rating calculation across all products of the shop
+        $averageRating = \App\Models\ProductRating::whereIn('product_id', $shop->products()->pluck('id'))
+            ->avg('rating') ?: 0;
+
+        return [
+            'total_revenue' => (float) $totalRevenue,
+            'pending_orders' => $pendingOrders,
+            'total_products' => $totalProducts,
+            'total_orders' => $totalOrders,
+            'average_rating' => round((float) $averageRating, 1),
+        ];
+    }
 }

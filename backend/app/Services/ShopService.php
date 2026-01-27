@@ -53,4 +53,17 @@ class ShopService implements ShopServiceInterface
             throw $e;
         }
     }
+
+    public function getAnalytics($shopId)
+    {
+        try {
+            DB::beginTransaction();
+            $analytics = $this->shopRepository->getAnalytics($shopId);
+            DB::commit();
+            return $analytics;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 }

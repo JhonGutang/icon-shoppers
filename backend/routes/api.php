@@ -28,6 +28,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/customer-profile', function (Request $request) {
         return $request->user();
     });
-
-    Route::get('/seller/orders', [OrderController::class, 'getSellerOrders']);
 });

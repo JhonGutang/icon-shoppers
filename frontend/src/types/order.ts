@@ -1,15 +1,16 @@
 import { Product, Shop } from "./product";
 
 export type OrderStatus = 
-  | 'ORDERED'
-  | 'APPROVED'
-  | 'PROCESSING'
-  | 'DELIVERING'
-  | 'DELIVERED'
-  | 'RECEIVED'
-  | 'COMPLETED'
-  | 'CANCELLED'
-  | 'RETURNED';
+  | 'ordered'
+  | 'approved'
+  | 'rejected'
+  | 'processing'
+  | 'delivering'
+  | 'delivered'
+  | 'received'
+  | 'completed'
+  | 'cancelled'
+  | 'returned';
 
 export interface OrderItem {
   id: number;
@@ -26,6 +27,7 @@ export interface Order {
   id: number;
   orderNumber: string;
   user_id: number;
+  userName?: string;
   shop_id: number;
   shop: Partial<Shop>;
   status: OrderStatus;
