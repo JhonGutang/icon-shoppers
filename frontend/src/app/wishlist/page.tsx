@@ -17,7 +17,8 @@ const WishlistPage = () => {
     queryFn: () => wishlistService.getWishlist(),
   });
 
-  const products = wishlistData?.data.map((item) => item.product) || [];
+
+  const products = wishlistData?.map((item:any) => item.product) || [];
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

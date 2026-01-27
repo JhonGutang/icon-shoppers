@@ -16,7 +16,7 @@ class WishlistService implements WishlistServiceInterface
 
     public function getUserWishlist($userId, $page = 1, $perPage = 20)
     {
-        return $this->wishlistRepository->getUserWishlist($userId, $page, $perPage);
+        return $this->wishlistRepository->getUserWishlists($userId, $page, $perPage);
     }
 
     public function addToWishlist($userId, $productId)
