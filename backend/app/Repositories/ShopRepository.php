@@ -60,4 +60,11 @@ class ShopRepository implements ShopRepositoryInterface
             'average_rating' => round((float) $averageRating, 1),
         ];
     }
+
+    public function update(array $data, int $shopId)
+    {
+        $shop = Shop::findOrFail($shopId);
+        $shop->update($data);
+        return $shop;
+    }
 }

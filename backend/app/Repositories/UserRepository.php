@@ -31,6 +31,6 @@ class UserRepository implements UserRepositoryInterface
     {
         $user = User::findOrFail($id);
         $user->update($data);
-        return $user;
+        return $user->fresh(); // Use fresh to ensure we return updated data
     }
 }

@@ -89,19 +89,19 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
+                  <Link href="/profile?section=customer">My Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
                   <Link href="/orders">My Orders</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/wishlist">Wishlist</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/addresses">My Addresses</Link>
-                </DropdownMenuItem>
                 {userType === "merchant" && (
                   <>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link href="/shop">Your Shop</Link>
+                      <Link href="/shop">Shop Dashboard</Link>
                     </DropdownMenuItem>
                   </>
                 )}

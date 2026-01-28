@@ -79,23 +79,14 @@ class UserService implements UserServiceInterface
 
     public function updateUser(array $validatedData, int $userId)
     {
-        DB::beginTransaction();
-        $uploadedImagePath = null;
         try {
-            if ($validatedData['logo_file']) {
-                $this->imageService->deleteImageIfExists($validatedData['logo_file'], $userId);
-                $uploadedImagePath = $this->imageService->uploadImage($validatedData['logo_file'], 'shop-logos');
-                $validatedData['logo_image'] = $uploadedImagePath;
-            }
+            DB::beginTransaction();
             $updatedUser = $this->userRepository->update($validatedData, $userId);
             DB::commit();
             return $updatedUser;
         } catch (\Exception $e) {
             DB::rollBack();
-            if ($uploadedImagePath) {
-                $this->imageService->deleteImageIfExists($validatedData['logo_file']);
-            }
-            return Response::json(['error' => 'Update failed', 'message' => $e->getMessage()], 500);
+            throw $e;
         }
     }
 }

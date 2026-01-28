@@ -48,6 +48,16 @@ export interface CustomerProfile {
     address: string
     description: string
     middle_name?: string
+    profile_picture?: string
+    shop?: {
+        id: number
+        name: string
+        description: string
+        logo_image: string
+        banner_image: string
+        shipping_fee: number
+        slug: string
+    }
 }
 export interface SellerProfile {
     name: string
@@ -59,7 +69,18 @@ export interface SellerProfile {
     logo_image?: string
     address: string
     description: string
+    middle_name?: string
+    profile_picture?: string
     owner: string
+    shop?: {
+        id: number
+        name: string
+        description: string
+        logo_image: string
+        banner_image: string
+        shipping_fee: number
+        slug: string
+    }
 }
 
 export interface ProfileDisplay {

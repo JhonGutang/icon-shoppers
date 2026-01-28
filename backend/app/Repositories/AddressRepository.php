@@ -23,26 +23,33 @@ class AddressRepository implements AddressRepositoryInterface
             ->get();
     }
 
-    public function createAddress(array $data)
+    public function getAddressById($id)
     {
+        return $this->model->findOrFail($id);
+    }
+
+    public function createAddress($userId, array $data)
+    {
+        $data['user_id'] = $userId;
+
         // If this is set as default, unset other defaults for this user
         if (isset($data['is_default']) && $data['is_default']) {
             $this->model
-                ->where('user_id', $data['user_id'])
+                ->where('user_id', $userId)
                 ->update(['is_default' => false]);
         }
 
         return $this->model->create($data);
     }
 
-    public function updateAddress($id, array $data)
+    public function updateAddress($userId, $id, array $data)
     {
-        $address = $this->model->findOrFail($id);
+        $address = $this->model->where('user_id', $userId)->findOrFail($id);
 
         // If this is set as default, unset other defaults for this user
         if (isset($data['is_default']) && $data['is_default']) {
             $this->model
-                ->where('user_id', $address->user_id)
+                ->where('user_id', $userId)
                 ->where('id', '!=', $id)
                 ->update(['is_default' => false]);
         }
@@ -51,9 +58,9 @@ class AddressRepository implements AddressRepositoryInterface
         return $address;
     }
 
-    public function deleteAddress($id)
+    public function deleteAddress($userId, $id)
     {
-        return $this->model->findOrFail($id)->delete();
+        return $this->model->where('user_id', $userId)->findOrFail($id)->delete();
     }
 
     public function setDefaultAddress($userId, $addressId)

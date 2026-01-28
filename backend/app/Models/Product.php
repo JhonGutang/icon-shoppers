@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class Product extends Model
 {
@@ -35,6 +36,8 @@ class Product extends Model
         'is_visible' => 'boolean',
         'is_featured' => 'boolean',
     ];
+
+    protected $appends = ['is_in_wishlist'];
 
     protected static function boot()
     {
@@ -100,5 +103,15 @@ class Product extends Model
     public function scopeFeatured($query)
     {
         return $query->where('is_featured', true);
+    }
+
+    public function getIsInWishlistAttribute()
+    {
+        $userId = Auth::guard('sanctum')->id();
+        if (!$userId) {
+            return false;
+        }
+
+        return $this->wishlists()->where('user_id', $userId)->exists();
     }
 }

@@ -66,4 +66,17 @@ class ShopService implements ShopServiceInterface
             throw $e;
         }
     }
+
+    public function updateShop(array $data, int $shopId)
+    {
+        try {
+            DB::beginTransaction();
+            $shop = $this->shopRepository->update($data, $shopId);
+            DB::commit();
+            return $shop;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 }

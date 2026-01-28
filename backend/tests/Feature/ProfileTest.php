@@ -13,12 +13,14 @@ test('authenticated user can view their unified profile', function () {
     $response->assertStatus(200);
 });
 
-test('merchant can update their shop profile', function () {
+test('merchant can update their unified profile', function () {
     Storage::fake('public');
     $merchant = $this->actingAsMerchant();
 
     $data = [
-        'name' => 'Updated Shop Name',
+        'user_name' => 'Updated User Name',
+        'contact_number' => '09998887777',
+        'shop_name' => 'Updated Shop Name',
         'description' => 'Updated description',
         'logo_image' => UploadedFile::fake()->create('logo.jpg', 100),
         'banner_image' => UploadedFile::fake()->create('banner.jpg', 100)
@@ -27,8 +29,14 @@ test('merchant can update their shop profile', function () {
     $response = $this->postJson('/api/profile', $data);
 
     $response->assertStatus(200)
-        ->assertJsonFragment(['message' => 'Shop updated successfully']);
+        ->assertJsonFragment(['message' => 'Profile updated successfully']);
     
+    $this->assertDatabaseHas('users', [
+        'id' => $merchant->id,
+        'name' => 'Updated User Name',
+        'contact_number' => '09998887777'
+    ]);
+
     $this->assertDatabaseHas('shops', [
         'id' => $merchant->shop->id,
         'name' => 'Updated Shop Name',

@@ -1,5 +1,5 @@
 import axiosInstance from "@/hooks/useAxios";
-import { Register, Login, CustomerProfile, EditProfile, SellerProfile } from "@/types/auth";
+import { Register, Login, CustomerProfile, SellerProfile } from "@/types/auth";
 
 const formatData = (data: Login) => {
   return {
@@ -52,36 +52,41 @@ export const getProfile = async () => {
 const formatProfileData = (data: CustomerProfile) => {
   return {
     name: data.name,
-    createdAt: data.created_at,
-    updatedAt: data.updated_at,
+    middleName: data.middle_name,
     email: data.email,
     contactNumber: data.contact_number,
-    profileImage: data.logo_image,
-    description: data.description,
-    middleName: data.middle_name,
+    profile_picture: data.profile_picture,
     address: data.address,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+    shop: data.shop,
   };
 };
 
 const formatSellerProfile = (data: SellerProfile) => {
   return {
     name: data.name,
-    createdAt: data.created_at,
-    updatedAt: data.updated_at,
+    middleName: data.middle_name,
     email: data.email,
     contactNumber: data.contact_number,
-    profileImage: data.logo_image,
-    description: data.description,
+    profile_picture: data.profile_picture,
     address: data.address,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+    shop: data.shop,
     owner: data.owner
   };
 };
 
-export const updateProfile = async (updatedData: EditProfile) => {
+export const updateProfile = async (formData: FormData) => {
   try { 
-    const response = await axiosInstance.post("/profile", updatedData);
+    const response = await axiosInstance.post("/profile", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     
-    return formatProfileData(response.data.user || response.data.customer)
+    return response.data;
   } catch (error) {
     console.error("Error updating profile:", error);
     throw error; 

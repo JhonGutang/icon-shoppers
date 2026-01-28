@@ -29,6 +29,7 @@ class ShopController extends Controller
     public function index()
     {
         $user = Auth::user();
+        $user->load('shop');
         return response()->json(['user' => $user]);
     }
 
@@ -69,27 +70,49 @@ class ShopController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        $shop = $user->shop;
-
-        if (!$shop) {
-            return response()->json(['message' => 'Shop not found.'], 404);
-        }
-
         $validatedData = $request->validated();
 
-        if ($request->hasFile('logo_image')) {
-            $validatedData['logo_image'] = $request->file('logo_image')->store('shops/logos', 'public');
+        // 1. Handle User Update
+        $userData = [];
+        if (isset($validatedData['user_name'])) $userData['name'] = $validatedData['user_name'];
+        if (isset($validatedData['middle_name'])) $userData['middle_name'] = $validatedData['middle_name'];
+        if (isset($validatedData['email'])) $userData['email'] = $validatedData['email'];
+        if (isset($validatedData['contact_number'])) $userData['contact_number'] = $validatedData['contact_number'];
+        
+        if ($request->hasFile('profile_picture')) {
+            $userData['profile_picture'] = $request->file('profile_picture')->store('profiles', 'public');
         }
 
-        if ($request->hasFile('banner_image')) {
-            $validatedData['banner_image'] = $request->file('banner_image')->store('shops/banners', 'public');
+        if (!empty($userData)) {
+            $this->userService->updateUser($userData, $user->id);
         }
 
-        $shop->update($validatedData);
+        // 2. Handle Shop Update (if user is a merchant)
+        $shop = $user->shop;
+        if ($shop) {
+            $shopData = [];
+            if (isset($validatedData['shop_name'])) $shopData['name'] = $validatedData['shop_name'];
+            if (isset($validatedData['description'])) $shopData['description'] = $validatedData['description'];
+            if (isset($validatedData['shipping_fee'])) $shopData['shipping_fee'] = $validatedData['shipping_fee'];
+
+            if ($request->hasFile('logo_image')) {
+                $shopData['logo_image'] = $request->file('logo_image')->store('shops/logos', 'public');
+            }
+
+            if ($request->hasFile('banner_image')) {
+                $shopData['banner_image'] = $request->file('banner_image')->store('shops/banners', 'public');
+            }
+
+            if (!empty($shopData)) {
+                $this->shopService->updateShop($shopData, $shop->id);
+            }
+        }
+
+        $user->load('shop');
 
         return response()->json([
-            'message' => 'Shop updated successfully',
-            'shop' => $shop,
+            'message' => 'Profile updated successfully',
+            'user' => $user,
         ]);
     }
 

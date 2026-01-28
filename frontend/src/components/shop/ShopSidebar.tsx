@@ -8,7 +8,8 @@ import {
   ShoppingBag, 
   Package, 
   ChevronRight,
-  Store
+  Store,
+  Settings
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +17,7 @@ const navigation = [
   { name: "Dashboard", href: "/shop", icon: LayoutDashboard },
   { name: "Orders", href: "/shop/orders", icon: ShoppingBag },
   { name: "Products", href: "/shop/products", icon: Package },
+  { name: "Settings", href: "/shop/settings", icon: Settings },
 ];
 
 const ShopSidebar = () => {

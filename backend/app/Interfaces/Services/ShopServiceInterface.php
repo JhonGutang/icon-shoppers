@@ -8,4 +8,5 @@ interface ShopServiceInterface
     public function getShop($shopName);
     public function createShop(array $data);
     public function getAnalytics($shopId);
+    public function updateShop(array $data, int $shopId);
 }

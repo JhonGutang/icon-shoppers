@@ -5,10 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 // Public Customer Routes
 Route::get('/products/all', [ProductController::class, 'fetchAllProducts']);
-Route::get('/products/featured', [ProductController::class, 'fetchFeaturedProducts']);
-Route::get('/products/top-selling', [ProductController::class, 'fetchTopSellingProducts']);
-// Public Customer Routes
-Route::get('/products/all', [ProductController::class, 'fetchAllProducts']);
+Route::get('/products/search', [ProductController::class, 'fetchAllProducts']); // Explicit search route
 Route::get('/products/featured', [ProductController::class, 'fetchFeaturedProducts']);
 Route::get('/products/top-selling', [ProductController::class, 'fetchTopSellingProducts']);
 Route::get('/products/category/{categoryId}', [ProductController::class, 'fetchByCategory']);

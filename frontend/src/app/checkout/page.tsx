@@ -90,7 +90,7 @@ const CheckoutPage = () => {
                   <MapPin className="text-primary" size={20} />
                   Shipping Address
                 </h2>
-                <Button variant="outline" size="sm" onClick={() => router.push('/addresses')}>Manage</Button>
+                <Button variant="outline" size="sm" onClick={() => router.push('/profile?section=address')}>Manage</Button>
               </div>
 
               {isLoadingAddresses ? (
@@ -111,7 +111,7 @@ const CheckoutPage = () => {
               ) : (
                 <div className="p-8 text-center border-2 border-dashed rounded-xl">
                   <p className="text-muted-foreground mb-4">No addresses found</p>
-                  <Button onClick={() => router.push('/addresses')}>Add New Address</Button>
+                  <Button onClick={() => router.push('/profile?section=address')}>Add New Address</Button>
                 </div>
               )}
             </section>
