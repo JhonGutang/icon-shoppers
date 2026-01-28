@@ -19,7 +19,6 @@ import {
 export default function Home() {
   const { data: categories } = useCategories();
   const [filters, setFilters] = useState({
-    category_id: undefined as number | undefined,
     sort: "newest",
   });
 
@@ -39,26 +38,6 @@ export default function Home() {
 
                 <div className="flex items-center gap-2">
                   <Select 
-                    value={filters.category_id?.toString() || "all"} 
-                    onValueChange={(val) => setFilters(prev => ({ 
-                      ...prev, 
-                      category_id: val === "all" ? undefined : Number(val) 
-                    }))}
-                  >
-                    <SelectTrigger className="w-[160px] h-12 rounded-xl">
-                      <SelectValue placeholder="All Categories" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
-                      {categories?.map((cat) => (
-                        <SelectItem key={cat.id} value={cat.id.toString()}>
-                          {cat.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select 
                     value={filters.sort} 
                     onValueChange={(val) => setFilters(prev => ({ ...prev, sort: val }))}
                   >
@@ -67,6 +46,7 @@ export default function Home() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="newest">Newest</SelectItem>
+                      <SelectItem value="featured">Featured First</SelectItem>
                       <SelectItem value="price_asc">Price: Low to High</SelectItem>
                       <SelectItem value="price_desc">Price: High to Low</SelectItem>
                       <SelectItem value="popular">Most Popular</SelectItem>
@@ -80,7 +60,6 @@ export default function Home() {
                 <div className="bg-white rounded-2xl shadow-sm border p-4 sm:p-6">
                   <Products 
                     location="Products" 
-                    categoryId={filters.category_id}
                     sort={filters.sort}
                   />
                 </div>
@@ -88,7 +67,10 @@ export default function Home() {
 
               <TabsContent value="shops" className="mt-0">
                 <div className="bg-white rounded-2xl shadow-sm border p-4 sm:p-6">
-                  <Shops location="Shops" />
+                  <Shops 
+                    location="Shops" 
+                    sort={filters.sort}
+                  />
                 </div>
               </TabsContent>
             </Tabs>

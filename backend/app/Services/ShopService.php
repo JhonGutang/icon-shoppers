@@ -16,11 +16,11 @@ class ShopService implements ShopServiceInterface
         $this->shopRepository = $shopRepository;
     }
 
-    public function getAll($searchParam)
+    public function getAll($filters = [])
     {
         try {
             DB::beginTransaction();
-            $shops = $this->shopRepository->getAllShops($searchParam);
+            $shops = $this->shopRepository->getAllShops($filters);
             DB::commit();
             return $shops;
         } catch (\Exception $e) {

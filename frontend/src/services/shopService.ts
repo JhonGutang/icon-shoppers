@@ -6,7 +6,7 @@ export const fetchSpecificShop = async(name: string) => {
 }
 
 export interface ShopFilters {
-    search?: string;
+    sort?: string;
     page?: number;
     per_page?: number;
 }

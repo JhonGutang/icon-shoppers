@@ -61,7 +61,7 @@ class ProductRepository implements ProductRepositoryInterface
         }
 
         // Sorting
-        $sortBy = $filters['sort_by'] ?? 'created_at';
+        $sortBy = $filters['sort'] ?? $filters['sort_by'] ?? 'created_at';
         $sortOrder = $filters['sort_order'] ?? 'desc';
 
         switch ($sortBy) {
@@ -81,8 +81,18 @@ class ProductRepository implements ProductRepositoryInterface
                 $queryBuilder->withAvg('ratings', 'rating')
                     ->orderBy('ratings_avg_rating', 'desc');
                 break;
+            case 'featured':
+                $queryBuilder->orderBy('is_featured', 'desc')
+                    ->orderBy('created_at', 'desc');
+                break;
             default:
-                $queryBuilder->orderBy($sortBy, $sortOrder);
+                // Handle arbitrary column sorting if needed, but safe-guard it
+                $allowedSorts = ['created_at', 'price', 'sales_count', 'name'];
+                if (in_array($sortBy, $allowedSorts)) {
+                    $queryBuilder->orderBy($sortBy, $sortOrder);
+                } else {
+                    $queryBuilder->orderBy('created_at', 'desc');
+                }
         }
 
         return $queryBuilder->paginate($perPage, ['*'], 'page', $page);

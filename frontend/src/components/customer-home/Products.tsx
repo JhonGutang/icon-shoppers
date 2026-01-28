@@ -7,11 +7,10 @@ import { Loader2 } from "lucide-react";
 
 interface ProductProps {
   location: string;
-  categoryId?: number;
   sort?: string;
 }
 
-const Products: React.FC<ProductProps> = ({ categoryId, sort = "newest" }) => {
+const Products: React.FC<ProductProps> = ({ sort = "newest" }) => {
   const observerTarget = useRef<HTMLDivElement>(null);
   
   const { 
@@ -21,7 +20,6 @@ const Products: React.FC<ProductProps> = ({ categoryId, sort = "newest" }) => {
     hasNextPage, 
     isFetchingNextPage 
   } = useInfiniteProducts({ 
-    category_id: categoryId, 
     sort 
   });
   

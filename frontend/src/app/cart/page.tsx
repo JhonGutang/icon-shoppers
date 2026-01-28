@@ -11,7 +11,7 @@ import { cartService } from "@/services/cartService";
 import { useSnackbar } from "@/components/context/SnackbarContext";
 
 const CartPage = () => {
-  const { productsInCart, removeProduct, addProduct, deleteProduct } = useCartStore();
+  const { productsInCart, removeProduct, addProduct, deleteProduct, minusQuantity } = useCartStore();
   const { openSnackbar } = useSnackbar();
 
   // Group items by shop
@@ -33,19 +33,26 @@ const CartPage = () => {
 
   const subtotal = productsInCart.reduce((sum, item) => sum + parseFloat(item.price) * (item.quantity || 1), 0);
 
-  const handleUpdateQuantity = (product: ProductInCart, delta: number) => {
+  const handleUpdateQuantity = async (product: ProductInCart, delta: number) => {
     if (delta > 0) {
       addProduct(product);
-      cartService.addToCart(product.id, 1);
-    } else {
-      // Manual quantity update if needed, but current store handles it via add/remove
-      // For now, let's keep it simple as the existing store logic
+      await cartService.addToCart(product.id, 1);
+    } else if (delta < 0) {
+      if (product.quantity > 1) {
+        // Decrease quantity by removing one item from cart via backend
+        minusQuantity(product.id);
+        await cartService.removeFromCart(product.id);
+      } else {
+        // If quantity is 1, remove the item entirely
+        deleteProduct(product.id);
+        await cartService.removeFromCart(product.id);
+      }
     }
   };
 
-  const handleRemoveItem = (id: number) => {
+  const handleRemoveItem = async (id: number) => {
     deleteProduct(id);
-    cartService.removeFromCart(id);
+    await cartService.removeFromCart(id);
     openSnackbar("Item removed from cart", "info");
   };
 

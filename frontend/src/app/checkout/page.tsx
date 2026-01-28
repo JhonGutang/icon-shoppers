@@ -44,10 +44,11 @@ const CheckoutPage = () => {
     fetchAddresses();
   }, []);
 
-  if (productsInCart.length === 0) {
-    if (typeof window !== 'undefined') router.replace('/cart');
-    return null;
-  }
+  useEffect(() => {
+    if (productsInCart.length === 0) {
+      router.replace('/cart');
+    }
+  }, [productsInCart, router]);
 
   const subtotal = productsInCart.reduce((sum, item) => sum + parseFloat(item.price) * (item.quantity || 1), 0);
   const total = subtotal; // Shipping fee would be dynamic in production

@@ -148,7 +148,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <Link href={`/products/${product.slug || product.id}`} className="flex-1">
         <Card
           className={cn(
-            "group relative h-full overflow-hidden rounded-xl border border-border bg-card transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col",
+            "group relative h-full bg-card overflow-hidden rounded-xl border border-border transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col",
             className,
             !product.is_visible && "opacity-75 grayscale-[0.5]"
           )}

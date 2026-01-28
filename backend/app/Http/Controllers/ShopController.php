@@ -125,8 +125,8 @@ class ShopController extends Controller
     }
 
     public function getAllShops(Request $request) {
-        $searchParams = $request->query('search');
-        $shops = $this->shopService->getAll($searchParams);
+        $filters = $request->all();
+        $shops = $this->shopService->getAll($filters);
         return response()->json($shops);
     }
 

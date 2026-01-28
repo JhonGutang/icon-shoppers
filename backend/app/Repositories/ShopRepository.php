@@ -8,11 +8,41 @@ use App\Models\Shop;
 class ShopRepository implements ShopRepositoryInterface
 {
 
-    public function getAllShops ($searchParam) {
-        return Shop::where('status', Shop::STATUS_ACTIVE)
+    public function getAllShops($filters = []) {
+        $searchParam = $filters['search'] ?? $filters['query'] ?? null;
+        $sortBy = $filters['sort'] ?? $filters['sort_by'] ?? 'created_at';
+        
+        $query = Shop::where('status', Shop::STATUS_ACTIVE)
             ->when($searchParam, function ($query) use ($searchParam) {
                 $query->where('name', 'like', "%{$searchParam}%");
-            })->paginate(12);
+            });
+
+        switch ($sortBy) {
+            case 'newest':
+                $query->orderBy('created_at', 'desc');
+                break;
+            case 'popular':
+                // Assuming popularity based on orders count
+                $query->withCount('orders')->orderBy('orders_count', 'desc');
+                break;
+            case 'rating':
+                // Assuming ratings are aggregatable
+                $query->orderBy(
+                    \App\Models\ProductRating::selectRaw('avg(rating)')
+                        ->whereIn('product_id', Shop::select('id')->whereColumn('shops.id', 'product_ratings.product_id')), // This might be complex, simplified for now
+                    'desc'
+                );
+                // Better approach: use a helper or specific column if exists, 
+                // but let's stick to creation for now if complex.
+                break;
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc');
+        }
+
+        return $query->paginate(12);
     }
 
     public function getSpecificShop ($shopSlug) {

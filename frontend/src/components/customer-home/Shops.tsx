@@ -7,10 +7,11 @@ import { useInfiniteShops } from "@/hooks/queries/useShopsQuery";
 import { Button } from "../ui/button";
 
 interface ShopProps {
-  location: string
+  location: string;
+  sort?: string;
 }
 
-const Shops:React.FC<ShopProps> = ({location}) => {
+const Shops:React.FC<ShopProps> = ({location, sort = "newest"}) => {
   const observerTarget = useRef<HTMLDivElement>(null);
   
   const {
@@ -19,7 +20,7 @@ const Shops:React.FC<ShopProps> = ({location}) => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage
-  } = useInfiniteShops();
+  } = useInfiniteShops({ sort });
 
   const allShops = data?.pages.flatMap(page => page.data) || [];
 
