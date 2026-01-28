@@ -23,6 +23,8 @@ export const metadata: Metadata = {
   },
 };
 
+import ScrollToTop from "@/components/ScrollToTop";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -36,6 +38,7 @@ export default function RootLayout({
             <CartInitializer />
             <AuthInitializer />
             {children}
+            <ScrollToTop />
           </SnackbarProvider>
         </QueryProvider>
 

@@ -12,7 +12,7 @@ class ShopRepository implements ShopRepositoryInterface
         return Shop::where('status', Shop::STATUS_ACTIVE)
             ->when($searchParam, function ($query) use ($searchParam) {
                 $query->where('name', 'like', "%{$searchParam}%");
-            })->get();
+            })->paginate(12);
     }
 
     public function getSpecificShop ($shopSlug) {
@@ -48,7 +48,6 @@ class ShopRepository implements ShopRepositoryInterface
         
         $totalOrders = $shop->orders()->count();
         
-        // Average rating calculation across all products of the shop
         $averageRating = \App\Models\ProductRating::whereIn('product_id', $shop->products()->pluck('id'))
             ->avg('rating') ?: 0;
 

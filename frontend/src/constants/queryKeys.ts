@@ -28,4 +28,9 @@ export const QUERY_KEYS = {
   USER: {
     PROFILE: ['user', 'profile'] as const,
   },
+  SHOPS: {
+    ALL: ['shops'] as const,
+    LIST: (filters: any) => ['shops', 'list', filters] as const,
+    DETAILS: (name: string) => ['shops', 'details', name] as const,
+  },
 };
