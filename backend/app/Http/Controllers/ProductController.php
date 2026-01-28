@@ -170,6 +170,7 @@ class ProductController extends Controller
         ];
 
         if ($request->hasFile('image')) {
+            $this->imageService->deleteImageIfExists($product->image);
             $imagePath = $this->imageService->uploadImage($request->file('image'), 'products', $product->shop->slug);
             $updateData['image'] = $imagePath;
         }

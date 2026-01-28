@@ -36,13 +36,19 @@ class ImageService implements ImageServiceInterface
 
     public function deleteImageIfExists($image, $id = null)
     {
-        if ($id === null) {
-            Storage::disk('public')->delete($image);
+        if ($image && $id === null) {
+            if (Storage::disk('public')->exists($image)) {
+                Storage::disk('public')->delete($image);
+            }
         }
 
-        if ($image && $id) {
-            $shop = $this->userRepository->getUser($id);
-            Storage::disk('public')->delete($shop->logo_image);
+        if ($id !== null) {
+            $user = $this->userRepository->getUser($id);
+            if ($user && isset($user->shop) && $user->shop->logo_image) {
+                if (Storage::disk('public')->exists($user->shop->logo_image)) {
+                    Storage::disk('public')->delete($user->shop->logo_image);
+                }
+            }
         }
     }
 }
