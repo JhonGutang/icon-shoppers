@@ -1,5 +1,6 @@
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { productService, SearchFilters } from "@/services/productService";
+import { Product } from "@/types/product";
 import { QUERY_KEYS } from "@/constants/queryKeys";
 
 export const useProducts = (filters: SearchFilters = {}) => {
@@ -54,5 +55,72 @@ export const useRelatedProducts = (id: number) => {
     queryFn: () => productService.getRelatedProducts(id),
     staleTime: 60 * 60 * 1000, // 1 hour
     enabled: !!id,
+  });
+};
+
+// Merchant specific hooks
+export const useMerchantProducts = () => {
+  return useQuery({
+    queryKey: QUERY_KEYS.PRODUCTS.SHOP,
+    queryFn: () => productService.getMerchantProducts(),
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+
+
+export const useCreateProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: FormData | any) => productService.createProduct(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS.SHOP });
+    },
+  });
+};
+
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: FormData | any }) => 
+      productService.updateProduct(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS.SHOP });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS.DETAILS(variables.id) });
+    },
+  });
+};
+
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => productService.deleteProduct(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS.SHOP });
+    },
+  });
+};
+
+export const useToggleProductVisibility = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, is_visible }: { id: number; is_visible: boolean }) => 
+      productService.updateProduct(id, { is_visible }),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS.SHOP });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS.DETAILS(variables.id) });
+    },
+  });
+};
+
+export const useToggleProductFeatured = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, is_featured }: { id: number; is_featured: boolean }) => 
+      productService.updateProduct(id, { is_featured }),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS.SHOP });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS.DETAILS(variables.id) });
+    },
   });
 };

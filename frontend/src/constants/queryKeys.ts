@@ -6,6 +6,7 @@ export const QUERY_KEYS = {
     RELATED: (id: number) => ['products', 'related', id] as const,
     FEATURED: ['products', 'featured'] as const,
     TOP_SELLING: ['products', 'top-selling'] as const,
+    SHOP: ['products', 'shop'] as const,
   },
   CATEGORIES: {
     ALL: ['categories'] as const,

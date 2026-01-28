@@ -12,7 +12,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useShopOrders } from "@/hooks/useShopOrders";
+import { useSellerOrders, useUpdateOrderStatus } from "@/hooks/queries/useOrderQuery";
+import { OrderStatus } from "@/types/order";
 import { STATUS_OPTIONS, formatStatus, getStatusColor } from "@/lib/orderUtils";
 import { StatusButtons } from "@/components/StatusButton";
 import { toast } from "sonner";
@@ -21,18 +22,16 @@ import { Input } from "@/components/ui/input";
 
 const ShopOrdersPage = () => {
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const { orders, loading, error, fetchOrders, updateStatus } = useShopOrders();
+  const { data: ordersData, isLoading, isError, refetch } = useSellerOrders(statusFilter);
+  const updateStatusMutation = useUpdateOrderStatus();
+  const orders = Array.isArray(ordersData) ? ordersData : ordersData?.data || [];
 
-  useEffect(() => {
-    fetchOrders(statusFilter);
-  }, [statusFilter, fetchOrders]);
-
-  const handleStatusChange = async (orderId: number, newStatus: any) => {
-    const success = await updateStatus(orderId, newStatus);
-    if (success) {
+  const handleStatusChange = async (orderId: number, newStatus: OrderStatus) => {
+    try {
+      await updateStatusMutation.mutateAsync({ orderId, status: newStatus });
       toast.success(`Order #${orderId} updated to ${formatStatus(newStatus)}`);
-      fetchOrders(statusFilter);
-    } else {
+    } catch (error) {
+      console.error(error);
       toast.error("Failed to update order status");
     }
   };
@@ -47,11 +46,11 @@ const ShopOrdersPage = () => {
         <Button 
           variant="outline" 
           size="sm" 
-          onClick={() => fetchOrders(statusFilter)}
-          disabled={loading}
+          onClick={() => refetch()}
+          disabled={isLoading}
           className="w-fit"
         >
-          <RefreshCcw className={cn("mr-2 h-4 w-4", loading && "animate-spin")} />
+          <RefreshCcw className={cn("mr-2 h-4 w-4", isLoading && "animate-spin")} />
           Refresh
         </Button>
       </div>
@@ -103,7 +102,7 @@ const ShopOrdersPage = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loading ? (
+              {isLoading || updateStatusMutation.isPending ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <TableRow key={i}>
                     <TableCell colSpan={7} className="h-16">
@@ -149,9 +148,6 @@ const ShopOrdersPage = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <span className="font-bold text-gray-900">₱{Number(order.totalAmount).toLocaleString()}</span>
-                    </TableCell>
-                    <TableCell>
                        <Badge className={cn("shadow-sm", getStatusColor(order.status))}>
                           {formatStatus(order.status)}
                        </Badge>
@@ -159,7 +155,7 @@ const ShopOrdersPage = () => {
                     <TableCell className="text-right">
                        <StatusButtons 
                           status={order.status} 
-                          onStatusUpdate={(newStatus) => handleStatusChange(order.id, newStatus)} 
+                          onStatusUpdate={(newStatus) => handleStatusChange(order.id, newStatus as OrderStatus)} 
                        />
                     </TableCell>
                   </TableRow>

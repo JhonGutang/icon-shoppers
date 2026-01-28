@@ -1,19 +1,15 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { Plus, Package, RefreshCcw } from "lucide-react";
+import React from "react";
+import { Package, RefreshCcw, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/ProductCard";
-import useProductAction from "@/hooks/useProductActions";
 import CreateProduct from "@/components/profile/CreateProduct";
 import { Card } from "@/components/ui/card";
+import { useMerchantProducts } from "@/hooks/queries/useProductsQuery";
 
 const ShopProductsPage = () => {
-  const { products, loading, handleFetchShopProducts } = useProductAction();
-
-  useEffect(() => {
-    handleFetchShopProducts();
-  }, [handleFetchShopProducts]);
+  const { data: products, isLoading, isError, refetch } = useMerchantProducts();
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -26,17 +22,29 @@ const ShopProductsPage = () => {
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={handleFetchShopProducts}
-            disabled={loading}
+            onClick={() => refetch()}
+            disabled={isLoading}
           >
-            <RefreshCcw className={cn("mr-2 h-4 w-4", loading && "animate-spin")} />
+            <RefreshCcw className={cn("mr-2 h-4 w-4", isLoading && "animate-spin")} />
             Refresh
           </Button>
           <CreateProduct />
         </div>
       </div>
 
-      {loading && products?.length === 0 ? (
+      {isError && (
+        <div className="rounded-xl bg-red-50 p-4 border border-red-200">
+          <div className="flex items-center gap-3 text-red-700">
+            <AlertCircle className="h-5 w-5" />
+            <span className="font-semibold">Error Loading Products</span>
+          </div>
+          <p className="mt-1 text-red-600 text-sm ml-8">
+            Failed to load your inventory. Please try refreshing the page.
+          </p>
+        </div>
+      )}
+
+      {isLoading && (!products || products?.length === 0) ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {Array.from({ length: 8 }).map((_, i) => (
             <Card key={i} className="aspect-[3/4] animate-pulse bg-gray-100 border-none shadow-none"></Card>

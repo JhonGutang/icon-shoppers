@@ -7,14 +7,16 @@ use App\Models\Product;
 use App\Interfaces\Services\ProductServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Interfaces\Services\ImageServiceInterface;
 
 class ProductController extends Controller
 {
-    protected $productService;
+    protected $productService, $imageService;
 
-    public function __construct(ProductServiceInterface $productService)
+    public function __construct(ProductServiceInterface $productService, ImageServiceInterface $imageService)
     {
         $this->productService = $productService;
+        $this->imageService = $imageService;
     }
 
     public function index()
@@ -174,14 +176,15 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
-        
-        /** @var \App\Models\User $user */
         $user = Auth::user();
         if ($product->shop_id !== $user->shop->id) {
             return response()->json(['message' => 'Unauthorized. This product does not belong to your shop.'], 403);
         }
 
-        $product->delete();
+        $deleted = $product->delete();
+        if($deleted) {
+            $this->imageService->deleteImageIfExists($product->image);
+        }
 
         return response()->json(['message' => 'Product deleted successfully']);
     }
