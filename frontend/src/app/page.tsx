@@ -57,21 +57,17 @@ export default function Home() {
               </div>
 
               <TabsContent value="products" className="mt-0">
-                <div className="bg-white rounded-2xl shadow-sm border p-4 sm:p-6">
-                  <Products 
-                    location="Products" 
-                    sort={filters.sort}
-                  />
-                </div>
+                <Products 
+                  location="Products" 
+                  sort={filters.sort}
+                />
               </TabsContent>
 
               <TabsContent value="shops" className="mt-0">
-                <div className="bg-white rounded-2xl shadow-sm border p-4 sm:p-6">
-                  <Shops 
-                    location="Shops" 
-                    sort={filters.sort}
-                  />
-                </div>
+                <Shops 
+                  location="Shops" 
+                  sort={filters.sort}
+                />
               </TabsContent>
             </Tabs>
           </div>

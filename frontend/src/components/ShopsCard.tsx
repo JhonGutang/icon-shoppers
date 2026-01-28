@@ -34,7 +34,7 @@ const ShopsCard: React.FC<ShopsProps> = ({ shop }) => {
           
           {/* Verified Badge */}
           <div className="absolute right-2 top-2">
-            <div className="flex items-center gap-1 rounded-full bg-white/90 backdrop-blur-sm px-2 py-0.5 text-[10px] font-bold text-green-600 shadow-sm border border-green-100">
+            <div className="flex items-center gap-1 rounded-full bg-white/90 backdrop-blur-sm px-2 py-0.5 text-[10px] font-bold shadow-sm border border-green-100">
               <ShieldCheck size={12} />
               <span>Verified Seller</span>
             </div>
@@ -49,7 +49,7 @@ const ShopsCard: React.FC<ShopsProps> = ({ shop }) => {
           </div>
 
           {/* Shop Name */}
-          <h3 className="line-clamp-1 text-lg font-bold text-gray-900 group-hover:text-green-700 transition-colors">
+          <h3 className="line-clamp-1 text-lg font-bold text-gray-900 transition-colors">
             {shop.name}
           </h3>
 
@@ -68,7 +68,7 @@ const ShopsCard: React.FC<ShopsProps> = ({ shop }) => {
           {/* Footer Action */}
           <div className="mt-6 pt-4 border-t border-gray-50">
             <Button 
-              className="w-full bg-green-600 hover:bg-green-700 text-white rounded-xl h-10 shadow-sm transition-all group/btn"
+              className="w-full text-white rounded-xl h-10 shadow-sm transition-all group/btn"
               onClick={() => redirectLink(shop.name)}
             >
               <span>Visit Store</span>

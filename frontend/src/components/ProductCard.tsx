@@ -28,6 +28,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   location,
   className,
   isLanding = false,
+  shopName,
 }) => {
   const shopId = useAuthStore((state) => state.id);
   const role = useAuthStore((state) => state.userType);

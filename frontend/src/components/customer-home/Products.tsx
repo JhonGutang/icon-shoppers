@@ -1,6 +1,4 @@
-import ProductCard from "@/components/ProductCard";
 import { useInfiniteProducts } from "@/hooks/queries/useProductsQuery";
-import { Skeleton } from "../ui/skeleton";
 import { useEffect, useRef } from "react";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
@@ -63,8 +61,6 @@ const Products: React.FC<ProductProps> = ({ sort = "newest" }) => {
           >
             Load More
           </Button>
-        ) : allProducts.length > 0 ? (
-          <p className="text-sm text-muted-foreground">You've reached the end!</p>
         ) : null}
       </div>
     </ProductContainer>

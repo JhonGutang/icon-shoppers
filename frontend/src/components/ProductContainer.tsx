@@ -21,7 +21,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({
   children,
 }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border p-4 sm:p-6 w-full">
+    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 w-full">
       {title && (
         <h2 className="text-2xl font-bold mb-6 text-foreground">{title}</h2>
       )}
