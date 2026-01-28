@@ -1,2 +1,8 @@
 *
 !.gitignore
+!local-flavor-kitchen/
+!petals-stems/
+!stylevault-co/
+!local-flavor-kitchen/**
+!petals-stems/**
+!stylevault-co/**

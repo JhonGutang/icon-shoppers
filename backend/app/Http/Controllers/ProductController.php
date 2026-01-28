@@ -120,7 +120,7 @@ class ProductController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
+            $imagePath = $this->imageService->uploadImage($request->file('image'), 'products', $shop->slug);
         }
 
         $product = Product::create([
@@ -164,7 +164,7 @@ class ProductController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
+            $imagePath = $this->imageService->uploadImage($request->file('image'), 'products', $product->shop->slug);
             $updateData['image'] = $imagePath;
         }
 

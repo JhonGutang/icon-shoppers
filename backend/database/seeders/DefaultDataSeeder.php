@@ -34,7 +34,7 @@ class DefaultDataSeeder extends Seeder
                     'password' => Hash::make('password'),
                 ],
                 'shop' => [
-                    'name' => 'Maria\'s Gourmet Delights',
+                    'name' => 'Local Flavor Kitchen',
                     'description' => 'Authentic homemade Filipino delicacies and gourmet treats.',
                 ],
                 'category' => 'Food'
@@ -49,7 +49,7 @@ class DefaultDataSeeder extends Seeder
                     'password' => Hash::make('password'),
                 ],
                 'shop' => [
-                    'name' => 'Cruz Tech Solutions',
+                    'name' => 'StyleVault Co.',
                     'description' => 'Premium gadgets and accessories for the modern professional.',
                 ],
                 'category' => 'Electronics'
@@ -64,11 +64,53 @@ class DefaultDataSeeder extends Seeder
                     'password' => Hash::make('password'),
                 ],
                 'shop' => [
-                    'name' => 'Sarah\'s Artisan Crafts',
+                    'name' => 'Petals & Stems',
                     'description' => 'Unique handcrafted items and personalized gifts.',
                 ],
                 'category' => 'Art'
             ],
+        ];
+
+        // Food product images for Local Flavor Kitchen
+        $foodImages = [
+            'balut.jpg',
+            'blue-lemonade.jpg',
+            'buko-pandan.jpg',
+            'chicharon.jpg',
+            'corndog.jpg',
+            'fishball.jpg',
+            'isaw.jpg',
+            'kwek-kwek.jpg',
+            'mango-juice.jpg',
+            'tempura.jpg',
+        ];
+
+        // Accessories product images for StyleVault Co.
+        $accessoriesImages = [
+            'cherry-earrings.jpg',
+            'crochet-jellyfish-keychains.jpg',
+            'crochet-pikachu-keychain.jpg',
+            'ghibli-couple-bracelet.jpg',
+            'hair-claw-clips.jpg',
+            'hair-clips.jpg',
+            'hoop-earrings.jpg',
+            'song-inspired-bracelets.jpg',
+            'sun-and-moon-couple-ring.jpg',
+            'tulip-flower-ring.jpg',
+        ];
+
+        // Bouquet product images for Petals & Stems
+        $bouquetImages = [
+            'crochet-bouquet.jpg',
+            'gerberas-bouquet.jpg',
+            'hibiscus-bouquet.jpg',
+            'hyacinth-bouquet.jpg',
+            'lilies-bouquet.jpg',
+            'peonies-bouquet.jpg',
+            'pink-fuzzy-wire-bouquet.jpg',
+            'rose-bouquet.jpg',
+            'sunflower-bouquet.jpg',
+            'tulips-bouquet.jpg',
         ];
 
         foreach ($merchants as $m) {
@@ -83,13 +125,28 @@ class DefaultDataSeeder extends Seeder
             ]);
 
             for ($i = 1; $i <= 10; $i++) {
+                // Use real images based on category
+                if ($m['category'] === 'Food') {
+                    $imageName = $foodImages[$i - 1];
+                    $imagePath = $shop->slug . '/products/' . $imageName;
+                    $productName = ucwords(str_replace('-', ' ', pathinfo($imageName, PATHINFO_FILENAME)));
+                } elseif ($m['category'] === 'Electronics') {
+                    $imageName = $accessoriesImages[$i - 1];
+                    $imagePath = $shop->slug . '/products/' . $imageName;
+                    $productName = ucwords(str_replace('-', ' ', pathinfo($imageName, PATHINFO_FILENAME)));
+                } else {
+                    $imageName = $bouquetImages[$i - 1];
+                    $imagePath = $shop->slug . '/products/' . $imageName;
+                    $productName = ucwords(str_replace('-', ' ', pathinfo($imageName, PATHINFO_FILENAME)));
+                }
+
                 $product = Product::create([
                     'shop_id' => $shop->id,
-                    'name' => $m['category'] . " Item " . $i,
+                    'name' => $productName,
                     'price' => rand(100, 5000),
                     'quantity' => rand(10, 100),
-                    'description' => "Detailed description for " . $m['category'] . " Item " . $i,
-                    'image' => "https://picsum.photos/seed/" . md5($shop->name . $i) . "/400/300",
+                    'description' => "Detailed description for " . $productName,
+                    'image' => $imagePath,
                     'is_visible' => true,
                     'is_featured' => $i <= 3,
                 ]);

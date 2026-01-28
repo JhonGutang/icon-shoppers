@@ -23,9 +23,13 @@ class ImageService implements ImageServiceInterface
         $this->userRepository = $userRepository;
     }
 
-    public function uploadImage($image, ?string $directory = null): string
+    public function uploadImage($image, ?string $directory = null, ?string $shopSlug = null): string
     {
-
+        // Build directory path with shop slug if provided
+        if ($shopSlug) {
+            $directory = $shopSlug . '/' . ($directory ?? 'products');
+        }
+        
         $imagePath = $image->store($directory, 'public');
         return $imagePath;
     }

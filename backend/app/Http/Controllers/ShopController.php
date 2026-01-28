@@ -8,6 +8,7 @@ use App\Http\Requests\ShopUpdateFormRequest;
 use App\Http\Requests\ShopCreateRequest;
 use App\Interfaces\Services\ShopServiceInterface;
 use App\Interfaces\Services\UserServiceInterface;
+use App\Interfaces\Services\ImageServiceInterface;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,14 +16,17 @@ class ShopController extends Controller
 {
     protected $userService;
     protected $shopService;
+    protected $imageService;
 
     public function __construct(
         UserServiceInterface $userService,
         ShopServiceInterface $shopService,
+        ImageServiceInterface $imageService,
     )
     {
         $this->userService = $userService;
         $this->shopService = $shopService;
+        $this->imageService = $imageService;
     }
 
 
@@ -47,15 +51,19 @@ class ShopController extends Controller
         $validatedData['owner_id'] = $user->id;
         $validatedData['status'] = Shop::STATUS_ACTIVE;
 
+        $shop = $this->shopService->createShop($validatedData);
+
         if ($request->hasFile('logo_image')) {
-            $validatedData['logo_image'] = $request->file('logo_image')->store('shops/logos', 'public');
+            $validatedData['logo_image'] = $this->imageService->uploadImage($request->file('logo_image'), 'logos', $shop->slug);
         }
 
         if ($request->hasFile('banner_image')) {
-            $validatedData['banner_image'] = $request->file('banner_image')->store('shops/banners', 'public');
+            $validatedData['banner_image'] = $this->imageService->uploadImage($request->file('banner_image'), 'banners', $shop->slug);
         }
 
-        $shop = $this->shopService->createShop($validatedData);
+        if (isset($validatedData['logo_image']) || isset($validatedData['banner_image'])) {
+            $this->shopService->updateShop($validatedData, $shop->id);
+        }
 
         // Transition user to merchant role
         $user->update(['role' => User::ROLE_MERCHANT]);
@@ -96,11 +104,11 @@ class ShopController extends Controller
             if (isset($validatedData['shipping_fee'])) $shopData['shipping_fee'] = $validatedData['shipping_fee'];
 
             if ($request->hasFile('logo_image')) {
-                $shopData['logo_image'] = $request->file('logo_image')->store('shops/logos', 'public');
+                $shopData['logo_image'] = $this->imageService->uploadImage($request->file('logo_image'), 'logos', $shop->slug);
             }
 
             if ($request->hasFile('banner_image')) {
-                $shopData['banner_image'] = $request->file('banner_image')->store('shops/banners', 'public');
+                $shopData['banner_image'] = $this->imageService->uploadImage($request->file('banner_image'), 'banners', $shop->slug);
             }
 
             if (!empty($shopData)) {
