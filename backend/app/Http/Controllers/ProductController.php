@@ -50,10 +50,6 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
-    public function searchProducts(Request $request)
-    {
-        return $this->fetchAllProducts($request);
-    }
 
     public function fetchFeaturedProducts(Request $request)
     {

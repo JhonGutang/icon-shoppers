@@ -16,16 +16,7 @@ require __DIR__.'/api/category.php';
 require __DIR__.'/api/address.php';
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
-
     // Profile Management (Unified)
     Route::get('/profile', [ShopController::class, 'index']); // For merchants
     Route::post('/profile', [ShopController::class, 'update']);
-    Route::post('/profile/upload-logo', [ShopController::class, 'uploadLogo']);
-
-    Route::get('/customer-profile', function (Request $request) {
-        return $request->user();
-    });
 });

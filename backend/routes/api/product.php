@@ -7,16 +7,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/products/all', [ProductController::class, 'fetchAllProducts']);
 Route::get('/products/featured', [ProductController::class, 'fetchFeaturedProducts']);
 Route::get('/products/top-selling', [ProductController::class, 'fetchTopSellingProducts']);
-Route::get('/products/search', [ProductController::class, 'searchProducts']);
+// Public Customer Routes
+Route::get('/products/all', [ProductController::class, 'fetchAllProducts']);
+Route::get('/products/featured', [ProductController::class, 'fetchFeaturedProducts']);
+Route::get('/products/top-selling', [ProductController::class, 'fetchTopSellingProducts']);
 Route::get('/products/category/{categoryId}', [ProductController::class, 'fetchByCategory']);
 Route::get('/products/{slug}', [ProductController::class, 'fetchSpecificProduct']);
 Route::get('/products/{id}/related', [ProductController::class, 'fetchRelatedProducts']);
-
-// Compatibility Routes
-Route::get('/all-products', [ProductController::class, 'fetchAllProducts']);
-Route::get('/featured-products', [ProductController::class, 'fetchFeaturedProducts']);
-Route::get('/product/{id}', [ProductController::class, 'fetchSpecificProduct']);
-Route::get('/search-products', [ProductController::class, 'searchProducts']);
 
 // Merchant Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -24,9 +21,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/merchant/products', [ProductController::class, 'create']);
     Route::post('/merchant/products/{id}', [ProductController::class, 'update']);
     Route::delete('/merchant/products/{id}', [ProductController::class, 'destroy']);
-    
-    // Compatibility merchant routes
-    Route::get('/products', [ProductController::class, 'index']);
-    Route::post('/product', [ProductController::class, 'create']);
-    Route::post('/product/{id}', [ProductController::class, 'update']);
 });

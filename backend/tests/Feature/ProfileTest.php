@@ -36,14 +36,6 @@ test('merchant can update their shop profile', function () {
     ]);
 });
 
-test('customer can view customer profile', function () {
-    $user = $this->actingAsCustomer();
-
-    $response = $this->getJson('/api/customer-profile');
-
-    $response->assertStatus(200)
-        ->assertJsonFragment(['email' => $user->email]);
-});
 
 test('unauthenticated user cannot view profile', function () {
     $response = $this->getJson('/api/profile');

@@ -13,7 +13,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/checkout', [OrderController::class, 'checkoutOrder']);
     Route::get('/orders/{orderNumber}', [OrderController::class, 'show']);
     Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel']);
-    
-    // Compatibility route for status update
-    Route::put('/status-update/{id}', [OrderController::class, 'statusUpdate']);
 });
