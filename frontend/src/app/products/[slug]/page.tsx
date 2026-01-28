@@ -156,7 +156,7 @@ const ProductDetailsPage = () => {
             </div>
 
             {/* Shop Card */}
-            <Link href={`/shops/${product.shop?.slug || product.shop_id}`} className="mt-10 group bg-muted/30 p-4 rounded-2xl border border-border/60 hover:border-primary/40 transition-colors">
+            <Link href={`/${product.shop?.slug || product.shop_id}`} className="mt-10 group bg-muted/30 p-4 rounded-2xl border border-border/60 hover:border-primary/40 transition-colors">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">

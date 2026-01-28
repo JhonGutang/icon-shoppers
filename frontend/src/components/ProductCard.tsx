@@ -20,6 +20,7 @@ interface ProductCardProps {
   location?: string;
   className?: string;
   isLanding?: boolean;
+  shopName?: string;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
