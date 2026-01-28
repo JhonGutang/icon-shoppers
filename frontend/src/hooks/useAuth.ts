@@ -12,7 +12,6 @@ const useAuth = () => {
 
   const [registerFormData, setRegisterFormData] = useState<Register>({
     name: "",
-    shopOwner: "",
     address: "",
     middleName: "",
     email: "",
@@ -38,36 +37,51 @@ const useAuth = () => {
     }
   };
 
-  const handleRegister = async (role: string) => {
+  const handleRegister = async () => {
     try {
-      await register(registerFormData, role);
+      await register(registerFormData);
       openSnackbar("Registered Successfully!", "success");
     } catch (error) {
       console.error(error);
       openSnackbar("Registration Failed!", "error");
+      throw error; // Propagate error to prevent UI progression
     }
   };
 
-  const handleLogin = async (role: string) => {
+  const handleLogin = async () => {
     try {
-      const profile = await login(loginFormData);
+      const response = await login(loginFormData);
+      const { token, user, has_shop } = response;
+      
       openSnackbar("Login successful!", "success");
-      store.setAuth(profile.token, profile.user.role, profile.user.id);
+      
+      // Store user info and set needsRoleSelection if they have a shop
+      store.setAuth(token, user.role, user.id, has_shop, has_shop);
 
-      if (role === "seller") {
-        redirectLink("profile");
-      } else {
-        redirectLink("/home");
-      }
+      // Always redirect to root discovery page first
+      redirectLink("/");
     } catch (error) {
       console.error(error)
       openSnackbar("Login failed!", "error");
+      throw error; // Propagate error
     }
   };
 
-  const handleLogout = async () => {
-    const role = useToken.getState().userType
+  const handleRoleSelect = (role: "customer" | "seller") => {
+    if (role === "seller") {
+      store.setSellerMode(true);
+      openSnackbar("Welcome back, Seller!", "success");
+      redirectLink("/shop");
+    } else {
+      store.setSellerMode(false);
+      openSnackbar("Continuing as Customer", "info");
+      // Already on home or wherever redirectLink("/") sent them
+    }
+    
+    store.setNeedsRoleSelection(false);
+  };
 
+  const handleLogout = async () => {
     try {
       await logout();
       openSnackbar("Logout successful!", "info");
@@ -77,12 +91,7 @@ const useAuth = () => {
     } finally {
       store.clearAuth();
       store.setLoggingOut(true);
-      
-      if(role === 'merchant') {
-        redirectLink("shop-auth");
-      } else {
-        redirectLink("customer-auth");
-      }
+      redirectLink("landing"); // Landing page for guests
     }
   };
 
@@ -93,7 +102,7 @@ const useAuth = () => {
 
   const handleUpdateProfile = async (updatedData: EditProfile) => {
       try {
-        const response = await updateProfile(updatedData);
+        const response = await updateProfile(updatedData as any);
         openSnackbar("Profile updated successfully!", "success");
         return response;
       } catch (error) {
@@ -105,14 +114,9 @@ const useAuth = () => {
 
   const handleRedirectIfUserIsAuth = () => {
     const accessToken = useToken.getState().accessToken;
-    const userType = useToken.getState().userType;
     
     if (accessToken) {
-      if (userType === "seller") {
-        redirectLink("/profile");
-      } else {
-        redirectLink("/home");
-      }
+       redirectLink("/");
     }
   }
 
@@ -125,7 +129,8 @@ const useAuth = () => {
     handleLogout,
     handleGetProfile,
     handleUpdateProfile,
-    handleRedirectIfUserIsAuth
+    handleRedirectIfUserIsAuth,
+    handleRoleSelect
   };
 };
 

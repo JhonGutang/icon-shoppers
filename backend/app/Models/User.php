@@ -11,13 +11,16 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
 
     const ROLE_CUSTOMER = 'customer';
+
     const ROLE_MERCHANT = 'merchant';
+
     const ROLE_ADMIN = 'admin';
 
     const STATUS_ACTIVE = 'active';
+
     const STATUS_SUSPENDED = 'suspended';
 
     /**
@@ -29,11 +32,17 @@ class User extends Authenticatable
         'name',
         'middle_name',
         'email',
+        'phone',
         'contact_number',
         'address',
+        'street',
+        'barangay',
+        'city',
+        'postal_code',
         'role',
         'status',
         'avatar',
+        'profile_picture',
         'password',
     ];
 
@@ -80,6 +89,11 @@ class User extends Authenticatable
         return $this->hasOne(Shop::class, 'owner_id');
     }
 
+    public function hasShop(): bool
+    {
+        return $this->shop()->exists();
+    }
+
     public function orders()
     {
         return $this->hasMany(Order::class, 'user_id');
@@ -88,5 +102,25 @@ class User extends Authenticatable
     public function cart()
     {
         return $this->hasOne(Cart::class, 'user_id');
+    }
+
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
+
+    public function followedShops()
+    {
+        return $this->belongsToMany(Shop::class, 'shop_followers');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(ProductRating::class);
     }
 }

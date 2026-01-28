@@ -1,23 +1,26 @@
-import {
-  addProduct as addProductService,
-  deleteProduct,
-  fetchAllProducts,
-  fetchShopProducts,
-  fetchSpecificProduct,
-  updateProduct,
-} from "@/services/productService";
+import { useState, useCallback } from "react";
 import useToken from "@/stores/useAuthStore";
-import useProducts from "@/stores/useProducts";
 import { newProduct, Product } from "@/types/product";
-import { useState } from "react";
 import useRedirectLink from "./useRedirectLink";
 import { useSnackbar } from "@/components/context/SnackbarContext";
+import { 
+  useCreateProduct, 
+  useUpdateProduct, 
+  useDeleteProduct, 
+  useToggleProductVisibility, 
+  useToggleProductFeatured 
+} from "./queries/useProductsQuery";
 
 const useProductAction = () => {
   const token = useToken.getState().accessToken;
   const { redirectLink } = useRedirectLink();
-  const { products, setProducts, deleteProductById, addProduct, updateProductById } = useProducts();
   const { openSnackbar } = useSnackbar(); 
+
+  const createMutation = useCreateProduct();
+  const updateMutation = useUpdateProduct();
+  const deleteMutation = useDeleteProduct();
+  const visibilityMutation = useToggleProductVisibility();
+  const featuredMutation = useToggleProductFeatured();
 
   const [newProduct, setNewProduct] = useState<newProduct>({
     name: "",
@@ -25,58 +28,34 @@ const useProductAction = () => {
     quantity: 0,
     image: undefined,
   });
-  const [product, setProduct] = useState<Product>();
 
-  const handleFetchAllProducts = async (type: string) => {
-    return await fetchAllProducts(type);
-  };
-
-
-  const handleFetchShopProducts = async () => {
+  const handleAddProducts = useCallback(async () => {
     if (!token) return;
+    
     try {
-      const fetchedProducts = await fetchShopProducts();
-      setProducts(fetchedProducts);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleFetchSpecificProduct = async (id: number) => {
-    const fetchedData = await fetchSpecificProduct(id);
-    setProduct(fetchedData);
-  };
-
-  const handleAddProducts = async () => {
-    if (!token) return;
-    try {
-      const newProductData = await addProductService(newProduct);
-      addProduct(newProductData);
+      await createMutation.mutateAsync(newProduct);
       setNewProduct({ name: "", price: 0, quantity: 0 });
       openSnackbar("Product Added Successfully", "success");
     } catch (error) {
       console.error(error);
       openSnackbar("Attempt to add product failed", "error");
     }
-  };
+  }, [token, newProduct, createMutation, openSnackbar]);
 
 
-  const handleDeleteProduct = async (id: number) => {
+  const handleDeleteProduct = useCallback(async (id: number) => {
     if (!token) return;
+    
     try {
-      await deleteProduct(id);
-      deleteProductById(id);
+      await deleteMutation.mutateAsync(id);
       openSnackbar("Product deleted", "success");
-      setTimeout(() => {
-        redirectLink("profile");
-      }, 1000);
     } catch (error) {
       console.error(error);
       openSnackbar("Failed to delete product", "error");
     }
-  };
+  }, [token, deleteMutation, openSnackbar, redirectLink]);
 
-  const handleInputs = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputs = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, type, value, files } = e.target;
 
     if (type === "file" && files && files[0]) {
@@ -90,9 +69,9 @@ const useProductAction = () => {
         [id]: value,
       }));
     }
-  };
+  }, []);
 
-  const handleProductVisibility = async (
+  const handleProductVisibility = useCallback(async (
     event: React.MouseEvent<HTMLButtonElement>,
     product: Product
   ) => {
@@ -100,55 +79,55 @@ const useProductAction = () => {
     if (!token) return;
 
     const updatedVisibility = !product.is_visible;
-    const updatedProduct = { ...product, is_visible: updatedVisibility };
 
     try {
-      await updateProductById(updatedProduct.id, updatedProduct);
+      await visibilityMutation.mutateAsync({ id: product.id, is_visible: updatedVisibility });
       openSnackbar(`Product visibility is now ${updatedVisibility ? "visible" : "hidden"}`, "info");
-
-      const productWithoutImage = { ...updatedProduct, image: null };
-      await updateProduct(productWithoutImage.id, productWithoutImage);
     } catch (error) {
       console.error(error);
       openSnackbar("Failed to update product visibility", "error");
     }
-  };
+  }, [token, visibilityMutation, openSnackbar]);
 
-  const handleFeatureToggle = async (product: Product, onLocalUpdate?: (product: Product) => void) => {
+  const handleFeatureToggle = useCallback(async (product: Product) => {
     if (!token) return;
 
-    const updatedProductFeature = { ...product, is_featured: !product.is_featured };
+    const updatedFeatured = !product.is_featured;
 
     try {
-      if (onLocalUpdate) {
-        onLocalUpdate(updatedProductFeature);
-        openSnackbar(
-          updatedProductFeature.is_featured ? "Product Now Featured" : "Product removed from Featured",
-          "success"
-        );
-      }
-
-      const productWithoutImage = { ...updatedProductFeature, image: null };
-
-      await updateProduct( productWithoutImage.id, productWithoutImage);
+      await featuredMutation.mutateAsync({ id: product.id, is_featured: updatedFeatured });
+      openSnackbar(
+        updatedFeatured ? "Product Now Featured" : "Product removed from Featured",
+        "success"
+      );
     } catch (error) {
       console.error(error);
-      openSnackbar("Feature toggle failed: Reverting Back", "error");
+      openSnackbar("Feature toggle failed", "error");
     }
-  };
+  }, [token, featuredMutation, openSnackbar]);
+
+  const handleUpdateProduct = useCallback(async (id: number, updatedData: any) => {
+    if (!token) return;
+    
+    try {
+      await updateMutation.mutateAsync({ id, data: updatedData });
+      openSnackbar("Product updated successfully", "success");
+    } catch (error) {
+      console.error(error);
+      openSnackbar("Failed to update product", "error");
+      throw error;
+    }
+  }, [token, updateMutation, openSnackbar]);
 
   return {
-    products,
-    product,
     newProduct,
-    handleFetchAllProducts,
-    handleFetchShopProducts,
-    handleFetchSpecificProduct,
+    loading: createMutation.isPending || updateMutation.isPending || deleteMutation.isPending || visibilityMutation.isPending || featuredMutation.isPending,
     handleAddProducts,
     handleDeleteProduct,
     handleInputs,
     handleProductVisibility,
     handleFeatureToggle,
+    handleUpdateProduct,
   };
 };
 

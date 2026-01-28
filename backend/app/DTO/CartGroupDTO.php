@@ -12,7 +12,7 @@ class CartGroupDTO
     public static function fromCartItems($items): self
     {
         $shop = ShopDTO::fromShop($items->first()->product->shop);
-        $products = $items->map(fn($item) => CartItemDTO::fromCartItem($item))->toArray();
+        $products = $items->map(fn ($item) => CartItemDTO::fromCartItem($item))->toArray();
 
         return new self(
             shop: $shop,
@@ -24,7 +24,7 @@ class CartGroupDTO
     {
         return [
             'shop' => $this->shop->toArray(),
-            'products' => array_map(fn($product) => $product->toArray(), $this->products),
+            'products' => array_map(fn ($product) => $product->toArray(), $this->products),
         ];
     }
 }

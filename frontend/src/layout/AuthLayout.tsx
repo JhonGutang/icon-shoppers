@@ -1,45 +1,38 @@
 import React, { ReactNode } from "react";
 import Image from "next/image";
 import { useIsMobile } from "../hooks/use-mobile";
-import { Button } from "@/components/ui/button";
-import useRedirectLink from "@/hooks/useRedirectLink";
 
 interface LayoutProps {
   children: ReactNode;
-  role: string;
 }
 
-const AuthLayout: React.FC<LayoutProps> = ({ children, role }) => {
-  const { redirectLink} = useRedirectLink()
+const AuthLayout: React.FC<LayoutProps> = ({ children }) => {
   const isMobile = useIsMobile();
-  const sellerLogin = role === 'customer' ? 'Seller' : 'Customer'
-  const authLink = role !== 'customer' ? '/customer-auth' : '/shop-auth'
-  console.log(authLink);
+
   return (  
-    <div className="w-screen h-screen flex justify-center items-center">
-      <div className="rounded-xl lg:border-2 border-gray-400 w-full h-full lg:w-[70vw] lg:h-[80vh] flex flex-col lg:flex-row gap-4 justify-center lg:justify-between lg:items-center px-10 lg:px-0 relative">
-        <Button className="absolute top-4 right-4 capitalize" variant='ghost' onClick={() => redirectLink(authLink)}>Login as {sellerLogin}</Button>
+    <div className="w-screen h-screen flex justify-center items-center bg-gray-50">
+      <div className="rounded-2xl lg:border border-gray-100 bg-white w-full h-full lg:w-[75vw] lg:h-[85vh] flex flex-col lg:flex-row gap-4 justify-center lg:justify-between lg:items-center px-10 lg:px-0 relative lg:shadow-2xl">
         {!isMobile && (
-          <div className="lg:w-[50%] flex flex-col lg:items-center gap-5">
-            <Image
+          <div className="lg:w-[50%] h-full relative overflow-hidden hidden lg:block rounded-l-2xl">
+             <Image
               src="/auth-picture.jpg"
-              alt="web shopping"
-              width={500}
-              height={50}
+              alt="Icon Shoppers Marketplace"
+              fill
+              className="object-cover"
+              priority
             />
+            <div className="absolute inset-0 bg-green-900/20 backdrop-blur-[2px] flex flex-col justify-end p-12 text-white">
+                <h1 className="text-4xl font-black mb-4">Gourmet at your doorstep.</h1>
+                <p className="text-lg opacity-90">Join the community of food lovers and local treasures.</p>
+            </div>
           </div>
         )}
-        <div className="lg:w-[50%] lg:p-10">
-          <div className="flex justify-center">
-            <img src="/logo.png" alt="" className="w-[130px] h-[130px]" />
+        <div className="lg:w-[50%] lg:p-12 flex flex-col items-center justify-center">
+          <div className="mb-8">
+            <img src="/logo.png" alt="Icon Shoppers Logo" className="w-[120px] h-[120px] object-contain" />
           </div>
-          <div className="text-center text-2xl lg:text-xl main-text-color">
-            Welcome Back!!
-          </div>
-          <div className="text-center lg:text-md text-md">
-            Your Local Marketplace is Ready for you!
-          </div>
-          <div className="mt-10 text-center flex flex-col gap-9">
+          
+          <div className="w-full max-w-sm">
             {children}
           </div>
         </div>

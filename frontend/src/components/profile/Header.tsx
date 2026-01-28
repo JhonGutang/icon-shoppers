@@ -27,6 +27,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
       <div className="w-full h-[45%] lg:h-[40%] border-black border-3 rounded-xl">
         <img
           src="https://i.pinimg.com/736x/4a/78/44/4a7844faf49677e5f2b602f929bd9ad6.jpg"
+          alt="Shop banner"
           className="object-cover w-full h-full rounded-xl shadow-xl"
         />
       </div>

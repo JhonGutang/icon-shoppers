@@ -1,62 +1,73 @@
-import { useEffect, useState } from "react";
-import { fetchAllShops } from "@/services/shopService";
-import { Shop } from "@/types/product";
+import { useRef, useEffect } from "react";
 import ShopsCard from "../ShopsCard";
 import { Skeleton } from "../ui/skeleton";
-import { Input } from "../ui/input";
+import { cn } from "@/lib/utils";
+import { Store, Loader2 } from "lucide-react";
+import { useInfiniteShops } from "@/hooks/queries/useShopsQuery";
+import { Button } from "../ui/button";
+import ShopContainer from "../ShopContainer";
 
 interface ShopProps {
-  location: string
+  location: string;
+  sort?: string;
 }
 
-const Shops:React.FC<ShopProps> = ({location}) => {
-  const [shops, setShops] = useState<Shop[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [search, setSearch] = useState<string>("");
+const Shops:React.FC<ShopProps> = ({location, sort = "newest"}) => {
+  const observerTarget = useRef<HTMLDivElement>(null);
+  
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteShops({ sort });
+
+  const allShops = data?.pages.flatMap(page => page.data) || [];
 
   useEffect(() => {
-    const getShops = async () => {
-      const shopData = await fetchAllShops(search);
-      setShops(shopData);
-      setLoading(false);
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
 
-    getShops();
-  }, [search]);
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(event.target.value);
-  };
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <div className="w-full">
-      <div className="mb-6 px-6 flex gap-5 items-center ">
-        <div className="text-xl ">Shops</div>
-        {location === "Shops" && (
-          <Input
-            placeholder="Search Shops..."
-            className="w-[50vw] h-[45px] rounded-full pl-5"
-            value={search}
-            onChange={handleSearchChange}
-          />
-        )}
-      </div>
-      <div className={`flex gap-4  ${location === "Shops" ? "flex-wrap justify-center" : "overflow-x-scroll px-5 pb-2"}`}>
-        {loading ? (
-          Array.from({ length: 5 }).map((_, index) => (
-            <Skeleton key={index} className="lg:w-[40vw] lg:h-[45vh] mb-4" />
-          ))
-        ) : shops.length > 0 ? (
-          shops.map((shop) => (
-            <div key={shop.id}>
-              <ShopsCard shop={shop} />
+    <ShopContainer
+      shops={allShops}
+      isLoading={isLoading}
+    >
+      {/* Loader/Observer Target */}
+      {location === "Shops" && (
+        <div ref={observerTarget} className="col-span-full py-2 flex justify-center w-full">
+          {isFetchingNextPage ? (
+            <div className="flex flex-col items-center gap-2">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">Loading more shops...</p>
             </div>
-          ))
-        ) : (
-          <div className="text-center w-full">Shop not found</div>
-        )}
-      </div>
-    </div>
+          ) : hasNextPage ? (
+            <Button 
+              variant="outline" 
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+              className="rounded-full px-8"
+            >
+              Load More
+            </Button>
+          ) : null}
+        </div>
+      )}
+    </ShopContainer>
   );
 };
 

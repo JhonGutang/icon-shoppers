@@ -52,7 +52,7 @@ Follow this flow strictly:
     - `libs/`: External libraries or wrappers.
     - `utils/`: Generic helper functions.
 
-### 🌐 Frontend (Vue/TypeScript)
+### 🌐 Frontend (Next.js/TypeScript)
 - **API Initialization:** All API calls must use a central axial/fetch instance with proper authorization headers.
 - **Services:** Logic for API interaction and state management.
 - **Global Folders:**
@@ -78,7 +78,9 @@ Follow this flow strictly:
 
 *This section is for recording mistakes, edge cases, and architectural lessons learned during development.*
 
-- **[Date] - [Issue]:** [Description and solution]
+- **2026-01-26 - Unified Auth Implementation:** Shifted from separate customer/shop guards and routes to a single-account system where any user can become a merchant by creating a shop. Cleaned up legacy `shop-api` guard, separate auth pages, and redundant redirects.
+- **2026-01-26 - Cart Endpoint Consistency:** Renamed cart deletion route from `DELETE /order/{id}` to `DELETE /cart-item/{id}` for clarity. Cart-related operations should use cart-specific endpoint names. Updated frontend service (`customerService.ts`) and hooks (`useCustomerActions.ts`) accordingly.
+- **2026-01-26 - Shop Slug Auto-Generation:** Fixed issue where existing shops had null slugs causing 404 errors. Created data migration to populate slugs from shop names. Shop model's `boot()` method now ensures all new shops auto-generate URL-friendly slugs. Always verify slug generation for models with slug-based routing.
 - *(Add new entries here)*
 
 ---

@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Interfaces\Repositories\UserRepositoryInterface;
 use App\Models\User;
 use App\Services\UserService;
-use App\Interfaces\Repositories\UserRepositoryInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
-use Tests\TestCase;
 use Mockery;
+use Tests\TestCase;
 
 class UserRegistrationTest extends TestCase
 {
@@ -38,7 +38,7 @@ class UserRegistrationTest extends TestCase
             'address' => '123 Main St, City, Country',
             'email' => 'john.doe@example.com',
             'password' => 'password123',
-            'role' => 'customer'
+            'role' => 'customer',
         ];
 
         $hashedPassword = Hash::make('password123');
@@ -62,18 +62,18 @@ class UserRegistrationTest extends TestCase
         $response = $this->postJson('/api/register', []);
 
         $response->assertStatus(422)
-                ->assertJsonValidationErrors([
-                    'name',
-                    'contact_number',
-                    'email',
-                    'password'
-                ]);
+            ->assertJsonValidationErrors([
+                'name',
+                'contact_number',
+                'email',
+                'password',
+            ]);
     }
 
     public function test_validates_unique_email_constraint()
     {
         User::factory()->create([
-            'email' => 'existing@example.com'
+            'email' => 'existing@example.com',
         ]);
 
         $duplicateData = [
@@ -81,12 +81,12 @@ class UserRegistrationTest extends TestCase
             'contact_number' => '+2222222222',
             'address' => 'Another Address',
             'email' => 'existing@example.com',
-            'password' => 'password123'
+            'password' => 'password123',
         ];
 
         $response = $this->postJson('/api/register', $duplicateData);
 
         $response->assertStatus(422)
-                ->assertJsonValidationErrors(['email']);
+            ->assertJsonValidationErrors(['email']);
     }
 }

@@ -14,7 +14,8 @@ class ProductRatingSummary extends Model
         'average_rating_score',
     ];
 
-    public function product(){
+    public function product()
+    {
         return $this->belongsTo(Product::class);
     }
 }

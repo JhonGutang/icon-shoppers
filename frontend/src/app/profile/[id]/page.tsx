@@ -1,33 +1,27 @@
 "use client";
-import SellerLayout from "@/layout/SellerLayout";
 import Feedback from "@/components/Feedback";
 import { Button } from "@/components/ui/button";
 import useProductAction from "@/hooks/useProductActions";
+import { useProductDetails } from "@/hooks/queries/useProductsQuery";
 import { Product } from "@/types/product";
 import { useEffect, use, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import EditProduct from "@/components/EditProduct";
 import { ChevronLeft } from "lucide-react";
 import useRedirectLink from "@/hooks/useRedirectLink";
+import ShopLayout from "@/app/shop/layout";
 
 const ProductPage = ({ params }: { params: Promise<{ id: number }> }) => {
-  const { handleFetchSpecificProduct, product } = useProductAction();
   const { id } = use(params);
-  const fetchData = async () => {
-    await handleFetchSpecificProduct(id);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [id]);
+  const { data: product } = useProductDetails(id);
 
   return (
-    <SellerLayout>
+    <ShopLayout>
       <div className="w-full h-screen flex">
         <ProductContainer product={product} id={id} />
         <FeedbackContainer />
       </div>
-    </SellerLayout>
+    </ShopLayout>
   );
 };
 
@@ -38,7 +32,6 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
   const {
     handleDeleteProduct,
     handleFeatureToggle,
-    handleFetchSpecificProduct,
   } = useProductAction();
   const [localProduct, setLocalProduct] = useState(product);
   const { redirectLink } = useRedirectLink();
@@ -50,7 +43,7 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
     {
       label: "Featured",
       onClick: () =>
-        localProduct && handleFeatureToggle(localProduct, setLocalProduct),
+        localProduct && handleFeatureToggle(localProduct),
       className: localProduct?.is_featured
         ? "rounded-full bg-green-700 text-white hover:bg-white hover:text-green-700"
         : "rounded-full text-green-700 bg-white hover:bg-green-700 hover:text-white",
@@ -70,7 +63,6 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
   ];
 
   const handleProductUpdate = async (updatedProduct: Product) => {
-    await handleFetchSpecificProduct(id);
     setLocalProduct(updatedProduct);
   };
 

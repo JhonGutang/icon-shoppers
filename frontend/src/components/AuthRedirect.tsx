@@ -7,63 +7,45 @@ import { toast } from "sonner";
 
 interface AuthRedirectProps {
   children: React.ReactNode;
-  allowedRoles?: string[];
 }
 
+/**
+ * AuthRedirect component
+ * If a user is already authenticated and tries to access guest-only pages (like login),
+ * they are redirected to the Home page.
+ */
 const AuthRedirect: React.FC<AuthRedirectProps> = ({
   children,
-  allowedRoles = [],
 }) => {
   const router = useRouter();
-  const { accessToken, userType, hasHydrated } = useAuthStore();
+  const { accessToken, hasHydrated } = useAuthStore();
   const hasShownToast = useRef(false);
 
   useEffect(() => {
-    if (!hasHydrated) return; // Wait for hydration
+    if (!hasHydrated) return;
 
-    // Reset toast flag when auth state changes
-    if (accessToken && userType) {
+    if (accessToken) {
+      if (!hasShownToast.current) {
+        toast.info("You are already signed in. Redirecting to home...", {
+          style: {
+            background: '#059669',
+            color: 'white',
+            border: 'none'
+          }
+        });
+        hasShownToast.current = true;
+      }
+      
+      const timer = setTimeout(() => {
+        router.push("/");
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    } else {
       hasShownToast.current = false;
     }
+  }, [accessToken, hasHydrated, router]);
 
-    // Add a small delay to prevent immediate redirects during logout
-    const timer = setTimeout(() => {
-      if (accessToken && userType) {
-        // If user is authenticated, redirect them to their appropriate dashboard
-        if (userType === "seller") {
-          if (!hasShownToast.current) {
-            toast.error("You are already logged in as a seller. Redirecting to your profile.", {
-              style: {
-                background: '#ef4444',
-                color: 'white',
-                border: '1px solid #dc2626'
-              }
-            });
-            hasShownToast.current = true;
-          }
-          router.push("/profile");
-          return;
-        } else if (userType === "customer") {
-          if (!hasShownToast.current) {
-            toast.error("You are already logged in as a customer. Redirecting to your dashboard.", {
-              style: {
-                background: '#ef4444',
-                color: 'white',
-                border: '1px solid #dc2626'
-              }
-            });
-            hasShownToast.current = true;
-          }
-          router.push("/home");
-          return;
-        }
-      }
-    }, 100); // Small delay to allow logout state to settle
-
-    return () => clearTimeout(timer);
-  }, [accessToken, userType, hasHydrated, router]);
-
-  // Show loading while checking auth
   if (!hasHydrated) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -72,7 +54,6 @@ const AuthRedirect: React.FC<AuthRedirectProps> = ({
     );
   }
 
-  // Don't render if user is authenticated
   if (accessToken) {
     return null;
   }

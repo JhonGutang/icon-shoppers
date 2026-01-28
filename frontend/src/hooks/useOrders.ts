@@ -14,21 +14,14 @@ export const useOrders = () => {
       setLoading(true);
       if (!token) throw new Error("No authentication token");
 
-      const data = await orderService.fetchOrders(status);
+      const response = await orderService.getCustomerOrders(status as any);
+      const data = response.data;
 
       const filteredOrders =
-        status === "all"
+        !status || (status as string) === "all"
           ? data
-          : data.filter((order) => {
-              const orderStatus = order.status.toLowerCase();
-
-              const filterStatus = status?.toLowerCase().replace(/ /g, "_");
-
-              if (status === "approved") {
-                return orderStatus === "active";
-              }
-
-              return orderStatus === filterStatus;
+          : data.filter((order: any) => {
+              return order.status.toUpperCase() === (status as string).toUpperCase();
             });
 
             setError(null);
@@ -47,11 +40,17 @@ export const useOrders = () => {
   ) => {
     if (!token) return;
     setLoading(true);
-    await orderService.updateOrderStatus(Number(orderId), newStatus);
-    setLoading(false);
+    try {
+        await orderService.updateOrderStatus(Number(orderId), newStatus);
+        setError(null);
+    } catch (err) {
+        console.error(err);
+        setError("Failed to update status");
+        throw err;
+    } finally {
+        setLoading(false);
+    }
   };
-
-
 
   return {
     loading,

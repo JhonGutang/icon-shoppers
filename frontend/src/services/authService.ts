@@ -1,25 +1,12 @@
 import axiosInstance from "@/hooks/useAxios";
-import { Register, Login, CustomerProfile, EditProfile, SellerProfile } from "@/types/auth";
+import { Register, Login, CustomerProfile, SellerProfile } from "@/types/auth";
 
-const formatData = (data: Register | Login, auth: string) => {
-  if (auth === "register") {
-    const registerData = data as Register;
-    return {
-      name: registerData.name,
-      owner: registerData.shopOwner,
-      email: registerData.email,
-      contact_number: registerData.contactNumber,
-      password: registerData.password,
-    };
-  } else {
-    const loginData = data as Login;
-    return {
-      email: loginData.email,
-      password: loginData.password,
-    };
-  }
+const formatData = (data: Login) => {
+  return {
+    email: data.email,
+    password: data.password,
+  };
 };
-
 
 const formatCustomerData = (data: Register) => {
   return {
@@ -32,16 +19,17 @@ const formatCustomerData = (data: Register) => {
   }
 }
 
-export const register = async (details: Register, role: string = "customer") => {
-  const formattedData = {
-    ...formatCustomerData(details),
-    role: role === "seller" ? "merchant" : "customer"
-  };
+/**
+ * Unified Register Service
+ * Everyone registers as a customer by default.
+ */
+export const register = async (details: Register) => {
+  const formattedData = formatCustomerData(details);
   return await axiosInstance.post("/register", formattedData);
 };
 
 export const login = async (credentials: Login) => {
-  const formattedData = formatData(credentials, "login");
+  const formattedData = formatData(credentials);
   const response = await axiosInstance.post("/login", formattedData);
   return response.data;
 };
@@ -64,35 +52,41 @@ export const getProfile = async () => {
 const formatProfileData = (data: CustomerProfile) => {
   return {
     name: data.name,
-    createdAt: data.created_at,
-    updatedAt: data.updated_at,
+    middleName: data.middle_name,
     email: data.email,
     contactNumber: data.contact_number,
-    profileImage: data.logo_image,
-    description: data.description,
-    middleName: data.middle_name,
+    profile_picture: data.profile_picture,
     address: data.address,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+    shop: data.shop,
   };
 };
+
 const formatSellerProfile = (data: SellerProfile) => {
   return {
     name: data.name,
-    createdAt: data.created_at,
-    updatedAt: data.updated_at,
+    middleName: data.middle_name,
     email: data.email,
     contactNumber: data.contact_number,
-    profileImage: data.logo_image,
-    description: data.description,
+    profile_picture: data.profile_picture,
     address: data.address,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+    shop: data.shop,
     owner: data.owner
   };
 };
 
-export const updateProfile = async (updatedData: EditProfile) => {
+export const updateProfile = async (formData: FormData) => {
   try { 
-    const response = await axiosInstance.post("/profile", updatedData);
+    const response = await axiosInstance.post("/profile", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     
-    return formatProfileData(response.data.user || response.data.customer)
+    return response.data;
   } catch (error) {
     console.error("Error updating profile:", error);
     throw error; 

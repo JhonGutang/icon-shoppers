@@ -3,8 +3,8 @@
 import PublicLayout from "@/layout/PublicLayout";
 import { useParams } from "next/navigation";
 import { useEffect, useState, MouseEvent } from "react";
-import useProductAction from "@/hooks/useProductActions";
 import useCustomerActions from "@/hooks/useCustomerActions";
+import { useProductDetails } from "@/hooks/queries/useProductsQuery";
 import useRedirectLink from "@/hooks/useRedirectLink";
 import CartNavbar from "@/components/mobile/CartNavbar";
 import { Button } from "@/components/ui/button";
@@ -19,28 +19,24 @@ import Details from "@/components/product/Details";
 const ProductPage = () => {
   const { redirectLink } = useRedirectLink();
   const { handleAddToCart } = useCustomerActions();
-  const { product, handleFetchSpecificProduct } = useProductAction();
   const { productName } = useParams();
-
   const id = Array.isArray(productName)
     ? productName[0]?.split(/[\s,_-]+/)[0]
     : productName?.split(/[\s,_-]+/)[0];
 
+  const { data: product } = useProductDetails(id || "");
+
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
 
-  useEffect(() => {
-    if (id) {
-      handleFetchSpecificProduct(Number(id));
-    }
-  }, []);
+  // useEffect removed as useProductDetails handles fetching automatically
 
   const redirectAfterAdd = (event: MouseEvent<HTMLButtonElement>) => {
     if (!product) return;
 
     setIsLoading(true);
     handleAddToCart(event, product);
-    redirectLink("/home");
+    redirectLink("/");
     setIsLoading(false);
   };
 

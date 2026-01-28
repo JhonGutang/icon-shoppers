@@ -43,7 +43,7 @@ const Checkout = () => {
     return (
       <div className="flex flex-col gap-2 items-center justify-center h-[80vh]">
         <div className="text-lg font-bold mb-5">Cart is Empty</div>
-        <Button onClick={() => router.push("/home?section=Products")}>
+        <Button onClick={() => router.push("/search")}>
           Find Products you Fancy
         </Button>
       </div>

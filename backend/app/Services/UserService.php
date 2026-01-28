@@ -3,41 +3,40 @@
 namespace App\Services;
 
 use App\Interfaces\Repositories\UserRepositoryInterface;
-use App\Models\Shop;
-use App\Models\User;
 use App\Interfaces\Services\ImageServiceInterface;
 use App\Interfaces\Services\UserServiceInterface;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Response;
 
 class UserService implements UserServiceInterface
 {
     /**
      * Authenticate a customer with given credentials.
      *
-     * @param array $credentials
+     * @param  array  $credentials
      * @return mixed
      */
-    protected $userRepository, $imageService;
+    protected $userRepository;
+
+    protected $imageService;
 
     public function __construct(
         UserRepositoryInterface $userRepository,
         ImageServiceInterface $imageService,
-    )
-    {
+    ) {
         $this->userRepository = $userRepository;
         $this->imageService = $imageService;
     }
-
 
     public function authenticateUser(array $credentials)
     {
         try {
             $user = $this->userRepository->findByEmail($credentials['email']);
-            if (!Auth::attempt($credentials)) {
+            if (! Auth::attempt($credentials)) {
                 return Response::json('Invalid Credentials', 401);
             }
             /** @var \App\Models\User $user */
@@ -45,15 +44,19 @@ class UserService implements UserServiceInterface
 
             if ($user->status === User::STATUS_SUSPENDED) {
                 Auth::logout();
+
                 return Response::json('Account is suspended', 403);
             }
 
             $token = $user->createToken('auth-token')->plainTextToken;
+
             return [
                 'user' => $user,
-                'token' => $token
+                'token' => $token,
+                'has_shop' => $user->hasShop(),
             ];
         } catch (Exception $e) {
+
             return Response::json(['error' => 'Authentication failed', 'message' => $e->getMessage()], 500);
         }
     }
@@ -62,54 +65,32 @@ class UserService implements UserServiceInterface
     {
         DB::beginTransaction();
         try {
-            $role = $validatedData['role'] ?? User::ROLE_CUSTOMER;
-            $validatedData['role'] = $role;
+            $validatedData['role'] = User::ROLE_CUSTOMER;
             $validatedData['password'] = Hash::make($validatedData['password']);
-            
-            // If it's a merchant registration from ShopController, map 'owner' to 'name'
-            if ($role === User::ROLE_MERCHANT && isset($validatedData['owner'])) {
-                $shopName = $validatedData['name'];
-                $validatedData['name'] = $validatedData['owner'];
-            }
 
             $registeredUser = $this->userRepository->create($validatedData);
 
-            if ($role === User::ROLE_MERCHANT) {
-                Shop::create([
-                    'name' => $shopName ?? $registeredUser->name . "'s Shop",
-                    'owner_id' => $registeredUser->id,
-                    'status' => Shop::STATUS_ACTIVE,
-                ]);
-            }
-
             DB::commit();
+
             return $registeredUser;
         } catch (Exception $e) {
             DB::rollBack();
+
             return Response::json(['error' => 'Registration failed', 'message' => $e->getMessage()], 500);
         }
     }
 
     public function updateUser(array $validatedData, int $userId)
     {
-        DB::beginTransaction();
-        $uploadedImagePath = null;
         try {
-            if ($validatedData['logo_file']) {
-                $this->imageService->deleteImageIfExists($validatedData['logo_file'], $userId);
-                $uploadedImagePath = $this->imageService->uploadImage($validatedData['logo_file'], 'shop-logos');
-                $validatedData['logo_image'] = $uploadedImagePath;
-            }
+            DB::beginTransaction();
             $updatedUser = $this->userRepository->update($validatedData, $userId);
             DB::commit();
+
             return $updatedUser;
         } catch (\Exception $e) {
             DB::rollBack();
-            if ($uploadedImagePath) {
-                $this->imageService->deleteImageIfExists($validatedData['logo_file']);
-            }
-            return Response::json(['error' => 'Update failed', 'message' => $e->getMessage()], 500);
+            throw $e;
         }
     }
 }
-

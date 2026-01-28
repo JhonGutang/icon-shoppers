@@ -1,118 +1,69 @@
-"use client";
-import ProductCard from "@/components/ProductCard";
-import useProductAction from "@/hooks/useProductActions";
-import { Product } from "@/types/product";
-import { useEffect, useState } from "react";
+import { useInfiniteProducts } from "@/hooks/queries/useProductsQuery";
+import { useEffect, useRef } from "react";
 import { Button } from "../ui/button";
-import { Skeleton } from "../ui/skeleton";
-import { Input } from "../ui/input";
-import { searchProducts } from "@/services/productService";
+import { Loader2 } from "lucide-react";
+import ProductContainer from "../ProductContainer";
 
 interface ProductProps {
   location: string;
+  sort?: string;
 }
 
-const Products: React.FC<ProductProps> = ({ location }) => {
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const { handleFetchAllProducts } = useProductAction();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [activeCategory, setActiveCategory] = useState<string>("all");
-  const [search, setSearch] = useState<string>("");
+const Products: React.FC<ProductProps> = ({ sort = "newest" }) => {
+  const observerTarget = useRef<HTMLDivElement>(null);
+  
+  const { 
+    data, 
+    isLoading, 
+    fetchNextPage, 
+    hasNextPage, 
+    isFetchingNextPage 
+  } = useInfiniteProducts({ 
+    sort 
+  });
+  
+  const allProducts = data?.pages.flatMap(page => page.data) || [];
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const products = await handleFetchAllProducts(activeCategory);
-      setAllProducts(products);
-      setLoading(false);
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
 
-    fetchProducts();
-  }, [activeCategory]);
-
-  const handleCategoryChange = (category: string) => {
-    setActiveCategory(category);
-  };
-
-  const handleSearchChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const searchTerm = event.target.value;
-    setSearch(searchTerm);
-    setLoading(true);
-
-    const updateProducts = async (products: Product[]) => {
-      setAllProducts(products);
-      setActiveCategory(
-        products.some((product) => product.is_featured) ? "featured" : "all"
-      );
-    };
-
-    if (searchTerm) {
-      const searchedProducts = await searchProducts(searchTerm);
-      await updateProducts(searchedProducts);
-    } else {
-      setSearch("");
-      setActiveCategory("all");
-      const products = await handleFetchAllProducts("all");
-      setAllProducts(products);
-      setLoading(false);
-      return;
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
     }
 
-    setLoading(false);
-  };
-
-  const categories = ["all", "featured"];
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <div className="w-full h-full">
-      <div className="w-full px-6">
-        <div className="text-xl ">Products</div>
-        <div className="w-full flex items-center gap-3 py-3">
-          <div>
-            {location === "Products" && (
-              <Input
-                placeholder="Search Shops..."
-                className="w-[50vw] h-[45px] rounded-full pl-5"
-                value={search}
-                onChange={handleSearchChange}
-              />
-            )}
+    <ProductContainer
+      products={allProducts}
+      isLoading={isLoading}
+    >
+      <div ref={observerTarget} className="col-span-full py-2 flex justify-center w-full">
+        {isFetchingNextPage ? (
+          <div className="flex flex-col items-center gap-2">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Loading more products...</p>
           </div>
-          {categories.map((category) => (
-            <Button
-              key={category}
-              className={`rounded-full ${
-                activeCategory === category ? "bg-green-600" : ""
-              } hover:bg-white hover:text-green-600`}
-              variant={activeCategory === category ? undefined : "ghost"}
-              onClick={() => handleCategoryChange(category)}
-            >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
-            </Button>
-          ))}
-        </div>
+        ) : hasNextPage ? (
+          <Button 
+            variant="outline" 
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+            className="rounded-full px-8"
+          >
+            Load More
+          </Button>
+        ) : null}
       </div>
-      <div className="flex justify-center">
-        <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 gap-4 p-3 space-y-4 max-w-7xl mx-auto">
-          {loading ? (
-            Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="break-inside-avoid w-full">
-                <Skeleton className="h-80 w-70" />
-              </div>
-            ))
-          ) : allProducts.length > 0 ? (
-            allProducts.map((product) => (
-              <div key={product.id} className="break-inside-avoid w-full">
-                <ProductCard product={product} />
-              </div>
-            ))
-          ) : (
-            <div className="text-center w-full ">No products found</div> // Fallback message
-          )}
-        </div>
-      </div>
-    </div>
+    </ProductContainer>
   );
 };
 

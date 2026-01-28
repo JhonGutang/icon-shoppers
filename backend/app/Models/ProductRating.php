@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class ProductRating extends Model
 {
@@ -19,7 +19,6 @@ class ProductRating extends Model
     /**
      * Relationships
      */
-
     public function product()
     {
         return $this->belongsTo(Product::class);

@@ -3,199 +3,195 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Interfaces\Services\ImageServiceInterface;
+use App\Interfaces\Services\ProductServiceInterface;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
+    protected $productService;
+
+    protected $imageService;
+
+    public function __construct(ProductServiceInterface $productService, ImageServiceInterface $imageService)
+    {
+        $this->productService = $productService;
+        $this->imageService = $imageService;
+    }
 
     public function index()
     {
-        $userid = Auth::guard('shop-api')->user()->id;
-        $products = Product::where('shop_id', $userid)->get()->values();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $shop = $user->shop;
+
+        if (! $shop) {
+            return response()->json([], 404);
+        }
+
+        $products = Product::where('shop_id', $shop->id)->get()->values();
+
         return response()->json($products);
     }
 
+    /**
+     * Customer facing product listing with search, filtering and pagination
+     */
     public function fetchAllProducts(Request $request)
     {
-        $query = Product::with('shop:id,name')->where('is_visible', true);
+        $query = $request->query('query') ?? $request->query('search');
+        $filters = $request->only(['category_id', 'min_price', 'max_price', 'rating', 'sort', 'type']);
+        $page = $request->query('page', 1);
+        $perPage = $request->query('per_page', 20);
 
+        // Map type=featured to internal filter if needed
         if ($request->query('type') === 'featured') {
-            $query->where('is_featured', true);
-        } elseif ($request->query('type') === 'all') {
-            // No additional conditions needed for all products
-        } else {
-            return response()->json([]);
+            return $this->fetchFeaturedProducts($request);
         }
 
-        $products = $query->get()->map(function($product) {
-            return [
-                'id' => $product->id,
-                'name' => $product->name,
-                'shop_id' => $product->shop_id,
-                'price' => $product->price,
-                'quantity' => $product->quantity,
-                'image' => $product->image,
-                'is_visible' => $product->is_visible,
-                'is_featured' => $product->is_featured,
-                'shop_name' => $product->shop->name ?? null,
-            ];
-        });
+        $products = $this->productService->searchProducts($query, $filters, $page, $perPage);
 
-        return response()->json($products->values());
+        return response()->json($products);
     }
 
-    public function searchProducts(Request $request)
+    public function fetchFeaturedProducts(Request $request)
     {
-        $searchTerm = $request->query('search');
-        $products = Product::with('shop:id,name')
-            ->where('is_visible', true)
-            ->where(function($query) use ($searchTerm) {
-                $query->where('name', 'like', '%' . $searchTerm . '%')
-                      ->orWhere('description', 'like', '%' . $searchTerm . '%'); // Assuming there's a description field
-            })
-            ->get()
-            ->map(function($product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'shop_id' => $product->shop_id,
-                    'price' => $product->price,
-                    'quantity' => $product->quantity,
-                    'image' => $product->image,
-                    'is_visible' => $product->is_visible,
-                    'is_featured' => $product->is_featured,
-                    'shop_name' => $product->shop->name ?? null,
-                ];
-            });
+        $page = $request->query('page', 1);
+        $perPage = $request->query('per_page', 20);
+        $products = $this->productService->getFeaturedProducts($page, $perPage);
 
-        return response()->json($products->values());
+        return response()->json($products);
     }
 
-    public function fetchFeaturedProducts() {
-        $products = Product::with('shop:id,name')
-            ->where('is_featured', true)
-            ->where('is_visible', true)
-            ->get()
-            ->map(function($product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'shop_id' => $product->shop_id,
-                    'price' => $product->price,
-                    'quantity' => $product->quantity,
-                    'image' => $product->image,
-                    'is_visible' => $product->is_visible,
-                    'is_featured' => $product->is_featured,
-                    'shop_name' => $product->shop->name ?? null,
-                ];
-            });
+    public function fetchSpecificProduct($slug)
+    {
+        // Support both ID and Slug for backward compatibility if needed,
+        // but Unified Flow uses Slugs for SEO
+        if (is_numeric($slug)) {
+            $product = Product::with(['shop', 'category', 'ratings.user', 'variants'])->findOrFail($slug);
+        } else {
+            $product = $this->productService->getProductDetails($slug);
+        }
 
-        return response()->json($products->values());
+        if (! $product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+
+        return response()->json($product);
     }
 
+    public function fetchRelatedProducts($id)
+    {
+        $products = $this->productService->getRelatedProducts($id);
 
-    public function fetchSpecificProduct($id){
-        $product = Product::with('shop:id,name')->find($id);
-        return response()->json([
-            'id' => $product->id,
-            'name' => $product->name,
-            'shop_id' => $product->shop_id,
-            'price' => $product->price,
-            'quantity' => $product->quantity,
-            'image' => $product->image,
-            'description'=> $product->description,
-            'is_visible' => $product->is_visible,
-            'is_featured' => $product->is_featured,
-            'shop_name' => $product->shop->name ?? null,
-        ]);
+        return response()->json($products);
     }
 
+    public function fetchTopSellingProducts(Request $request)
+    {
+        $page = $request->query('page', 1);
+        $perPage = $request->query('per_page', 20);
+        $products = $this->productService->getTopSellingProducts($page, $perPage);
 
+        return response()->json($products);
+    }
+
+    public function fetchByCategory(Request $request, $categoryId)
+    {
+        $filters = $request->only(['min_price', 'max_price', 'rating', 'sort']);
+        $page = $request->query('page', 1);
+        $perPage = $request->query('per_page', 20);
+
+        $products = $this->productService->getProductsByCategory($categoryId, $filters, $page, $perPage);
+
+        return response()->json($products);
+    }
+
+    /**
+     * Merchant operations below
+     */
     public function create(ProductRequest $request)
     {
-        $userId = Auth::guard('shop-api')->user()->id;
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $shop = $user->shop;
+
+        if (! $shop) {
+            return response()->json(['message' => 'Shop not found'], 404);
+        }
+
         $validatedData = $request->validated();
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
+            $imagePath = $this->imageService->uploadImage($request->file('image'), 'products', $shop->slug);
         }
 
         $product = Product::create([
-            'shop_id' => $userId,
+            'shop_id' => $shop->id,
+            'category_id' => $validatedData['category_id'] ?? null,
             'name' => $validatedData['name'],
             'price' => number_format($validatedData['price'], 2, '.', ''),
             'quantity' => $validatedData['quantity'],
+            'stock' => $validatedData['quantity'], // Sync initial stock
+            'status' => Product::STATUS_PUBLISHED,
             'is_visible' => true,
             'is_featured' => false,
             'image' => $imagePath,
+            'description' => $validatedData['description'] ?? null,
         ]);
 
-        return response()->json($product);
+        return response()->json($product, 201);
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(ProductRequest $request, $id)
     {
+        $product = Product::findOrFail($id);
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        if ($product->shop_id !== $user->shop->id) {
+            return response()->json(['message' => 'Unauthorized. This product does not belong to your shop.'], 403);
+        }
+
         $validatedData = $request->validated();
+
         $updateData = [
-            'name' => $validatedData['name'] ?? null,
-            'price' => isset($validatedData['price']) ? number_format($validatedData['price'], 2, '.', '') : null,
-            'quantity' => $validatedData['quantity'] ?? null,
-            'is_visible' => $validatedData['is_visible'] ?? null,
-            'is_featured' => $validatedData['is_featured'] ?? null,
+            'category_id' => $validatedData['category_id'] ?? $product->category_id,
+            'name' => $validatedData['name'] ?? $product->name,
+            'price' => isset($validatedData['price']) ? number_format($validatedData['price'], 2, '.', '') : $product->price,
+            'quantity' => $validatedData['quantity'] ?? $product->quantity,
+            'stock' => $validatedData['quantity'] ?? $product->stock,
+            'is_visible' => $validatedData['is_visible'] ?? $product->is_visible,
+            'is_featured' => $validatedData['is_featured'] ?? $product->is_featured,
+            'status' => $validatedData['status'] ?? $product->status,
         ];
 
-        // Handle image upload
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
+            $this->imageService->deleteImageIfExists($product->image);
+            $imagePath = $this->imageService->uploadImage($request->file('image'), 'products', $product->shop->slug);
             $updateData['image'] = $imagePath;
         }
 
-        $updateData = array_filter($updateData, fn($value) => !is_null($value));
-        Product::where('id', $id)->update($updateData);
-        $product = Product::find($id);
+        $product->update($updateData);
 
         return response()->json($product);
     }
 
-
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        $product->delete();
+        $product = Product::findOrFail($id);
+        $user = Auth::user();
+        if ($product->shop_id !== $user->shop->id) {
+            return response()->json(['message' => 'Unauthorized. This product does not belong to your shop.'], 403);
+        }
+
+        $deleted = $product->delete();
+        if ($deleted) {
+            $this->imageService->deleteImageIfExists($product->image);
+        }
 
         return response()->json(['message' => 'Product deleted successfully']);
     }

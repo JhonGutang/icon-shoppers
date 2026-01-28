@@ -9,6 +9,8 @@ type CartStore = {
   addProduct: (product: Product, quantity?: number) => void;
   deleteProduct: (id: number) => void;
   clearProducts: () => void;
+  removeProduct: (id: number) => void;
+  clearCart: () => void;
   addQuantity: (id: number) => void;
   minusQuantity: (id: number) => void;
   setProducts: (products: ProductInCart[]) => void;
@@ -44,6 +46,13 @@ export const useCartStore = create<CartStore>((set) => ({
       ),
     })),
   clearProducts: () => set({ productsInCart: [] }),
+  removeProduct: (id) =>
+    set((state) => ({
+      productsInCart: state.productsInCart.filter(
+        (product) => product.id !== id
+      ),
+    })),
+  clearCart: () => set({ productsInCart: [] }),
   addQuantity: (id) =>
     set((state) => ({
       productsInCart: state.productsInCart.map((product) =>
@@ -67,8 +76,17 @@ export const useCartStore = create<CartStore>((set) => ({
   clearProductsToCheckout: () => set({ productsToCheckout: [] }),
   fetchCart: async () => {
     try {
-      const orders = await fetchPendingOrders();
-      set({ productsInCart: orders });
+      const response = await fetchPendingOrders();
+      // Flatten the grouped structure from backend: [{ shop: {}, products: [] }] -> [ ...products ]
+      const flattenedProducts = response.flatMap((group: any) => 
+        group.products.map((p: any) => ({
+          ...p,
+          shop_id: group.shop.id,
+          shop: group.shop,
+          shop_name: group.shop.name
+        }))
+      );
+      set({ productsInCart: flattenedProducts });
     } catch (error) {
       console.error("Failed to fetch cart:", error);
     }
