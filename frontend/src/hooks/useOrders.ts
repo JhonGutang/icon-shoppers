@@ -14,13 +14,14 @@ export const useOrders = () => {
       setLoading(true);
       if (!token) throw new Error("No authentication token");
 
-      const data = await orderService.fetchOrders(status);
+      const response = await orderService.getCustomerOrders(status as any);
+      const data = response.data;
 
       const filteredOrders =
-        !status || status === "all"
+        !status || (status as string) === "all"
           ? data
           : data.filter((order: any) => {
-              return order.status.toUpperCase() === status.toUpperCase();
+              return order.status.toUpperCase() === (status as string).toUpperCase();
             });
 
             setError(null);

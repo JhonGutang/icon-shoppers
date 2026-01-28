@@ -6,10 +6,11 @@ import { ProductWithShop } from "@/types/product";
 import { useEffect, useState } from "react";
 import { useOrders } from "@/hooks/useOrders";
 import { formatStatus, getStatusColor } from "@/lib/orderUtils";
+import { Order } from "@/types/order";
 
 const Orders = () => {
   const { handleOrders } = useCustomerActions();
-  const [orders, setOrders] = useState<ProductWithShop[]>();
+  const [orders, setOrders] = useState<Order[]>();
   const [activeTab, setActiveTab] = useState<string>("all");
   const { handleStatusUpdate } = useOrders();
 
@@ -127,7 +128,7 @@ const Orders = () => {
                     </div>
                     <div className="text-sm flex justify-between">
                       <span className="text-gray-500">Address:</span>
-                      <span className="font-medium text-right max-w-[150px] truncate">{order.shipping_address || "Regional Delivery"}</span>
+                      <span className="font-medium text-right max-w-[150px] truncate">{order.shippingAddress || "Regional Delivery"}</span>
                     </div>
                     <div className="pt-2 border-t flex justify-between items-baseline">
                       <span className="font-bold">Total:</span>
@@ -142,11 +143,11 @@ const Orders = () => {
               </div>
             </div>
             
-            {(order.status === 'SHIPPED' || order.status === 'delivering') && (
+            {((order.status as string).toUpperCase() === 'SHIPPED' || order.status === 'delivering') && (
               <div className="bg-gray-50 p-4 flex justify-end">
                 <Button 
                     className="bg-green-600 hover:bg-green-700 text-white font-bold h-12 px-8 rounded-xl shadow-lg shadow-green-100" 
-                    onClick={() => handleStatusUpdate(String(order.order_id), 'DELIVERED')}
+                    onClick={() => handleStatusUpdate(String(order.id), 'delivered')}
                 >
                   Mark as Received
                 </Button>

@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Mail, Phone, Star, MapPin, Calendar, Info, Store } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 const ShopPage = () => {
   const { shopName } = useParams();
@@ -74,10 +75,10 @@ const ShopPage = () => {
           <Info size={64} className="text-muted-foreground mb-4" />
           <h1 className="text-3xl font-bold mb-2">Shop Not Found</h1>
           <p className="text-muted-foreground max-w-md">
-            The shop you're looking for doesn't exist or has been moved.
+            The shop you&apos;re looking for doesn&apos;t exist or has been moved.
           </p>
           <Button asChild className="mt-8 rounded-full px-8">
-            <a href="/">Back to Home</a>
+            <Link href="/">Back to Home</Link>
           </Button>
         </main>
         <Footer />
@@ -252,7 +253,7 @@ const ShopPage = () => {
                             </div>
                             <span className="text-xs font-bold text-muted-foreground">Verified Buyer</span>
                           </div>
-                          <p className="text-sm font-medium italic">"Great quality and fast delivery! Highly recommend this shop."</p>
+                          <p className="text-sm font-medium italic">&quot;Great quality and fast delivery! Highly recommend this shop.&quot;</p>
                         </div>
                         <div className="p-4 rounded-xl border bg-muted/20">
                           <div className="flex items-center gap-2 mb-2">
@@ -265,7 +266,7 @@ const ShopPage = () => {
                             </div>
                             <span className="text-xs font-bold text-muted-foreground">Verified Buyer</span>
                           </div>
-                          <p className="text-sm font-medium italic">"Fresh products every time. Very friendly seller!"</p>
+                          <p className="text-sm font-medium italic">&quot;Fresh products every time. Very friendly seller!&quot;</p>
                         </div>
                       </div>
 

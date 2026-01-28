@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useSnackbar } from "@/components/context/SnackbarContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 const ShopSettingsPage = () => {
   const { openSnackbar } = useSnackbar();
@@ -87,7 +88,7 @@ const ShopSettingsPage = () => {
         <h2 className="text-xl font-semibold text-gray-900">No Shop Found</h2>
         <p className="text-gray-500 mt-2">You need to create a shop first to access these settings.</p>
         <Button className="mt-6" asChild>
-           <a href="/profile">Go to Profile</a>
+           <Link href="/profile">Go to Profile</Link>
         </Button>
       </div>
     );
@@ -98,7 +99,7 @@ const ShopSettingsPage = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Shop Settings</h1>
-          <p className="text-gray-500">Manage your store's public identity and logistics.</p>
+          <p className="text-gray-500">Manage your store&apos;s public identity and logistics.</p>
         </div>
       </div>
 
@@ -122,7 +123,7 @@ const ShopSettingsPage = () => {
                  <div className="flex items-center gap-6">
                     <div className="h-24 w-24 rounded-2xl overflow-hidden border-2 border-dashed bg-gray-50 flex items-center justify-center group overflow-hidden relative">
                        {shopData.logo_image ? (
-                          <img src={shopData.logo_image} className="h-full w-full object-cover" />
+                          <img src={shopData.logo_image} alt={`${shopData.name} logo`} className="h-full w-full object-cover" />
                        ) : (
                           <Store size={32} className="text-gray-300" />
                        )}
@@ -142,7 +143,7 @@ const ShopSettingsPage = () => {
                  <Label>Shop Banner</Label>
                  <div className="relative h-24 w-full rounded-2xl overflow-hidden border bg-muted group">
                     {shopData.banner_image ? (
-                       <img src={shopData.banner_image} className="h-full w-full object-cover" />
+                       <img src={shopData.banner_image} alt={`${shopData.name} banner`} className="h-full w-full object-cover" />
                     ) : (
                        <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm font-medium">No banner set</div>
                     )}

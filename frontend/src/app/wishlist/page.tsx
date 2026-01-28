@@ -18,7 +18,7 @@ const WishlistPage = () => {
   });
 
 
-  const products = wishlistData?.map((item:any) => item.product) || [];
+  const products = wishlistData?.data.map((item:any) => item.product) || [];
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

@@ -38,8 +38,8 @@ const useCustomerActions = () => {
 
   const handleOrders = async (status: string) => {
     if(!token) return
-    const products = await orderService.fetchCustomerOrders(status)
-    return products
+    const response = await orderService.getCustomerOrders(status as any)
+    return response.data
   }
 
   const handleAddToCart = (

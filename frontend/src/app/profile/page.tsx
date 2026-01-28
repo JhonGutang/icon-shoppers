@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import { addressService } from "@/services/addressService";
@@ -40,9 +40,10 @@ import {
 import { cn } from "@/lib/utils";
 import useAuthStore from "@/stores/useAuthStore";
 
-const ProfilePage = () => {
+const ProfilePageContent = () => {
   const searchParams = useSearchParams();
   const sectionParam = searchParams.get("section");
+  // ... rest of lines 46-511
   const { openSnackbar } = useSnackbar();
   const { userType } = useAuthStore();
 
@@ -510,4 +511,18 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen flex-col bg-muted/30">
+        <Navbar />
+        <main className="container mx-auto px-4 py-8 space-y-8">
+           <Skeleton className="h-64 w-full rounded-2xl" />
+           <Skeleton className="h-96 w-full rounded-2xl" />
+        </main>
+      </div>
+    }>
+      <ProfilePageContent />
+    </Suspense>
+  );
+}

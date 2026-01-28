@@ -9,14 +9,15 @@ import { Card } from "@/components/ui/card";
 import { useMerchantProducts } from "@/hooks/queries/useProductsQuery";
 
 const ShopProductsPage = () => {
-  const { data: products, isLoading, isError, refetch } = useMerchantProducts();
+  const { data, isLoading, isError, refetch } = useMerchantProducts();
+  const products = data as any[];
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-3xl font-extrabold tracking-tight text-gray-900">Product Management</h2>
-          <p className="mt-1 text-gray-500">Add, edit, and manage your shop's inventory.</p>
+          <p className="mt-1 text-gray-500">Add, edit, and manage your shop&apos;s inventory.</p>
         </div>
         <div className="flex gap-2">
           <Button 

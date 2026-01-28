@@ -8,7 +8,6 @@ import Checkout from "@/components/customer-home/Checkout";
 import Products from "@/components/customer-home/Products";
 import Shops from "@/components/customer-home/Shops";
 import Profile from "@/components/customer-home/Profile";
-import SellerDashboard from "@/components/customer-home/SellerDashboard";
 import useAuthStore from "@/stores/useAuthStore";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -32,7 +31,7 @@ const HomeContent = () => {
       <UnifiedNavbar />
       <div className="flex-1 px-4 py-8 lg:px-20 overflow-auto">
         {isSellerMode ? (
-            <SellerDashboard />
+            <div className="text-center py-20">Redirecting to shop...</div>
         ) : (
             <>
                 {activeComponent === "Home" && <Default />}

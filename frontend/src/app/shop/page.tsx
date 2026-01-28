@@ -87,7 +87,7 @@ const ShopDashboard = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-extrabold tracking-tight text-gray-900">Your Shop Insights</h2>
-          <p className="mt-1 text-gray-500">Real-time overview of your store's performance.</p>
+          <p className="mt-1 text-gray-500">Real-time overview of your store&apos;s performance.</p>
         </div>
         <div className="flex gap-3">
           <Link href="/shop/products">

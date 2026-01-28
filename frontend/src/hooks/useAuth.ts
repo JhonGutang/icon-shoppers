@@ -102,7 +102,7 @@ const useAuth = () => {
 
   const handleUpdateProfile = async (updatedData: EditProfile) => {
       try {
-        const response = await updateProfile(updatedData);
+        const response = await updateProfile(updatedData as any);
         openSnackbar("Profile updated successfully!", "success");
         return response;
       } catch (error) {

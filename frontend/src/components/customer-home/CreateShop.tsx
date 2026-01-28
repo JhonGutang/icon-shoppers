@@ -37,7 +37,7 @@ const CreateShop = () => {
       await createShop(form);
       
       // Update local storage/store to reflect merchant status
-      setAuth(accessToken, "merchant", id);
+      setAuth(accessToken, "merchant", id, true);
       setSellerMode(true);
 
       openSnackbar("Shop created successfully! You are now a merchant. Switching to Seller Mode...", "success");

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import Link from "next/link";
 import { ShoppingCart, Heart, User, Search, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -45,7 +45,9 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
         {/* Search Bar - Hidden on Mobile, shown on tablet/desktop */}
         {!isLanding && (
           <div className="hidden flex-1 justify-center px-8 md:flex">
-            <SearchBar />
+            <Suspense fallback={<div className="h-10 w-full max-w-lg rounded-full bg-muted/50 animate-pulse" />}>
+              <SearchBar />
+            </Suspense>
           </div>
         )}
 

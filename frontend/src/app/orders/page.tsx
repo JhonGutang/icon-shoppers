@@ -99,7 +99,7 @@ const OrderCard = ({ order }: { order: Order }) => {
             <span className="text-muted-foreground">|</span>
             <span className="text-xs font-mono text-muted-foreground">#{order.orderNumber}</span>
         </div>
-        <Badge variant="outline" className={cn("rounded-full px-3 py-0.5 font-bold text-[10px]", statusColors[order.status])}>
+        <Badge variant="outline" className={cn("rounded-full px-3 py-0.5 font-bold text-[10px]", statusColors[(order.status as string).toUpperCase()])}>
           {order.statusLabel}
         </Badge>
       </CardHeader>
@@ -140,12 +140,12 @@ const OrderCard = ({ order }: { order: Order }) => {
             <Button variant="outline" size="sm" asChild className="rounded-full flex-1 sm:flex-none">
                 <Link href={`/orders/${order.orderNumber}`}>Details</Link>
             </Button>
-            {order.status === 'ORDERED' && (
+            {(order.status as string) === 'ORDERED' && (
                 <Button variant="ghost" size="sm" className="text-destructive hover:bg-red-50 hover:text-red-600 rounded-full flex-1 sm:flex-none">
                     Cancel
                 </Button>
             )}
-            {(order.status === 'DELIVERED') && (
+            {(order.status as string) === 'DELIVERED' && (
                 <Button size="sm" className="rounded-full flex-1 sm:flex-none">
                    Received
                 </Button>

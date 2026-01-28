@@ -19,7 +19,7 @@ interface EditProductProps {
 
 const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
   const {openSnackbar} = useSnackbar()
-  const [formData, setFormData] = useState<ProductToUpdate>({ name: "", quantity: 0, price: "", image: undefined });
+  const [formData, setFormData] = useState<ProductToUpdate>({ id: product?.id || 0, name: "", quantity: 0, price: "", image: undefined });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -32,6 +32,7 @@ const EditProduct: React.FC<EditProductProps> = ({ product, onSave }) => {
 
   const populateFormFromProduct = (product: Product) => {
     setFormData({
+      id: product.id,
       name: product.name ?? "",
       quantity: product.quantity ?? 0,
       price: product.price?.toString() ?? "",
