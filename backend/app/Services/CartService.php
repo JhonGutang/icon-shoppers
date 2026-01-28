@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 class CartService implements CartServiceInterface
 {
     protected $cartRepository;
+
     public function __construct(CartRepositoryInterface $cartRepository)
     {
         $this->cartRepository = $cartRepository;
@@ -20,6 +21,7 @@ class CartService implements CartServiceInterface
         try {
             $items = $this->cartRepository->getItems($userId);
             DB::commit();
+
             return $items;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -45,8 +47,9 @@ class CartService implements CartServiceInterface
         try {
             $cartWithItems = $this->cartRepository->getCartWithItems($userId, $productId);
 
-            if (!$cartWithItems) {
+            if (! $cartWithItems) {
                 DB::rollBack();
+
                 return response()->json(['message' => 'No active cart found or product not found in cart.'], 404);
             }
             $this->cartRepository->removeItems($cartWithItems);

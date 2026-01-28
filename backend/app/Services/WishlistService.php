@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Interfaces\Services\WishlistServiceInterface;
 use App\Interfaces\Repositories\WishlistRepositoryInterface;
+use App\Interfaces\Services\WishlistServiceInterface;
 
 class WishlistService implements WishlistServiceInterface
 {
@@ -33,10 +33,12 @@ class WishlistService implements WishlistServiceInterface
     {
         if ($this->wishlistRepository->isInWishlist($userId, $productId)) {
             $this->wishlistRepository->removeFromWishlist($userId, $productId);
+
             return ['status' => 'removed', 'message' => 'Product removed from wishlist'];
         }
 
         $this->wishlistRepository->addToWishlist($userId, $productId);
+
         return ['status' => 'added', 'message' => 'Product added to wishlist'];
     }
 }

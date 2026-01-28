@@ -2,42 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Shop;
-use Illuminate\Http\Request;
-use App\Http\Requests\ShopUpdateFormRequest;
 use App\Http\Requests\ShopCreateRequest;
+use App\Http\Requests\ShopUpdateFormRequest;
+use App\Interfaces\Services\ImageServiceInterface;
 use App\Interfaces\Services\ShopServiceInterface;
 use App\Interfaces\Services\UserServiceInterface;
-use App\Interfaces\Services\ImageServiceInterface;
+use App\Models\Shop;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ShopController extends Controller
 {
     protected $userService;
+
     protected $shopService;
+
     protected $imageService;
 
     public function __construct(
         UserServiceInterface $userService,
         ShopServiceInterface $shopService,
         ImageServiceInterface $imageService,
-    )
-    {
+    ) {
         $this->userService = $userService;
         $this->shopService = $shopService;
         $this->imageService = $imageService;
     }
 
-
     public function index()
     {
         $user = Auth::user();
         $user->load('shop');
+
         return response()->json(['user' => $user]);
     }
 
-    
     public function create(ShopCreateRequest $request)
     {
         /** @var \App\Models\User $user */
@@ -70,7 +70,7 @@ class ShopController extends Controller
 
         return response()->json([
             'message' => 'Shop created successfully',
-            'shop' => $shop
+            'shop' => $shop,
         ], 201);
     }
 
@@ -82,16 +82,24 @@ class ShopController extends Controller
 
         // 1. Handle User Update
         $userData = [];
-        if (isset($validatedData['user_name'])) $userData['name'] = $validatedData['user_name'];
-        if (isset($validatedData['middle_name'])) $userData['middle_name'] = $validatedData['middle_name'];
-        if (isset($validatedData['email'])) $userData['email'] = $validatedData['email'];
-        if (isset($validatedData['contact_number'])) $userData['contact_number'] = $validatedData['contact_number'];
-        
+        if (isset($validatedData['user_name'])) {
+            $userData['name'] = $validatedData['user_name'];
+        }
+        if (isset($validatedData['middle_name'])) {
+            $userData['middle_name'] = $validatedData['middle_name'];
+        }
+        if (isset($validatedData['email'])) {
+            $userData['email'] = $validatedData['email'];
+        }
+        if (isset($validatedData['contact_number'])) {
+            $userData['contact_number'] = $validatedData['contact_number'];
+        }
+
         if ($request->hasFile('profile_picture')) {
             $userData['profile_picture'] = $request->file('profile_picture')->store('profiles', 'public');
         }
 
-        if (!empty($userData)) {
+        if (! empty($userData)) {
             $this->userService->updateUser($userData, $user->id);
         }
 
@@ -99,9 +107,15 @@ class ShopController extends Controller
         $shop = $user->shop;
         if ($shop) {
             $shopData = [];
-            if (isset($validatedData['shop_name'])) $shopData['name'] = $validatedData['shop_name'];
-            if (isset($validatedData['description'])) $shopData['description'] = $validatedData['description'];
-            if (isset($validatedData['shipping_fee'])) $shopData['shipping_fee'] = $validatedData['shipping_fee'];
+            if (isset($validatedData['shop_name'])) {
+                $shopData['name'] = $validatedData['shop_name'];
+            }
+            if (isset($validatedData['description'])) {
+                $shopData['description'] = $validatedData['description'];
+            }
+            if (isset($validatedData['shipping_fee'])) {
+                $shopData['shipping_fee'] = $validatedData['shipping_fee'];
+            }
 
             if ($request->hasFile('logo_image')) {
                 $shopData['logo_image'] = $this->imageService->uploadImage($request->file('logo_image'), 'logos', $shop->slug);
@@ -111,7 +125,7 @@ class ShopController extends Controller
                 $shopData['banner_image'] = $this->imageService->uploadImage($request->file('banner_image'), 'banners', $shop->slug);
             }
 
-            if (!empty($shopData)) {
+            if (! empty($shopData)) {
                 $this->shopService->updateShop($shopData, $shop->id);
             }
         }
@@ -124,35 +138,39 @@ class ShopController extends Controller
         ]);
     }
 
-    public function getAllShops(Request $request) {
+    public function getAllShops(Request $request)
+    {
         $filters = $request->all();
         $shops = $this->shopService->getAll($filters);
+
         return response()->json($shops);
     }
 
-    public function getSpecificShop($name) {
+    public function getSpecificShop($name)
+    {
         $shop = $this->shopService->getShop($name);
-        
-        if (!$shop) {
+
+        if (! $shop) {
             return response()->json([
                 'success' => false,
-                'message' => 'Shop not found. The shop may not exist or is inactive.'
+                'message' => 'Shop not found. The shop may not exist or is inactive.',
             ], 404);
         }
-        
+
         return response()->json([
             'success' => true,
-            'data' => $shop
+            'data' => $shop,
         ], 200);
     }
 
-
-    public function logout () {
+    public function logout()
+    {
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $user->tokens()->delete();
+
         return response()->json([
-            'message' => 'Logged out successfully'
+            'message' => 'Logged out successfully',
         ]);
     }
 
@@ -160,12 +178,12 @@ class ShopController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        if (!$user->hasShop()) {
+        if (! $user->hasShop()) {
             return response()->json(['message' => 'Shop not found.'], 404);
         }
 
         $analytics = $this->shopService->getAnalytics($user->shop->id);
+
         return response()->json($analytics);
     }
-
 }

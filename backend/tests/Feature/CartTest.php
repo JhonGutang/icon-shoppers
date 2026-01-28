@@ -1,9 +1,8 @@
 <?php
 
-use App\Models\User;
-use App\Models\Product;
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Product;
 
 test('authenticated customer can view their cart', function () {
     $user = $this->actingAsCustomer();
@@ -24,7 +23,7 @@ test('authenticated customer can add product to cart', function () {
 
     $response->assertStatus(200)
         ->assertJson(['message' => 'Product added to cart successfully']);
-    
+
     $this->assertDatabaseHas('cart_items', [
         'product_id' => $product->id,
     ]);
@@ -39,7 +38,7 @@ test('authenticated customer can remove item from cart', function () {
 
     $response->assertStatus(200)
         ->assertJson(['message' => 'Product removed from cart successfully.']);
-    
+
     $this->assertDatabaseMissing('cart_items', ['id' => $cartItem->id]);
 });
 

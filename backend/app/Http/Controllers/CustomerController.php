@@ -24,19 +24,21 @@ class CustomerController extends Controller
     public function index()
     {
         $user = Auth::user();
+
         return $user;
     }
 
-    public function login(LoginFormRequest $request) {
+    public function login(LoginFormRequest $request)
+    {
         $credentials = $request->validated();
         $authenticatedUser = $this->userService->authenticateUser($credentials);
+
         return response()
             ->json([
                 'user' => $authenticatedUser['user'],
                 'token' => $authenticatedUser['token'],
-                'type' => 'customer'
-            ])
-        ;
+                'type' => 'customer',
+            ]);
     }
 
     public function create(CustomerRequest $request)
@@ -44,8 +46,9 @@ class CustomerController extends Controller
         $validatedData = $request->validated();
         $validatedData['role'] = User::ROLE_CUSTOMER;
         $registeredUser = $this->userService->registerUser($validatedData);
+
         return response()->json([
-            'message'  => 'Customer created successfully.',
+            'message' => 'Customer created successfully.',
             'customer' => $registeredUser,
         ], 201);
     }
@@ -55,18 +58,21 @@ class CustomerController extends Controller
         $user = Auth::user();
         $validatedData = $request->validated();
         $updatedCustomer = $this->userService->updateUser($validatedData, $user->id);
+
         return response()->json([
             'message' => 'Customer updated successfully.',
             'customer' => $updatedCustomer,
         ]);
     }
 
-    public function logout () {
+    public function logout()
+    {
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $user->tokens()->delete();
+
         return response()->json([
-            'message' => 'Logged out successfully'
+            'message' => 'Logged out successfully',
         ]);
     }
 }

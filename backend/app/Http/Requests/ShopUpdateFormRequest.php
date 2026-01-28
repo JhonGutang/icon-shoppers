@@ -25,10 +25,10 @@ class ShopUpdateFormRequest extends FormRequest
             // User fields
             'user_name' => 'sometimes|string|max:255',
             'middle_name' => 'nullable|string|max:255',
-            'email' => 'sometimes|email|unique:users,email,' . $this->user()->id,
+            'email' => 'sometimes|email|unique:users,email,'.$this->user()->id,
             'contact_number' => 'sometimes|string|max:20',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            
+
             // Shop fields
             'shop_name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',

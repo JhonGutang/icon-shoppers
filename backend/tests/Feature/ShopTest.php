@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\User;
 use App\Models\Shop;
+use App\Models\User;
 use Laravel\Sanctum\Sanctum;
 
 test('anyone can view all shops', function () {
@@ -29,17 +29,17 @@ test('authenticated user can create a shop', function () {
     $data = [
         'name' => 'Unique Shop Name',
         'description' => 'A very unique shop',
-        'category' => 'Food'
+        'category' => 'Food',
     ];
 
     $response = $this->postJson('/api/shops', $data);
 
     $response->assertStatus(201)
         ->assertJsonFragment(['name' => 'Unique Shop Name']);
-    
+
     $this->assertDatabaseHas('shops', [
         'name' => 'Unique Shop Name',
-        'owner_id' => $user->id
+        'owner_id' => $user->id,
     ]);
 });
 
@@ -53,7 +53,7 @@ test('merchant can view shop analytics', function () {
             'total_revenue',
             'total_orders',
             'total_products',
-            'average_rating'
+            'average_rating',
         ]);
 });
 

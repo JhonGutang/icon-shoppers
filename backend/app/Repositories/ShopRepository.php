@@ -7,11 +7,11 @@ use App\Models\Shop;
 
 class ShopRepository implements ShopRepositoryInterface
 {
-
-    public function getAllShops($filters = []) {
+    public function getAllShops($filters = [])
+    {
         $searchParam = $filters['search'] ?? $filters['query'] ?? null;
         $sortBy = $filters['sort'] ?? $filters['sort_by'] ?? 'created_at';
-        
+
         $query = Shop::where('status', Shop::STATUS_ACTIVE)
             ->when($searchParam, function ($query) use ($searchParam) {
                 $query->where('name', 'like', "%{$searchParam}%");
@@ -32,7 +32,7 @@ class ShopRepository implements ShopRepositoryInterface
                         ->whereIn('product_id', Shop::select('id')->whereColumn('shops.id', 'product_ratings.product_id')), // This might be complex, simplified for now
                     'desc'
                 );
-                // Better approach: use a helper or specific column if exists, 
+                // Better approach: use a helper or specific column if exists,
                 // but let's stick to creation for now if complex.
                 break;
             case 'name_asc':
@@ -45,7 +45,8 @@ class ShopRepository implements ShopRepositoryInterface
         return $query->paginate(12);
     }
 
-    public function getSpecificShop ($shopSlug) {
+    public function getSpecificShop($shopSlug)
+    {
         return Shop::with('products')
             ->where('slug', $shopSlug)
             ->where('status', Shop::STATUS_ACTIVE)
@@ -65,19 +66,19 @@ class ShopRepository implements ShopRepositoryInterface
     public function getAnalytics($shopId)
     {
         $shop = Shop::findOrFail($shopId);
-        
+
         $totalRevenue = $shop->orders()
             ->where('status', \App\Models\Order::STATUS_DELIVERED)
             ->sum('total_amount');
-            
+
         $pendingOrders = $shop->orders()
             ->where('status', \App\Models\Order::STATUS_ORDERED)
             ->count();
-            
+
         $totalProducts = $shop->products()->count();
-        
+
         $totalOrders = $shop->orders()->count();
-        
+
         $averageRating = \App\Models\ProductRating::whereIn('product_id', $shop->products()->pluck('id'))
             ->avg('rating') ?: 0;
 
@@ -94,6 +95,7 @@ class ShopRepository implements ShopRepositoryInterface
     {
         $shop = Shop::findOrFail($shopId);
         $shop->update($data);
+
         return $shop;
     }
 }

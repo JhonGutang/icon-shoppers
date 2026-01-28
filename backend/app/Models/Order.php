@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class Order extends Model
@@ -13,22 +12,34 @@ class Order extends Model
 
     // Updated status constants to match unified flow
     const STATUS_ORDERED = 'ordered';
+
     const STATUS_APPROVED = 'approved';
+
     const STATUS_REJECTED = 'rejected';
+
     const STATUS_PROCESSING = 'processing';
+
     const STATUS_DELIVERING = 'delivering';
+
     const STATUS_DELIVERED = 'delivered';
+
     const STATUS_RECEIVED = 'received';
+
     const STATUS_COMPLETED = 'completed';
+
     const STATUS_CANCELLED = 'cancelled';
 
     // Keep old constants for backward compatibility
     const STATUS_PENDING = 'ordered';
+
     const STATUS_SHIPPED = 'delivering';
 
     const PAYMENT_STATUS_PENDING = 'pending';
+
     const PAYMENT_STATUS_PAID = 'paid';
+
     const PAYMENT_STATUS_FAILED = 'failed';
+
     const PAYMENT_STATUS_REFUNDED = 'refunded';
 
     /**
@@ -37,7 +48,7 @@ class Order extends Model
     public static function normalizeStatus($status): string
     {
         $status = strtolower($status);
-        
+
         $map = [
             'pending' => self::STATUS_ORDERED,
             'shipped' => self::STATUS_DELIVERING,
@@ -48,7 +59,7 @@ class Order extends Model
 
         return $map[$status] ?? $status;
     }
-    
+
     protected $fillable = [
         'user_id',
         'shop_id',
@@ -70,7 +81,7 @@ class Order extends Model
 
         static::creating(function ($order) {
             if (empty($order->order_number)) {
-                $order->order_number = 'ORD-' . strtoupper(Str::random(10));
+                $order->order_number = 'ORD-'.strtoupper(Str::random(10));
             }
         });
     }

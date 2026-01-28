@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\User;
 use App\Models\Product;
 use App\Models\ProductRating;
 
@@ -14,7 +13,7 @@ test('anyone can fetch product rating summary', function () {
     $response->assertStatus(200)
         ->assertJson([
             'total' => 2,
-            'average' => 4.5
+            'average' => 4.5,
         ]);
 });
 
@@ -25,7 +24,7 @@ test('authenticated customer can rate a product', function () {
     $data = [
         'product_id' => $product->id,
         'rating' => 5,
-        'feedback' => 'Amazing quality!'
+        'feedback' => 'Amazing quality!',
     ];
 
     $response = $this->postJson('/api/customer/product-ratings', $data);
@@ -35,7 +34,7 @@ test('authenticated customer can rate a product', function () {
         'user_id' => $user->id,
         'product_id' => $product->id,
         'rating' => 5,
-        'feedback' => 'Amazing quality!'
+        'feedback' => 'Amazing quality!',
     ]);
 });
 
@@ -44,12 +43,12 @@ test('customer cannot rate the same product twice', function () {
     $product = Product::factory()->create();
     ProductRating::factory()->create([
         'user_id' => $user->id,
-        'product_id' => $product->id
+        'product_id' => $product->id,
     ]);
 
     $data = [
         'product_id' => $product->id,
-        'rating' => 4
+        'rating' => 4,
     ];
 
     $response = $this->postJson('/api/customer/product-ratings', $data);
@@ -63,7 +62,7 @@ test('rating validation checks for 1-5 range', function () {
 
     $response = $this->postJson('/api/customer/product-ratings', [
         'product_id' => $product->id,
-        'rating' => 6
+        'rating' => 6,
     ]);
 
     $response->assertStatus(422)

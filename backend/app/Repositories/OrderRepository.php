@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Interfaces\Repositories\OrderRepositoryInterface;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Product;
 
 class OrderRepository implements OrderRepositoryInterface
 {
@@ -29,7 +28,7 @@ class OrderRepository implements OrderRepositoryInterface
     {
         $order = Order::findOrFail($orderId);
         $order->update([
-            'status' => $status
+            'status' => $status,
         ]);
 
         return $order;
@@ -38,9 +37,9 @@ class OrderRepository implements OrderRepositoryInterface
     public function getCustomersOrder($status, $userId, $page = 1, $perPage = 20)
     {
         $orders = Order::with([
-                'orderItems.product:id,name,price,shop_id,image',
-                'orderItems.product.shop:id,name,description',
-            ])
+            'orderItems.product:id,name,price,shop_id,image',
+            'orderItems.product.shop:id,name,description',
+        ])
             ->where('user_id', $userId)
             ->when($status && $status !== 'ALL', function ($query) use ($status) {
                 $query->where('status', $status);
@@ -74,7 +73,7 @@ class OrderRepository implements OrderRepositoryInterface
     {
         return OrderItem::create($items);
     }
-    
+
     public function updateOrderTotalAmount($orderId, $totalAmount)
     {
         $order = Order::findOrFail($orderId);
@@ -88,8 +87,8 @@ class OrderRepository implements OrderRepositoryInterface
             'shop',
             'orderItems.product.shop',
         ])
-        ->where('order_number', $orderNumber)
-        ->firstOrFail();
+            ->where('order_number', $orderNumber)
+            ->firstOrFail();
     }
 
     public function cancelOrder($orderId, $reason)
@@ -97,8 +96,9 @@ class OrderRepository implements OrderRepositoryInterface
         $order = Order::findOrFail($orderId);
         $order->update([
             'status' => Order::STATUS_CANCELLED,
-            'notes' => $order->notes . "\nCancellation Reason: " . $reason
+            'notes' => $order->notes."\nCancellation Reason: ".$reason,
         ]);
+
         return $order;
     }
 }

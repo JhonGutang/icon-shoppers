@@ -16,24 +16,24 @@ return new class extends Migration
             $table->decimal('subtotal', 10, 2)->default(0)->after('total_amount');
             $table->decimal('shipping_fee', 10, 2)->default(0)->after('subtotal');
             $table->string('delivery_method')->nullable()->after('payment_method');
-            
+
             // Update status column - drop and recreate with new enum values
             $table->dropColumn('status');
         });
-        
+
         Schema::table('orders', function (Blueprint $table) {
             $table->enum('status', [
-                'ordered', 
-                'approved', 
-                'rejected', 
-                'processing', 
-                'delivering', 
-                'delivered', 
-                'received', 
-                'completed', 
-                'cancelled'
+                'ordered',
+                'approved',
+                'rejected',
+                'processing',
+                'delivering',
+                'delivered',
+                'received',
+                'completed',
+                'cancelled',
             ])->default('ordered')->after('shop_id');
-            
+
             $table->index('order_number');
             $table->index('status');
         });
@@ -49,7 +49,7 @@ return new class extends Migration
             $table->dropIndex(['status']);
             $table->dropColumn(['order_number', 'subtotal', 'shipping_fee', 'delivery_method', 'status']);
         });
-        
+
         Schema::table('orders', function (Blueprint $table) {
             $table->string('status')->default('PENDING');
         });

@@ -8,6 +8,7 @@ use App\Models\Product;
 class ProductRepository implements ProductRepositoryInterface
 {
     const DEFAULT_PER_PAGE = 20;
+
     const MAX_PER_PAGE = 100;
 
     protected $model;
@@ -20,41 +21,42 @@ class ProductRepository implements ProductRepositoryInterface
     public function findProducts($ids)
     {
         $products = Product::with('shop')->whereIn('id', $ids)->get()->keyBy('id');
+
         return $products;
     }
 
     public function searchProducts($query, $filters = [], $page = 1, $perPage = self::DEFAULT_PER_PAGE)
     {
         $perPage = min($perPage, self::MAX_PER_PAGE);
-        
+
         $queryBuilder = $this->model->query()
             ->published()
             ->where('is_visible', true)
             ->with(['shop', 'category', 'ratings']);
 
         // Search by name or description
-        if (!empty($query)) {
+        if (! empty($query)) {
             $queryBuilder->where(function ($q) use ($query) {
                 $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('description', 'like', "%{$query}%");
+                    ->orWhere('description', 'like', "%{$query}%");
             });
         }
 
         // Filter by category
-        if (!empty($filters['category_id'])) {
+        if (! empty($filters['category_id'])) {
             $queryBuilder->where('category_id', $filters['category_id']);
         }
 
         // Filter by price range
-        if (!empty($filters['min_price'])) {
+        if (! empty($filters['min_price'])) {
             $queryBuilder->where('price', '>=', $filters['min_price']);
         }
-        if (!empty($filters['max_price'])) {
+        if (! empty($filters['max_price'])) {
             $queryBuilder->where('price', '<=', $filters['max_price']);
         }
 
         // Filter by rating
-        if (!empty($filters['min_rating'])) {
+        if (! empty($filters['min_rating'])) {
             $queryBuilder->whereHas('ratings', function ($q) use ($filters) {
                 $q->havingRaw('AVG(rating) >= ?', [$filters['min_rating']]);
             });
@@ -101,13 +103,14 @@ class ProductRepository implements ProductRepositoryInterface
     public function getProductsByCategory($categoryId, $filters = [], $page = 1, $perPage = self::DEFAULT_PER_PAGE)
     {
         $filters['category_id'] = $categoryId;
+
         return $this->searchProducts('', $filters, $page, $perPage);
     }
 
     public function getFeaturedProducts($page = 1, $perPage = self::DEFAULT_PER_PAGE)
     {
         $perPage = min($perPage, self::MAX_PER_PAGE);
-        
+
         return $this->model
             ->published()
             ->featured()
@@ -120,7 +123,7 @@ class ProductRepository implements ProductRepositoryInterface
     public function getTopSellingProducts($page = 1, $perPage = self::DEFAULT_PER_PAGE)
     {
         $perPage = min($perPage, self::MAX_PER_PAGE);
-        
+
         return $this->model
             ->published()
             ->with(['shop', 'category', 'ratings'])
@@ -131,13 +134,13 @@ class ProductRepository implements ProductRepositoryInterface
     public function getRelatedProducts($productId, $limit = 6)
     {
         $product = $this->model->findOrFail($productId);
-        
+
         return $this->model
             ->published()
             ->where('id', '!=', $productId)
             ->where(function ($query) use ($product) {
                 $query->where('category_id', $product->category_id)
-                      ->orWhere('shop_id', $product->shop_id);
+                    ->orWhere('shop_id', $product->shop_id);
             })
             ->with(['shop', 'category', 'ratings'])
             ->withAvg('ratings', 'rating')

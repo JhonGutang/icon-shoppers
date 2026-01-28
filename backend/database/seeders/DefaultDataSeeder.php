@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
-use App\Models\Shop;
 use App\Models\Product;
+use App\Models\Shop;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class DefaultDataSeeder extends Seeder
@@ -37,7 +37,7 @@ class DefaultDataSeeder extends Seeder
                     'name' => 'Local Flavor Kitchen',
                     'description' => 'Authentic homemade Filipino delicacies and gourmet treats.',
                 ],
-                'category' => 'Food'
+                'category' => 'Food',
             ],
             [
                 'user' => [
@@ -52,7 +52,7 @@ class DefaultDataSeeder extends Seeder
                     'name' => 'StyleVault Co.',
                     'description' => 'Premium gadgets and accessories for the modern professional.',
                 ],
-                'category' => 'Electronics'
+                'category' => 'Electronics',
             ],
             [
                 'user' => [
@@ -67,7 +67,7 @@ class DefaultDataSeeder extends Seeder
                     'name' => 'Petals & Stems',
                     'description' => 'Unique handcrafted items and personalized gifts.',
                 ],
-                'category' => 'Art'
+                'category' => 'Art',
             ],
         ];
 
@@ -128,15 +128,15 @@ class DefaultDataSeeder extends Seeder
                 // Use real images based on category
                 if ($m['category'] === 'Food') {
                     $imageName = $foodImages[$i - 1];
-                    $imagePath = $shop->slug . '/products/' . $imageName;
+                    $imagePath = $shop->slug.'/products/'.$imageName;
                     $productName = ucwords(str_replace('-', ' ', pathinfo($imageName, PATHINFO_FILENAME)));
                 } elseif ($m['category'] === 'Electronics') {
                     $imageName = $accessoriesImages[$i - 1];
-                    $imagePath = $shop->slug . '/products/' . $imageName;
+                    $imagePath = $shop->slug.'/products/'.$imageName;
                     $productName = ucwords(str_replace('-', ' ', pathinfo($imageName, PATHINFO_FILENAME)));
                 } else {
                     $imageName = $bouquetImages[$i - 1];
-                    $imagePath = $shop->slug . '/products/' . $imageName;
+                    $imagePath = $shop->slug.'/products/'.$imageName;
                     $productName = ucwords(str_replace('-', ' ', pathinfo($imageName, PATHINFO_FILENAME)));
                 }
 
@@ -145,7 +145,7 @@ class DefaultDataSeeder extends Seeder
                     'name' => $productName,
                     'price' => rand(100, 5000),
                     'quantity' => rand(10, 100),
-                    'description' => "Detailed description for " . $productName,
+                    'description' => 'Detailed description for '.$productName,
                     'image' => $imagePath,
                     'is_visible' => true,
                     'is_featured' => $i <= 3,
@@ -155,17 +155,17 @@ class DefaultDataSeeder extends Seeder
                 if ($i % 2 == 0) {
                     \App\Models\ProductVariant::create([
                         'product_id' => $product->id,
-                        'sku' => 'VAR-' . $product->id . '-S',
+                        'sku' => 'VAR-'.$product->id.'-S',
                         'price' => $product->price,
                         'stock' => 5,
-                        'attributes' => ['Size' => 'Small']
+                        'attributes' => ['Size' => 'Small'],
                     ]);
                     \App\Models\ProductVariant::create([
                         'product_id' => $product->id,
-                        'sku' => 'VAR-' . $product->id . '-L',
+                        'sku' => 'VAR-'.$product->id.'-L',
                         'price' => $product->price + 50,
                         'stock' => 10,
-                        'attributes' => ['Size' => 'Large']
+                        'attributes' => ['Size' => 'Large'],
                     ]);
                 }
             }

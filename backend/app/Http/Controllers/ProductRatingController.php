@@ -7,7 +7,6 @@ use App\Models\ProductRating;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class ProductRatingController extends Controller
 {
@@ -17,19 +16,17 @@ class ProductRatingController extends Controller
     public function index($productId)
     {
         $product = Product::findOrFail($productId);
-    
+
         $ratings = $product->ratings()->with('user')->latest()->get();
-    
+
         $totalRatings = $ratings->count();
         $averageRating = $ratings->avg('rating');
-    
+
         return response()->json([
             'total' => $totalRatings,
             'average' => round($averageRating, 2),
         ]);
     }
-    
-
 
     public function store(Request $request)
     {
@@ -38,19 +35,19 @@ class ProductRatingController extends Controller
             'rating' => ['required', 'integer', 'between:1,5'],
             'feedback' => ['nullable', 'string', 'max:1000'],
         ]);
-    
+
         $user = Auth::user();
-        if (!$user) {
+        if (! $user) {
             return response()->json(['message' => 'Unauthorized.'], 401);
         }
         $userId = $user->id;
-    
+
         $product = Product::findOrFail($validated['product_id']);
-    
+
         if ($product->ratings()->where('user_id', $userId)->exists()) {
             return response()->json(['message' => 'You have already rated this product.'], 409);
         }
-    
+
         try {
             $rating = $product->ratings()->create([
                 'user_id' => $userId,
@@ -58,13 +55,14 @@ class ProductRatingController extends Controller
                 'feedback' => $validated['feedback'],
             ]);
         } catch (QueryException $e) {
-            if ($e->errorInfo[1] == 1062) { 
+            if ($e->errorInfo[1] == 1062) {
                 return response()->json(['message' => 'You have already rated this product.'], 409);
             }
-            report($e); 
+            report($e);
+
             return response()->json(['message' => 'Failed to save rating.'], 500);
         }
-    
+
         return response()->json($rating, 201);
     }
 
@@ -74,6 +72,7 @@ class ProductRatingController extends Controller
     public function show(Product $product, ProductRating $rating)
     {
         $this->authorizeRatingAccess($rating, $product);
+
         return response()->json($rating->load('user'));
     }
 

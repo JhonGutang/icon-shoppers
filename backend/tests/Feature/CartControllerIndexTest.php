@@ -2,9 +2,9 @@
 
 use App\Models\Cart;
 use App\Models\CartItem;
-use App\Models\User;
 use App\Models\Product;
 use App\Models\Shop;
+use App\Models\User;
 use App\Services\CartService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
@@ -44,48 +44,48 @@ describe('Cart Controller Index', function () {
             'name' => 'Electronics Store',
             'description' => 'Best electronics shop',
             'logo_image' => 'electronics-logo.jpg',
-            'status' => 'active'
+            'status' => 'active',
         ]);
         $shop2 = Shop::factory()->create([
             'name' => 'Fashion Store',
             'description' => 'Trendy fashion items',
-            'logo_image' => 'fashion-logo.jpg'
+            'logo_image' => 'fashion-logo.jpg',
         ]);
 
         $product1 = Product::factory()->create([
             'shop_id' => $shop1->id,
             'name' => 'iPhone 15',
             'price' => 999.99,
-            'image' => 'iphone15.jpg'
+            'image' => 'iphone15.jpg',
         ]);
         $product2 = Product::factory()->create([
             'shop_id' => $shop1->id,
             'name' => 'MacBook Pro',
             'price' => 1999.99,
-            'image' => 'macbook.jpg'
+            'image' => 'macbook.jpg',
         ]);
         $product3 = Product::factory()->create([
             'shop_id' => $shop2->id,
             'name' => 'Nike Shoes',
             'price' => 129.99,
-            'image' => 'nike-shoes.jpg'
+            'image' => 'nike-shoes.jpg',
         ]);
 
         $cart = Cart::factory()->create(['user_id' => $customer->id]);
         CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product1->id,
-            'quantity' => 2
+            'quantity' => 2,
         ]);
         CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product2->id,
-            'quantity' => 1
+            'quantity' => 1,
         ]);
         CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product3->id,
-            'quantity' => 3
+            'quantity' => 3,
         ]);
 
         Sanctum::actingAs($customer);
@@ -99,7 +99,7 @@ describe('Cart Controller Index', function () {
                         'id',
                         'name',
                         'logo_image',
-                        'description'
+                        'description',
                     ],
                     'products' => [
                         '*' => [
@@ -108,10 +108,10 @@ describe('Cart Controller Index', function () {
                             'name',
                             'price',
                             'image',
-                            'quantity'
-                        ]
-                    ]
-                ]
+                            'quantity',
+                        ],
+                    ],
+                ],
             ]);
 
         $responseData = $response->json();
@@ -151,20 +151,20 @@ describe('Cart Controller Index', function () {
         $shop = Shop::factory()->create([
             'name' => 'Single Shop',
             'description' => 'Single product shop',
-            'logo_image' => 'single-logo.jpg'
+            'logo_image' => 'single-logo.jpg',
         ]);
         $product = Product::factory()->create([
             'shop_id' => $shop->id,
             'name' => 'Single Product',
             'price' => 50.00,
-            'image' => 'single-product.jpg'
+            'image' => 'single-product.jpg',
         ]);
 
         $cart = Cart::factory()->create(['user_id' => $customer->id]);
         CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
-            'quantity' => 1
+            'quantity' => 1,
         ]);
 
         Sanctum::actingAs($customer);
@@ -196,14 +196,14 @@ describe('Cart Controller Index', function () {
             'shop_id' => $shop->id,
             'name' => 'Product without image',
             'price' => 25.00,
-            'image' => null
+            'image' => null,
         ]);
 
         $cart = Cart::factory()->create(['user_id' => $customer->id]);
         CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
-            'quantity' => 1
+            'quantity' => 1,
         ]);
 
         Sanctum::actingAs($customer);
@@ -220,19 +220,19 @@ describe('Cart Controller Index', function () {
         $customer = User::factory()->create(['role' => 'customer']);
         $shop = Shop::factory()->create([
             'name' => 'Shop without logo',
-            'logo_image' => null
+            'logo_image' => null,
         ]);
         $product = Product::factory()->create([
             'shop_id' => $shop->id,
             'name' => 'Test Product',
-            'price' => 30.00
+            'price' => 30.00,
         ]);
 
         $cart = Cart::factory()->create(['user_id' => $customer->id]);
         CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
-            'quantity' => 1
+            'quantity' => 1,
         ]);
 
         Sanctum::actingAs($customer);
@@ -254,7 +254,7 @@ describe('Cart Controller Index', function () {
         $cartItem = CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
-            'quantity' => 1
+            'quantity' => 1,
         ]);
 
         Sanctum::actingAs($customer);
@@ -276,7 +276,7 @@ describe('Cart Controller Index', function () {
         CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
-            'quantity' => 5
+            'quantity' => 5,
         ]);
 
         Sanctum::actingAs($customer);
@@ -289,21 +289,20 @@ describe('Cart Controller Index', function () {
         expect($productData['quantity'])->toBe(5);
     });
 
-
     test('handles decimal prices correctly', function () {
         $customer = User::factory()->create(['role' => 'customer']);
         $shop = Shop::factory()->create();
         $product = Product::factory()->create([
             'shop_id' => $shop->id,
             'name' => 'Expensive Product',
-            'price' => 1234.56
+            'price' => 1234.56,
         ]);
 
         $cart = Cart::factory()->create(['user_id' => $customer->id]);
         CartItem::factory()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
-            'quantity' => 1
+            'quantity' => 1,
         ]);
 
         Sanctum::actingAs($customer);

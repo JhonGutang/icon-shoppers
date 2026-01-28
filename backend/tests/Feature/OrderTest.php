@@ -1,10 +1,8 @@
 <?php
 
-use App\Models\User;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Shop;
-use App\Models\Order;
-use App\Models\OrderItem;
 
 test('customer can checkout their cart', function () {
     $user = $this->actingAsCustomer();
@@ -13,7 +11,7 @@ test('customer can checkout their cart', function () {
 
     $data = [
         'products' => [
-            ['id' => $product->id, 'quantity' => 2]
+            ['id' => $product->id, 'quantity' => 2],
         ],
         'shipping_address' => '123 Test St, Balamban',
         'payment_method' => 'COD',
@@ -23,7 +21,7 @@ test('customer can checkout their cart', function () {
 
     $response->assertStatus(200)
         ->assertJsonFragment(['message' => 'Order(s) placed successfully']);
-    
+
     $this->assertDatabaseHas('orders', [
         'user_id' => $user->id,
         'shop_id' => $shop->id,
@@ -54,15 +52,15 @@ test('merchant can update order status', function () {
     $order = Order::factory()->create(['shop_id' => $merchant->shop->id, 'status' => 'ordered']);
 
     $response = $this->putJson("/api/orders/{$order->id}/status", [
-        'status' => 'approved'
+        'status' => 'approved',
     ]);
 
     $response->assertStatus(200)
         ->assertJsonFragment(['message' => 'Order status updated to approved']);
-    
+
     $this->assertDatabaseHas('orders', [
         'id' => $order->id,
-        'status' => 'approved'
+        'status' => 'approved',
     ]);
 });
 
@@ -71,15 +69,15 @@ test('merchant can update order status using legacy uppercase string', function 
     $order = Order::factory()->create(['shop_id' => $merchant->shop->id, 'status' => 'ordered']);
 
     $response = $this->putJson("/api/orders/{$order->id}/status", [
-        'status' => 'SHIPPED'
+        'status' => 'SHIPPED',
     ]);
 
     $response->assertStatus(200);
-    
+
     // SHIPPED should normalize to delivering
     $this->assertDatabaseHas('orders', [
         'id' => $order->id,
-        'status' => 'delivering'
+        'status' => 'delivering',
     ]);
 });
 
@@ -88,14 +86,14 @@ test('customer can cancel their pending order', function () {
     $order = Order::factory()->create(['user_id' => $user->id, 'status' => 'ordered']);
 
     $response = $this->postJson("/api/orders/{$order->id}/cancel", [
-        'reason' => 'Changed my mind'
+        'reason' => 'Changed my mind',
     ]);
 
     $response->assertStatus(200)
         ->assertJsonFragment(['message' => 'Order cancelled successfully']);
-    
+
     $this->assertDatabaseHas('orders', [
         'id' => $order->id,
-        'status' => 'cancelled' // Assuming SERVICE handles the status change to cancelled
+        'status' => 'cancelled', // Assuming SERVICE handles the status change to cancelled
     ]);
 });

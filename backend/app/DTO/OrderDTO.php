@@ -2,7 +2,6 @@
 
 namespace App\DTO;
 
-use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class OrderDTO
@@ -26,7 +25,7 @@ class OrderDTO
 
     public static function fromOrder($order): self
     {
-        $items = $order->orderItems->map(fn($item) => OrderItemDTO::fromOrderItem($item))->toArray();
+        $items = $order->orderItems->map(fn ($item) => OrderItemDTO::fromOrderItem($item))->toArray();
 
         return new self(
             id: (int) $order->id,
@@ -52,7 +51,7 @@ class OrderDTO
             'id' => $this->id,
             'orderNumber' => $this->order_number,
             'userName' => $this->user_name,
-            'products' => array_map(fn($product) => $product->toArray(), $this->products),
+            'products' => array_map(fn ($product) => $product->toArray(), $this->products),
             'subtotal' => $this->subtotal,
             'shippingFee' => $this->shipping_fee,
             'totalAmount' => $this->total_amount,

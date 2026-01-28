@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Interfaces\Services\AddressServiceInterface;
 use App\Interfaces\Repositories\AddressRepositoryInterface;
+use App\Interfaces\Services\AddressServiceInterface;
 
 class AddressService implements AddressServiceInterface
 {

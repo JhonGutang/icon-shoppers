@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('postal_code');
             $table->boolean('is_default')->default(false);
             $table->timestamps();
-            
+
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->index('user_id');
         });

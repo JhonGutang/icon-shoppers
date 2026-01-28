@@ -15,7 +15,7 @@ test('products can be sorted by price ascending', function () {
 
     $response->assertStatus(200);
     $data = $response->json('data');
-    
+
     expect($data[0]['price'])->toEqual(50);
     expect($data[1]['price'])->toEqual(100);
     expect($data[2]['price'])->toEqual(150);
@@ -30,7 +30,7 @@ test('products can be sorted by price descending', function () {
 
     $response->assertStatus(200);
     $data = $response->json('data');
-    
+
     expect($data[0]['price'])->toEqual(150);
     expect($data[1]['price'])->toEqual(100);
     expect($data[2]['price'])->toEqual(50);
@@ -45,7 +45,7 @@ test('products can be sorted by featured status', function () {
 
     $response->assertStatus(200);
     $data = $response->json('data');
-    
+
     expect($data[0]['is_featured'])->toBe(true);
     expect($data[1]['is_featured'])->toBe(false);
 });
@@ -59,7 +59,7 @@ test('shops can be sorted by name', function () {
 
     $response->assertStatus(200);
     $data = $response->json('data');
-    
+
     expect($data[0]['name'])->toBe('A Shop');
     expect($data[1]['name'])->toBe('M Shop');
     expect($data[2]['name'])->toBe('Z Shop');
@@ -74,7 +74,7 @@ test('shops can be searched and sorted', function () {
 
     $response->assertStatus(200);
     $data = $response->json('data');
-    
+
     expect(count($data))->toBe(2);
     expect($data[0]['name'])->toBe('Apple Store');
     expect($data[1]['name'])->toBe('Banana Store');

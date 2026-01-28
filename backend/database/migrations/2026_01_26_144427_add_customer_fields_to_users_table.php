@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('barangay')->nullable()->after('street');
             $table->string('city')->nullable()->after('barangay');
             $table->string('postal_code')->nullable()->after('city');
-            
+
             $table->index('phone');
         });
     }

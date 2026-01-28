@@ -22,6 +22,7 @@ class WishlistController extends Controller
         $perPage = $request->query('per_page', 20);
 
         $wishlist = $this->wishlistService->getUserWishlist($userId, $page, $perPage);
+
         return response()->json($wishlist);
     }
 
@@ -31,6 +32,7 @@ class WishlistController extends Controller
         $productId = $request->input('product_id');
 
         $result = $this->wishlistService->addToWishlist($userId, $productId);
+
         return response()->json($result);
     }
 
@@ -38,6 +40,7 @@ class WishlistController extends Controller
     {
         $userId = Auth::id();
         $this->wishlistService->removeFromWishlist($userId, $productId);
+
         return response()->json(['message' => 'Product removed from wishlist']);
     }
 
@@ -47,6 +50,7 @@ class WishlistController extends Controller
         $productId = $request->input('product_id');
 
         $result = $this->wishlistService->toggleWishlist($userId, $productId);
+
         return response()->json($result);
     }
 }

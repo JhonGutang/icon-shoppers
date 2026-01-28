@@ -15,10 +15,10 @@ return new class extends Migration
             $table->unsignedTinyInteger('rating')->comment('Rating from 1 to 5');
             $table->text('feedback')->nullable();
             $table->timestamps();
-        
+
             $table->unique(['product_id', 'user_id']); // one rating per user per product
         });
-        
+
     }
 
     public function down(): void

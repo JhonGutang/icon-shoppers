@@ -1,10 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ShopRatingController;
 use App\Http\Controllers\ProductRatingController;
-
+use Illuminate\Support\Facades\Route;
 
 Route::get('/product-ratings/{product}', [ProductRatingController::class, 'index']);
 Route::middleware('auth:sanctum')->prefix('customer')->group(function () {

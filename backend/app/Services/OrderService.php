@@ -2,17 +2,19 @@
 
 namespace App\Services;
 
-use App\Interfaces\Services\OrderServiceInterface;
-use App\Interfaces\Repositories\OrderRepositoryInterface;
 use App\DTO\OrderDTO;
 use App\DTO\OrderItemDTO;
+use App\Interfaces\Repositories\OrderRepositoryInterface;
 use App\Interfaces\Repositories\ProductRepositoryInterface;
+use App\Interfaces\Services\OrderServiceInterface;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 
 class OrderService implements OrderServiceInterface
 {
-    protected $orderRepository, $productRepository;
+    protected $orderRepository;
+
+    protected $productRepository;
 
     public function __construct(OrderRepositoryInterface $orderRepository, ProductRepositoryInterface $productRepository)
     {
@@ -24,12 +26,14 @@ class OrderService implements OrderServiceInterface
     {
         $normalizedStatus = $status !== 'ALL' ? \App\Models\Order::normalizeStatus($status) : 'ALL';
         $paginatedOrders = $this->orderRepository->all($normalizedStatus, $shopId, $page, $perPage);
+
         return OrderDTO::formatPaginatedOrders($paginatedOrders);
     }
 
     public function updateOrderStatus($status, $orderId)
     {
         $normalizedStatus = \App\Models\Order::normalizeStatus($status);
+
         return $this->orderRepository->update($normalizedStatus, $orderId);
     }
 
@@ -37,6 +41,7 @@ class OrderService implements OrderServiceInterface
     {
         $normalizedStatus = $status !== 'ALL' ? \App\Models\Order::normalizeStatus($status) : 'ALL';
         $paginatedOrders = $this->orderRepository->getCustomersOrder($normalizedStatus, $userId, $page, $perPage);
+
         return OrderDTO::formatPaginatedOrders($paginatedOrders);
     }
 
@@ -46,17 +51,19 @@ class OrderService implements OrderServiceInterface
             DB::beginTransaction();
 
             $products = $this->productRepository->findProducts($productIds);
-            
+
             // Group products by shop since an order belongs to a shop
             $productsByShop = [];
             foreach ($productsFromRequest as $item) {
                 // Find product in the collection
                 $product = $products->firstWhere('id', $item['id']);
-                if (!$product) continue;
-                
+                if (! $product) {
+                    continue;
+                }
+
                 $productsByShop[$product->shop_id][] = [
                     'item' => $item,
-                    'product' => $product
+                    'product' => $product,
                 ];
             }
 
@@ -65,9 +72,9 @@ class OrderService implements OrderServiceInterface
                 // Fetch shop to get shipping fee (eager loaded with products)
                 $shop = $items[0]['product']->shop;
                 $shippingFee = (float) ($shop->shipping_fee ?? 0);
-                
+
                 $subtotal = 0;
-                
+
                 // Calculate subtotal first to save with order
                 foreach ($items as $itemData) {
                     $item = $itemData['item'];
@@ -81,24 +88,25 @@ class OrderService implements OrderServiceInterface
                     'total_amount' => $subtotal + $shippingFee,
                     'delivery_method' => $data['delivery_method'] ?? 'Standard Delivery',
                 ]);
-                
+
                 $order = $this->orderRepository->saveOrder($userId, $shopId, $orderData);
-                
+
                 foreach ($items as $itemData) {
                     $item = $itemData['item'];
                     $product = $itemData['product'];
-                    
+
                     $formattedOrderItem = OrderItemDTO::fromCheckoutItem($order->id, $item, $product);
                     $this->orderRepository->saveOrderItems($formattedOrderItem);
-                    
+
                     // Increment sales count for each product
                     $this->productRepository->incrementSalesCount($product->id, (int) $item['quantity']);
                 }
-                
+
                 $createdOrders[] = $order;
             }
 
             DB::commit();
+
             return $createdOrders;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -109,6 +117,7 @@ class OrderService implements OrderServiceInterface
     public function getOrderDetails($orderNumber)
     {
         $order = $this->orderRepository->getOrderByNumber($orderNumber);
+
         return OrderDTO::fromOrder($order)->toArray();
     }
 

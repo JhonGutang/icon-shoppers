@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Interfaces\Services\CategoryServiceInterface;
 use App\Interfaces\Repositories\CategoryRepositoryInterface;
+use App\Interfaces\Services\CategoryServiceInterface;
 
 class CategoryService implements CategoryServiceInterface
 {

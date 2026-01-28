@@ -55,6 +55,7 @@ class AddressRepository implements AddressRepositoryInterface
         }
 
         $address->update($data);
+
         return $address;
     }
 

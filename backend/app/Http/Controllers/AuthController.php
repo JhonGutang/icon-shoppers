@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CustomerRequest;
+use App\Http\Requests\LoginFormRequest;
 use App\Interfaces\Services\UserServiceInterface;
 use App\Models\User;
-use App\Http\Requests\LoginFormRequest;
-use App\Http\Requests\CustomerRequest;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -17,10 +17,11 @@ class AuthController extends Controller
         $this->userService = $userService;
     }
 
-    public function login(LoginFormRequest $request) {
+    public function login(LoginFormRequest $request)
+    {
         $credentials = $request->validated();
         $result = $this->userService->authenticateUser($credentials);
-        
+
         if ($result instanceof \Illuminate\Http\JsonResponse) {
             return $result;
         }
@@ -29,7 +30,7 @@ class AuthController extends Controller
             'user' => $result['user'],
             'token' => $result['token'],
             'role' => $result['user']->role,
-            'has_shop' => $result['has_shop'] ?? false
+            'has_shop' => $result['has_shop'] ?? false,
         ]);
 
     }
@@ -39,23 +40,25 @@ class AuthController extends Controller
         $validatedData = $request->validated();
         // Default to customer role if not specified or restricted by policy
         $validatedData['role'] = $validatedData['role'] ?? User::ROLE_CUSTOMER;
-        
+
         $registeredUser = $this->userService->registerUser($validatedData);
-        
+
         if ($registeredUser instanceof \Illuminate\Http\JsonResponse) {
             return $registeredUser;
         }
 
         return response()->json([
-            'message'  => 'User created successfully.',
+            'message' => 'User created successfully.',
             'user' => $registeredUser,
         ], 201);
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         $request->user()->tokens()->delete();
+
         return response()->json([
-            'message' => 'Logged out successfully'
+            'message' => 'Logged out successfully',
         ]);
     }
 }

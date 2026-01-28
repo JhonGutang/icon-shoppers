@@ -19,6 +19,7 @@ class AddressController extends Controller
     {
         $userId = Auth::id();
         $addresses = $this->addressService->getUserAddresses($userId);
+
         return response()->json($addresses);
     }
 
@@ -36,6 +37,7 @@ class AddressController extends Controller
         ]);
 
         $address = $this->addressService->createAddress($userId, $validatedData);
+
         return response()->json($address, 201);
     }
 
@@ -53,6 +55,7 @@ class AddressController extends Controller
         ]);
 
         $address = $this->addressService->updateAddress($userId, $id, $validatedData);
+
         return response()->json($address);
     }
 
@@ -60,6 +63,7 @@ class AddressController extends Controller
     {
         $userId = Auth::id();
         $this->addressService->deleteAddress($userId, $id);
+
         return response()->json(['message' => 'Address deleted successfully']);
     }
 
@@ -67,6 +71,7 @@ class AddressController extends Controller
     {
         $userId = Auth::id();
         $address = $this->addressService->setDefaultAddress($userId, $id);
+
         return response()->json($address);
     }
 }

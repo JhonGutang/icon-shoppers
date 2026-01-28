@@ -11,13 +11,16 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
 
     const ROLE_CUSTOMER = 'customer';
+
     const ROLE_MERCHANT = 'merchant';
+
     const ROLE_ADMIN = 'admin';
 
     const STATUS_ACTIVE = 'active';
+
     const STATUS_SUSPENDED = 'suspended';
 
     /**

@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Interfaces\Services\ProductServiceInterface;
 use App\Interfaces\Repositories\ProductRepositoryInterface;
+use App\Interfaces\Services\ProductServiceInterface;
 
 class ProductService implements ProductServiceInterface
 {

@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
-use App\Models\Product;
+use App\Interfaces\Services\ImageServiceInterface;
 use App\Interfaces\Services\ProductServiceInterface;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Interfaces\Services\ImageServiceInterface;
 
 class ProductController extends Controller
 {
-    protected $productService, $imageService;
+    protected $productService;
+
+    protected $imageService;
 
     public function __construct(ProductServiceInterface $productService, ImageServiceInterface $imageService)
     {
@@ -25,11 +27,12 @@ class ProductController extends Controller
         $user = Auth::user();
         $shop = $user->shop;
 
-        if (!$shop) {
+        if (! $shop) {
             return response()->json([], 404);
         }
 
         $products = Product::where('shop_id', $shop->id)->get()->values();
+
         return response()->json($products);
     }
 
@@ -45,25 +48,26 @@ class ProductController extends Controller
 
         // Map type=featured to internal filter if needed
         if ($request->query('type') === 'featured') {
-             return $this->fetchFeaturedProducts($request);
+            return $this->fetchFeaturedProducts($request);
         }
 
         $products = $this->productService->searchProducts($query, $filters, $page, $perPage);
+
         return response()->json($products);
     }
-
 
     public function fetchFeaturedProducts(Request $request)
     {
         $page = $request->query('page', 1);
         $perPage = $request->query('per_page', 20);
         $products = $this->productService->getFeaturedProducts($page, $perPage);
+
         return response()->json($products);
     }
 
     public function fetchSpecificProduct($slug)
     {
-        // Support both ID and Slug for backward compatibility if needed, 
+        // Support both ID and Slug for backward compatibility if needed,
         // but Unified Flow uses Slugs for SEO
         if (is_numeric($slug)) {
             $product = Product::with(['shop', 'category', 'ratings.user', 'variants'])->findOrFail($slug);
@@ -71,7 +75,7 @@ class ProductController extends Controller
             $product = $this->productService->getProductDetails($slug);
         }
 
-        if (!$product) {
+        if (! $product) {
             return response()->json(['message' => 'Product not found'], 404);
         }
 
@@ -81,6 +85,7 @@ class ProductController extends Controller
     public function fetchRelatedProducts($id)
     {
         $products = $this->productService->getRelatedProducts($id);
+
         return response()->json($products);
     }
 
@@ -89,6 +94,7 @@ class ProductController extends Controller
         $page = $request->query('page', 1);
         $perPage = $request->query('per_page', 20);
         $products = $this->productService->getTopSellingProducts($page, $perPage);
+
         return response()->json($products);
     }
 
@@ -99,20 +105,20 @@ class ProductController extends Controller
         $perPage = $request->query('per_page', 20);
 
         $products = $this->productService->getProductsByCategory($categoryId, $filters, $page, $perPage);
+
         return response()->json($products);
     }
 
     /**
      * Merchant operations below
      */
-
     public function create(ProductRequest $request)
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $shop = $user->shop;
 
-        if (!$shop) {
+        if (! $shop) {
             return response()->json(['message' => 'Shop not found'], 404);
         }
 
@@ -143,7 +149,7 @@ class ProductController extends Controller
     public function update(ProductRequest $request, $id)
     {
         $product = Product::findOrFail($id);
-        
+
         /** @var \App\Models\User $user */
         $user = Auth::user();
         if ($product->shop_id !== $user->shop->id) {
@@ -182,7 +188,7 @@ class ProductController extends Controller
         }
 
         $deleted = $product->delete();
-        if($deleted) {
+        if ($deleted) {
             $this->imageService->deleteImageIfExists($product->image);
         }
 

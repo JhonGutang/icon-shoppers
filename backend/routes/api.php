@@ -1,10 +1,8 @@
 <?php
 
-use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ShopController;
-use App\Http\Controllers\OrderController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 require __DIR__.'/api/product.php';
 require __DIR__.'/api/auth.php';
 require __DIR__.'/api/order.php';

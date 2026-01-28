@@ -9,10 +9,9 @@ use App\Models\CartItem;
 
 class CartRepository implements CartRepositoryInterface
 {
-
     public function getCartWithItems(int $userId, int $productId)
     {
-        return Cart::with(['cartItems' => function($query) use ($productId) {
+        return Cart::with(['cartItems' => function ($query) use ($productId) {
             $query->where('product_id', $productId);
         }])->where('user_id', $userId)->first();
     }
@@ -20,7 +19,7 @@ class CartRepository implements CartRepositoryInterface
     public function create(int $userId, int $productId)
     {
         $cart = Cart::where('user_id', $userId)->first();
-        if (!$cart) {
+        if (! $cart) {
             $cart = Cart::create([
                 'user_id' => $userId,
             ]);
@@ -46,14 +45,14 @@ class CartRepository implements CartRepositoryInterface
     {
         $cart = Cart::where('user_id', $userId)->first();
 
-        if (!$cart) {
+        if (! $cart) {
             return [];
         }
 
         $cartItems = CartItem::where('cart_id', $cart->id)
             ->with([
                 'product:id,name,price,shop_id,image',
-                'product.shop:id,name,description,logo_image'
+                'product.shop:id,name,description,logo_image',
             ])
             ->get();
 
@@ -70,7 +69,8 @@ class CartRepository implements CartRepositoryInterface
         return $grouped->toArray();
     }
 
-    public function removeItems($cartWithItems): void {
+    public function removeItems($cartWithItems): void
+    {
         $cartWithItems->cartItems->first()->delete();
         if ($cartWithItems->cartItems()->count() === 0) {
             $cartWithItems->delete();

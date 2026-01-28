@@ -21,8 +21,8 @@ test('user can register with valid data', function () {
         ->assertJsonStructure([
             'message',
             'user' => [
-                'id', 'name', 'email', 'role'
-            ]
+                'id', 'name', 'email', 'role',
+            ],
         ]);
 
     $this->assertDatabaseHas('users', [
@@ -60,7 +60,7 @@ test('user can login with valid credentials', function () {
         ->assertJsonStructure([
             'user',
             'token',
-            'role'
+            'role',
         ]);
 });
 
@@ -86,7 +86,7 @@ test('authenticated user can logout', function () {
 
     $response->assertStatus(200)
         ->assertJson(['message' => 'Logged out successfully']);
-    
+
     expect($user->tokens()->count())->toBe(0);
 });
 

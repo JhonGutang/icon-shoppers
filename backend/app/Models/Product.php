@@ -4,17 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
     use HasFactory;
 
     const STATUS_PUBLISHED = 'published';
+
     const STATUS_DRAFT = 'draft';
+
     const STATUS_ARCHIVED = 'archived';
-    
+
     protected $fillable = [
         'shop_id',
         'category_id',
@@ -48,7 +50,7 @@ class Product extends Model
                 $product->slug = Str::slug($product->name);
             }
             if (empty($product->sku)) {
-                $product->sku = 'PRD-' . strtoupper(Str::random(8));
+                $product->sku = 'PRD-'.strtoupper(Str::random(8));
             }
         });
 
@@ -63,7 +65,6 @@ class Product extends Model
     {
         return $this->belongsTo(Shop::class, 'shop_id');
     }
-
 
     public function orders()
     {
@@ -108,7 +109,7 @@ class Product extends Model
     public function getIsInWishlistAttribute()
     {
         $userId = Auth::guard('sanctum')->id();
-        if (!$userId) {
+        if (! $userId) {
             return false;
         }
 

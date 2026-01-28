@@ -10,6 +10,7 @@ class Shop extends Model
     use HasFactory;
 
     const STATUS_ACTIVE = 'active';
+
     const STATUS_SUSPENDED = 'suspended';
 
     protected $fillable = [
@@ -29,13 +30,13 @@ class Shop extends Model
         parent::boot();
 
         static::creating(function ($shop) {
-            if (!$shop->slug) {
+            if (! $shop->slug) {
                 $shop->slug = \Illuminate\Support\Str::slug($shop->name);
             }
         });
 
         static::updating(function ($shop) {
-            if ($shop->isDirty('name') && !$shop->isDirty('slug')) {
+            if ($shop->isDirty('name') && ! $shop->isDirty('slug')) {
                 $shop->slug = \Illuminate\Support\Str::slug($shop->name);
             }
         });

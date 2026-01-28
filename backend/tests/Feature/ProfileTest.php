@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\User;
-use App\Models\Shop;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -23,27 +21,26 @@ test('merchant can update their unified profile', function () {
         'shop_name' => 'Updated Shop Name',
         'description' => 'Updated description',
         'logo_image' => UploadedFile::fake()->create('logo.jpg', 100),
-        'banner_image' => UploadedFile::fake()->create('banner.jpg', 100)
+        'banner_image' => UploadedFile::fake()->create('banner.jpg', 100),
     ];
 
     $response = $this->postJson('/api/profile', $data);
 
     $response->assertStatus(200)
         ->assertJsonFragment(['message' => 'Profile updated successfully']);
-    
+
     $this->assertDatabaseHas('users', [
         'id' => $merchant->id,
         'name' => 'Updated User Name',
-        'contact_number' => '09998887777'
+        'contact_number' => '09998887777',
     ]);
 
     $this->assertDatabaseHas('shops', [
         'id' => $merchant->shop->id,
         'name' => 'Updated Shop Name',
-        'description' => 'Updated description'
+        'description' => 'Updated description',
     ]);
 });
-
 
 test('unauthenticated user cannot view profile', function () {
     $response = $this->getJson('/api/profile');

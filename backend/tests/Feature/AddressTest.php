@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\User;
 use App\Models\Address;
+use App\Models\User;
 use Laravel\Sanctum\Sanctum;
 
 test('authenticated user can view their addresses', function () {
@@ -26,18 +26,18 @@ test('user can create a new address', function () {
         'barangay' => 'Brgy 1',
         'city' => 'Metro Manila',
         'postal_code' => '1000',
-        'is_default' => true
+        'is_default' => true,
     ];
 
     $response = $this->postJson('/api/addresses', $data);
 
     $response->assertStatus(201)
         ->assertJsonFragment(['name' => 'John Doe']);
-    
+
     $this->assertDatabaseHas('addresses', [
         'user_id' => $user->id,
         'name' => 'John Doe',
-        'is_default' => 1
+        'is_default' => 1,
     ]);
 });
 
@@ -52,10 +52,10 @@ test('user can update their address', function () {
 
     $response->assertStatus(200)
         ->assertJsonFragment(['name' => 'Updated Name']);
-    
+
     $this->assertDatabaseHas('addresses', [
         'id' => $address->id,
-        'name' => 'Updated Name'
+        'name' => 'Updated Name',
     ]);
 });
 
@@ -79,7 +79,7 @@ test('user can set an address as default', function () {
     $response = $this->postJson("/api/addresses/{$address2->id}/set-default");
 
     $response->assertStatus(200);
-    
+
     $this->assertDatabaseHas('addresses', ['id' => $address2->id, 'is_default' => 1]);
     $this->assertDatabaseHas('addresses', ['id' => $address1->id, 'is_default' => 0]);
 });

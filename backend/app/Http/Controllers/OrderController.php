@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Order;
 use App\Interfaces\Services\OrderServiceInterface;
+use App\Models\Order;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -23,13 +23,17 @@ class OrderController extends Controller
     {
         try {
             $order = $this->orderService->getOrderDetails($orderNumber);
+
             return response()->json($order);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             // fallback to ID search for old routes
             if (is_numeric($orderNumber)) {
                 $order = Order::with(['user', 'shop', 'orderItems.product.shop'])->find($orderNumber);
-                if ($order) return response()->json($order);
+                if ($order) {
+                    return response()->json($order);
+                }
             }
+
             return response()->json(['message' => 'Order not found'], 404);
         }
     }
@@ -41,7 +45,7 @@ class OrderController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        if (!$user->hasShop()) {
+        if (! $user->hasShop()) {
             return response()->json(['message' => 'Unauthorized. Must have a shop to view seller orders.'], 403);
         }
 
@@ -51,23 +55,24 @@ class OrderController extends Controller
         $perPage = $request->query('per_page', 20);
 
         $orders = $this->orderService->getOrders($status, $shopId, $page, $perPage);
+
         return response()->json($orders);
     }
-    
+
     /**
      * Update order status (Seller action)
      */
     public function statusUpdate(Request $request, $id)
     {
         $status = $request->input('status');
-        
+
         // Ensure status sequence is followed (Planned for future, but basic update for now)
         $order = $this->orderService->updateOrderStatus($status, $id);
-        
+
         return response()->json([
             'success' => true,
-            'message' => 'Order status updated to ' . str_replace('_', ' ', $status),
-            'order' => $order
+            'message' => 'Order status updated to '.str_replace('_', ' ', $status),
+            'order' => $order,
         ]);
     }
 
@@ -82,6 +87,7 @@ class OrderController extends Controller
         $perPage = $request->query('per_page', 20);
 
         $orders = $this->orderService->getCustomerOrders($status, $userId, $page, $perPage);
+
         return response()->json($orders);
     }
 
@@ -101,19 +107,19 @@ class OrderController extends Controller
         $userId = Auth::id();
         $products = $request->input('products');
         $productIds = collect($products)->pluck('id');
-        
+
         $data = $request->only(['shipping_address', 'notes', 'payment_method', 'delivery_method']);
-        
+
         try {
             $result = $this->orderService->checkoutOrder($userId, $products, $productIds, $data);
-            
+
             return response()->json([
                 'message' => 'Order(s) placed successfully',
-                'orders' => $result
+                'orders' => $result,
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to place order: ' . $e->getMessage()
+                'message' => 'Failed to place order: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -124,17 +130,18 @@ class OrderController extends Controller
     public function cancel(Request $request, $id)
     {
         $reason = $request->input('reason', 'No reason provided');
-        
+
         try {
             $order = $this->orderService->cancelOrder($id, $reason);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Order cancelled successfully',
-                'order' => $order
+                'order' => $order,
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed to cancel order: ' . $e->getMessage()
+                'message' => 'Failed to cancel order: '.$e->getMessage(),
             ], 500);
         }
     }

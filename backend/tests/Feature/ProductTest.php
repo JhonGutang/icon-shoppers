@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\User;
 use App\Models\Product;
 use App\Models\Shop;
 use Illuminate\Http\UploadedFile;
@@ -17,7 +16,7 @@ test('anyone can fetch all products', function () {
 });
 
 test('anyone can search for products', function () {
-    $uniqueName = 'ZYX-UNIQUE-APPLE-' . uniqid();
+    $uniqueName = 'ZYX-UNIQUE-APPLE-'.uniqid();
     Product::factory()->create(['name' => $uniqueName, 'is_visible' => true]);
     Product::factory()->create(['name' => 'Other Random Product', 'is_visible' => true]);
 
@@ -57,17 +56,17 @@ test('merchant can create a product', function () {
         'price' => 150.00,
         'quantity' => 10,
         'description' => 'Great product',
-        'image' => UploadedFile::fake()->create('product.jpg', 100)
+        'image' => UploadedFile::fake()->create('product.jpg', 100),
     ];
 
     $response = $this->postJson('/api/merchant/products', $data);
 
     $response->assertStatus(201)
         ->assertJsonFragment(['name' => 'New Test Product']);
-    
+
     $this->assertDatabaseHas('products', [
         'name' => 'New Test Product',
-        'shop_id' => $merchant->shop->id
+        'shop_id' => $merchant->shop->id,
     ]);
 });
 
@@ -78,17 +77,17 @@ test('merchant can update their product', function () {
     $response = $this->postJson("/api/merchant/products/{$product->id}", [
         'name' => 'Updated Name',
         'price' => 200.00,
-        'quantity' => 50
+        'quantity' => 50,
     ]);
 
     $response->assertStatus(200)
         ->assertJsonFragment(['name' => 'Updated Name']);
-    
+
     $this->assertDatabaseHas('products', [
         'id' => $product->id,
         'name' => 'Updated Name',
         'price' => 200.00,
-        'quantity' => 50
+        'quantity' => 50,
     ]);
 });
 
@@ -99,7 +98,7 @@ test('merchant cannot update someone elses product', function () {
     $response = $this->postJson("/api/merchant/products/{$otherProduct->id}", [
         'name' => 'Hacker Update',
         'price' => 1000.00,
-        'quantity' => 1
+        'quantity' => 1,
     ]);
 
     $response->assertStatus(403);

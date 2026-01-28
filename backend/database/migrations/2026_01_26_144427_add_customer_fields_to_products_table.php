@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('stock')->default(0)->after('sku');
             $table->enum('status', ['published', 'draft'])->default('published')->after('is_visible');
             $table->unsignedBigInteger('category_id')->nullable()->after('shop_id');
-            
+
             $table->index('slug');
             $table->index('status');
             $table->index('category_id');
