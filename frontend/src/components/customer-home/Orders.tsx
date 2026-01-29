@@ -86,7 +86,7 @@ const Orders = () => {
                 {order.products.map((product) => (
                   <div key={product.id} className="flex items-center gap-4">
                     <img
-                      src={`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`}
+                      src={`https://icon-shoppers.onrender.com/storage/${product.image}`}
                       alt={product.name}
                       className="w-20 h-20 object-cover rounded-xl border shadow-sm"
                     />

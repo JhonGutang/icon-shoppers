@@ -25,7 +25,7 @@ const ShopsCard: React.FC<ShopsProps> = ({ shop }) => {
           <img
             src={
               shop.logo_image
-                ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${shop.logo_image}`
+                ? `https://icon-shoppers.onrender.com/storage/${shop.logo_image}`
                 : "https://i.pinimg.com/736x/fd/3d/8e/fd3d8e2a1dd4f09b4170d31e26913bab.jpg"
             }
             alt={shop.name}

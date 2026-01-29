@@ -70,7 +70,7 @@ const EditProduct: React.FC<EditProductProps> = ({ product }) => {
         <div className="w-full flex flex-col gap-5">
           {product.image && (
              <img
-                src={`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`}
+                src={`https://icon-shoppers.onrender.com/storage/${product.image}`}
                 className="w-[40%] rounded-xl object-contain max-h-[25vh]"
                 alt="Product Preview"
              />

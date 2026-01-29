@@ -96,7 +96,7 @@ const ShopPage = () => {
           <div className="relative w-full h-[250px] md:h-[350px] bg-muted overflow-hidden">
             {shop.banner_image ? (
               <img
-                src={`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${shop.banner_image}`}
+                src={`https://icon-shoppers.onrender.com/storage/${shop.banner_image}`}
                 alt={`${shop.name} Banner`}
                 className="w-full h-full object-cover"
               />
@@ -112,7 +112,7 @@ const ShopPage = () => {
                 {/* Shop Logo */}
                 <div className="relative -mb-4 md:-mb-12 h-24 w-24 md:h-36 md:w-36 rounded-2xl border-4 border-background bg-white shadow-xl overflow-hidden shrink-0">
                   <img
-                    src={shop.logo_image ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${shop.logo_image}` : "https://placehold.co/200x200?text=Shop"}
+                    src={shop.logo_image ? `https://icon-shoppers.onrender.com/storage/${shop.logo_image}` : "https://placehold.co/200x200?text=Shop"}
                     alt={shop.name}
                     className="w-full h-full object-cover"
                   />

@@ -86,7 +86,7 @@ const ProductContainer: React.FC<{ product?: Product; id: number }> = ({
                 <img
                   src={
                     product?.image
-                      ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`
+                      ? `https://icon-shoppers.onrender.com/storage/${product.image}`
                       : "https://i.pinimg.com/736x/c5/a0/03/c5a00375d647591a14dd36e31151acb1.jpg"
                   }
                   alt="Product Image"

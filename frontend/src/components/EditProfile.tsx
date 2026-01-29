@@ -114,7 +114,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onSave }) => {
             <div className="relative w-24 h-24">
               {imagePreview ? (
                 <img
-                  src={imagePreview.startsWith('blob:') || imagePreview.startsWith('http') ? imagePreview : `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${imagePreview}`}
+                  src={imagePreview.startsWith('blob:') || imagePreview.startsWith('http') ? imagePreview : `https://icon-shoppers.onrender.com/storage/${imagePreview}`}
                   alt="Profile"
                   className="w-24 h-24 rounded-full object-cover border"
                 />
