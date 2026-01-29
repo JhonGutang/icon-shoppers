@@ -2,7 +2,7 @@ import axios from 'axios';
 import useAuthStore from '@/stores/useAuthStore';
 
 const axiosInstance = axios.create({
-  baseURL: `https://icon-shoppers.onrender.com/api/`,
+  baseURL: '/api/',
 });
 
 axiosInstance.interceptors.request.use((config) => {
