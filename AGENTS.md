@@ -33,6 +33,9 @@ This document serves as the primary source of truth for all AI agents and develo
 5.  **Type Safety:**
     - Always use TypeScript. Define interfaces/types for all data structures (API responses, props, state).
     - Avoid `any` at all costs.
+6.  **Comments:**
+    - Ensure that comments are written only for complex codes.
+    - Strongly suggest to not write comments if possible; prefer self-documenting code.
 
 ---
 
@@ -69,7 +72,7 @@ Follow this flow strictly:
 3.  **Implementation:** Adhere strictly to the rules stated in this document.
 4.  **Testing:** Create comprehensive test cases (Pest for backend, Vitest for frontend). **Do not modify existing test cases** unless absolutely necessary for the fix/feature.
 5.  **Final Type Check & Build Check:** Run a full type check and build process to ensure no regressions or system-wide errors. This must pass before proceeding.
-6.  **Documentation:** Add or update documentation (README, internal docs, comments) after every implementation.
+6.  **Documentation:** Add or update documentation (README, internal docs) after every implementation. Use comments only for complex logic as per project guidelines.
 7.  **Compounding Knowledge:** If a mistake is made, record it in the [Compounding Knowledge](#-compounding-knowledge) section to avoid repetition.
 
 ---

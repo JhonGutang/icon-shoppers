@@ -14,12 +14,12 @@ class WishlistRepository implements WishlistRepositoryInterface
         $this->model = $wishlist;
     }
 
-    public function getUserWishlists($userId)
+    public function getUserWishlists($userId, $page = 1, $perPage = 20)
     {
         return $this->model
             ->where('user_id', $userId)
-            ->with('product.shop')
-            ->get();
+            ->with(['product.shop', 'product.category'])
+            ->paginate($perPage, ['*'], 'page', $page);
     }
 
     public function addToWishlist($userId, $productId)

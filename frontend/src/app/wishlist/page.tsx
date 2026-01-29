@@ -18,7 +18,19 @@ const WishlistPage = () => {
   });
 
 
-  const products = wishlistData?.data?.map((item: any) => item.product) || [];
+  const products = React.useMemo(() => {
+    if (!wishlistData) return [];
+    
+    if (wishlistData.data && Array.isArray(wishlistData.data)) {
+      return wishlistData.data.map((item: any) => item.product).filter(Boolean);
+    }
+    
+    if (Array.isArray(wishlistData)) {
+      return wishlistData.map((item: any) => item.product).filter(Boolean);
+    }
+    
+    return [];
+  }, [wishlistData]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

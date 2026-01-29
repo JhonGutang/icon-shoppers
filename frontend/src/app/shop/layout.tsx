@@ -21,12 +21,10 @@ const ShopLayout: React.FC<ShopLayoutProps> = ({ children }) => {
 
   const handleSwitchToCustomer = async () => {
     setIsSwitching(true);
-    
-    // Simulate a smooth transition loading state
     await new Promise((resolve) => setTimeout(resolve, 1500));
     
     setSellerMode(false);
-    router.push("/");
+    router.push("/home");
   };
 
   return (

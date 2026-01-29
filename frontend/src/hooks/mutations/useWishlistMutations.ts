@@ -50,11 +50,22 @@ export const useToggleWishlistMutation = () => {
 
       // Optimistically remove from wishlist query if we're on the wishlist page
       queryClient.setQueriesData({ queryKey: ['wishlist'], exact: false }, (oldData: any) => {
-        if (!oldData || !oldData.data) return oldData;
-        return {
-          ...oldData,
-          data: oldData.data.filter((item: any) => String(item.product_id) !== String(productId))
-        };
+        if (!oldData) return oldData;
+        
+        // Handle paginated response: { data: [...] }
+        if (oldData.data && Array.isArray(oldData.data)) {
+          return {
+            ...oldData,
+            data: oldData.data.filter((item: any) => String(item.product_id) !== String(productId))
+          };
+        }
+        
+        // Handle flat array response: [...]
+        if (Array.isArray(oldData)) {
+          return oldData.filter((item: any) => String(item.product_id) !== String(productId));
+        }
+        
+        return oldData;
       });
     },
     onError: (error: any) => {
