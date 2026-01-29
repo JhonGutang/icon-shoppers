@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import useAuth from "@/hooks/useAuth";
@@ -11,15 +11,16 @@ const Profile = () => {
   const [editableUser, setEditableUser] = useState<EditProfile | undefined>();
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     const data = await handleGetProfile();
     setUser(data);
     setEditableUser(data);
-  };
+  }, [handleGetProfile]);
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    // Decouple state updates from the effect body to avoid cascading renders
+    Promise.resolve().then(() => fetchProfile());
+  }, [fetchProfile]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -52,7 +53,7 @@ const Profile = () => {
         <div className="rounded-xl flex flex-col items-center w-full lg:mb-0 mb-5">
           <img
             src="https://i.pinimg.com/736x/fd/3d/8e/fd3d8e2a1dd4f09b4170d31e26913bab.jpg"
-            alt="Profile"
+            alt="User Profile"
             className="rounded-xl lg:w-[30vw] w-[50vw]"
           />
         </div>

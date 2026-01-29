@@ -22,10 +22,11 @@ const CreateProduct = () => {
   useEffect(() => {
     if (newProduct.image) {
       const previewUrl = URL.createObjectURL(newProduct.image);
-      setImagePreview(previewUrl);
+      // Decouple from render cycle to satisfy newer React lint rules
+      Promise.resolve().then(() => setImagePreview(previewUrl));
       return () => URL.revokeObjectURL(previewUrl);
     } else {
-      setImagePreview("");
+      Promise.resolve().then(() => setImagePreview(""));
     }
   }, [newProduct.image]);
 

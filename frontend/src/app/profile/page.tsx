@@ -414,7 +414,7 @@ const ProfilePageContent = () => {
                        <div className="flex items-center gap-6">
                           <div className="h-24 w-24 rounded-2xl overflow-hidden border bg-muted flex items-center justify-center">
                              {profileData.shop?.logo_image ? (
-                                <img src={profileData.shop.logo_image} className="h-full w-full object-cover" />
+                                <img src={profileData.shop.logo_image} alt="Shop Logo" className="h-full w-full object-cover" />
                              ) : (
                                 <Store size={32} className="text-muted-foreground" />
                              )}
@@ -434,7 +434,7 @@ const ProfilePageContent = () => {
                        <Label>Shop Banner</Label>
                        <div className="relative h-24 w-full rounded-2xl overflow-hidden border bg-muted group">
                           {profileData.shop?.banner_image ? (
-                             <img src={profileData.shop.banner_image} className="h-full w-full object-cover" />
+                             <img src={profileData.shop.banner_image} alt="Shop Banner" className="h-full w-full object-cover" />
                           ) : (
                              <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">No banner set</div>
                           )}

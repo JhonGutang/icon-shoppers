@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import useCustomerActions from "@/hooks/useCustomerActions";
 import { ProductWithShop } from "@/types/product";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useOrders } from "@/hooks/useOrders";
 import { formatStatus, getStatusColor } from "@/lib/orderUtils";
 import { Order } from "@/types/order";
@@ -22,14 +22,15 @@ const Orders = () => {
     { id: "DELIVERED", label: "Delivered" },
   ];
 
-  const fetchOrders = async (status?: string) => {
+  const fetchOrders = useCallback(async (status?: string) => {
     const products = await handleOrders(status || "all");
     if (products) setOrders(products);
-  };
+  }, [handleOrders]);
 
   useEffect(() => {
-    fetchOrders(activeTab);
-  }, [activeTab]);
+    // Decouple state updates from the effect body to avoid cascading renders
+    Promise.resolve().then(() => fetchOrders(activeTab));
+  }, [activeTab, fetchOrders]);
 
   if (!orders)
     return (

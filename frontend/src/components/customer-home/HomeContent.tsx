@@ -14,17 +14,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const HomeContent = () => {
   const searchParams = useSearchParams();
-  const [activeComponent, setActiveComponent] = useState<string>("Home");
   const { isSellerMode } = useAuthStore();
-
-  useEffect(() => {
-    const section = searchParams.get("section");
-    if (section) {
-      setActiveComponent(section);
-    } else {
-      setActiveComponent("Home");
-    }
-  }, [searchParams]);
+  const activeComponent = searchParams.get("section") || "Home";
 
   return (
     <div className="w-full min-h-screen flex flex-col bg-gray-50">
