@@ -11,9 +11,6 @@ npm-debug.log
 yarn-error.log
 .git
 .github
-Dockerfile
-docker-entrypoint.sh
-.dockerignore
 tests
 phpunit.xml
 .editorconfig
