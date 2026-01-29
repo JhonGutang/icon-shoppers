@@ -41,6 +41,9 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Create supervisor log directory
+RUN mkdir -p /var/log/supervisor
+
 # Copy configurations
 COPY nginx.conf /etc/nginx/http.d/default.conf
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
