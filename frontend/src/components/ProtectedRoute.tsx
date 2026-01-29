@@ -76,9 +76,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         
         // Redirect logic
         if (userRole === "customer" && allowedRoles.includes("merchant")) {
-             router.push("/?section=Create Shop"); // Suggest creating a shop
+             router.push("/home?section=Create Shop"); // Suggest creating a shop
         } else {
-             router.push("/");
+             router.push("/home");
         }
         return;
       }

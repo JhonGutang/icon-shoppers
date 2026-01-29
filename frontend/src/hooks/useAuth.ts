@@ -59,7 +59,7 @@ const useAuth = () => {
       store.setAuth(token, user.role, user.id, has_shop, has_shop);
 
       // Always redirect to root discovery page first
-      redirectLink("/");
+      redirectLink("/home");
     } catch (error) {
       console.error(error)
       openSnackbar("Login failed!", "error");
@@ -91,7 +91,7 @@ const useAuth = () => {
     } finally {
       store.clearAuth();
       store.setLoggingOut(true);
-      redirectLink("landing"); // Landing page for guests
+      redirectLink("/"); // Landing page for guests
     }
   };
 
@@ -116,7 +116,7 @@ const useAuth = () => {
     const accessToken = useToken.getState().accessToken;
     
     if (accessToken) {
-       redirectLink("/");
+       redirectLink("/home");
     }
   }
 

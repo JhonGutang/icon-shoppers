@@ -123,7 +123,7 @@ const ProductImage = ({ product }: { product?: Product }) => {
         <img
           src={
             product?.image
-              ? `https://icon-shoppers.onrender.com/storage/${product.image}`
+              ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`
               : "https://i.pinimg.com/736x/fd/3d/8e/fd3d8e2a1dd4f09b4170d31e26913bab.jpg"
           }
           alt={product?.name || "Product Image"}

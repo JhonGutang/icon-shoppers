@@ -128,7 +128,7 @@ const CheckoutContainer: React.FC<CheckoutContainerProps> = ({
                 {products.map((product) => (
                   <div key={product.id} className="flex gap-4 p-4 border rounded-lg hover:border-green-200 transition-colors">
                     <img
-                      src={`https://icon-shoppers.onrender.com/storage/${product.image}`}
+                      src={`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`}
                       alt={product.name}
                       className="w-24 h-24 object-cover rounded-md"
                     />

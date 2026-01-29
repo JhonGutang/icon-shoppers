@@ -37,7 +37,7 @@ const AuthRedirect: React.FC<AuthRedirectProps> = ({
       }
       
       const timer = setTimeout(() => {
-        router.push("/");
+        router.push("/home");
       }, 100);
       
       return () => clearTimeout(timer);

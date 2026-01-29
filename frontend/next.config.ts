@@ -3,14 +3,15 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   async rewrites() {
+    const apiUrl = process.env.NEXT_PUBLIC_LARAVEL_API_URL || 'http://127.0.0.1:8000';
     return [
       {
         source: '/api/:path*',
-        destination: 'https://icon-shoppers.onrender.com/api/:path*',
+        destination: `${apiUrl}/api/:path*`,
       },
       {
         source: '/storage/:path*',
-        destination: 'https://icon-shoppers.onrender.com/storage/:path*',
+        destination: `${apiUrl}/storage/:path*`,
       },
     ];
   },

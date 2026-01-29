@@ -71,7 +71,7 @@ const OrderDetailsPage = () => {
                     {order.products.map((product) => (
                         <div key={product.id} className="p-6 flex gap-4">
                             <img 
-                                src={product.image ? `https://icon-shoppers.onrender.com/storage/${product.image}` : "https://placehold.co/100x100"} 
+                                src={product.image ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}` : "https://placehold.co/100x100"} 
                                 alt={product.name}
                                 className="h-20 w-20 rounded-xl object-cover border"
                             />

@@ -63,7 +63,7 @@ const ProductDetailsPage = () => {
               <img
                 src={
                   product.image
-                    ? `https://icon-shoppers.onrender.com/storage/${product.image}`
+                    ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`
                     : "https://placehold.co/800x800?text=Product+Image"
                 }
                 alt={product.name}

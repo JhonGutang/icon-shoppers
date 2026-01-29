@@ -113,7 +113,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <img
               src={
                 product.image
-                  ? `https://icon-shoppers.onrender.com/storage/${product.image}`
+                  ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`
                   : "https://placehold.co/400x400?text=No+Image"
               }
               alt={product.name}
@@ -199,7 +199,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <img
               src={
                 product.image
-                  ? `https://icon-shoppers.onrender.com/storage/${product.image}`
+                  ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`
                   : "https://placehold.co/400x400?text=No+Image"
               }
               alt={product.name}

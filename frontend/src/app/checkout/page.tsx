@@ -165,7 +165,7 @@ const CheckoutPage = () => {
                     {productsInCart.map(item => (
                         <div key={item.id} className="flex gap-3">
                             <img 
-                                src={item.image ? `https://icon-shoppers.onrender.com/storage/${item.image}` : "https://placehold.co/100x100"} 
+                                src={item.image ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${item.image}` : "https://placehold.co/100x100"} 
                                 alt={item.name}
                                 className="h-12 w-12 rounded object-cover flex-shrink-0"
                             />

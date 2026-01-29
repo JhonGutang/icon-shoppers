@@ -109,7 +109,7 @@ const OrderCard = ({ order }: { order: Order }) => {
           {order.products.map((product: any) => (
             <div key={product.order_item_id} className="flex gap-4">
               <img 
-                src={product.image ? `https://icon-shoppers.onrender.com/storage/${product.image}` : "https://placehold.co/80x80"} 
+                src={product.image ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}` : "https://placehold.co/80x80"} 
                 alt={product.name}
                 className="h-16 w-16 rounded-xl object-cover flex-shrink-0 border"
               />

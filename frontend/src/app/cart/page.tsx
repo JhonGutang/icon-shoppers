@@ -79,7 +79,7 @@ const CartPage = () => {
                       <div key={item.id} className="p-4 flex gap-4">
                         <div className="h-20 w-20 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
                           <img 
-                            src={item.image ? `https://icon-shoppers.onrender.com/storage/${item.image}` : "https://placehold.co/100x100"} 
+                            src={item.image ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${item.image}` : "https://placehold.co/100x100"} 
                             alt={item.name}
                             className="h-full w-full object-cover"
                           />

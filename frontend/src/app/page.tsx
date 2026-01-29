@@ -1,80 +1,126 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useEffect } from "react";
 import Navbar from "@/components/Navbar";
+import Hero from "@/components/landing-page/Hero";
+import AboutUs from "@/components/landing-page/About-us";
 import Footer from "@/components/landing-page/Footer";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Products from "@/components/customer-home/Products";
-import Shops from "@/components/customer-home/Shops";
+import { useProducts, useFeaturedProducts } from "@/hooks/queries/useProductsQuery";
+import ProductGrid from "@/components/ProductGrid";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ChevronRight, TrendingUp, Sparkles } from "lucide-react";
 import { useCategories } from "@/hooks/queries/useCategoryQuery";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import useAuthStore from "@/stores/useAuthStore";
+import { useRouter } from "next/navigation";
 
-export default function Home() {
+export default function LandingPage() {
+  const router = useRouter();
+  const { accessToken, hasHydrated } = useAuthStore();
+  const productRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (hasHydrated && accessToken) {
+      router.push("/home");
+    }
+  }, [accessToken, hasHydrated, router]);
+
+  const scrollToProducts = () => {
+    productRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const { data: featuredData, isLoading: isFeaturedLoading } = useFeaturedProducts(1);
+  const { data: latestData, isLoading: isLatestLoading } = useProducts({ sort: 'newest', per_page: 5 });
   const { data: categories } = useCategories();
-  const [filters, setFilters] = useState({
-    sort: "newest",
-  });
 
   return (
-    <ProtectedRoute redirectTo="/auth">
-      <div className="flex min-h-screen flex-col bg-background">
-        <Navbar />
-        
-        <main className="flex-1 overflow-x-hidden">
-          <div className="container mx-auto px-4 py-8">
-            <Tabs defaultValue="products" className="w-full">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <TabsList className="grid w-full max-w-md grid-cols-2 h-12">
-                  <TabsTrigger value="products" className="text-lg font-bold">Explore Products</TabsTrigger>
-                  <TabsTrigger value="shops" className="text-lg font-bold">Explore Shops</TabsTrigger>
-                </TabsList>
+    <div className="flex min-h-screen flex-col bg-background">
+      <Navbar isLanding={true} />
+      
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section id="home">
+          <Hero onViewProducts={scrollToProducts} />
+        </section>
 
-                <div className="flex items-center gap-2">
-                  <Select 
-                    value={filters.sort} 
-                    onValueChange={(val) => setFilters(prev => ({ ...prev, sort: val }))}
+        {/* Category Icons */}
+        <section className="py-12 bg-muted/30">
+          <div className="container mx-auto px-4">
+             <div className="flex flex-wrap justify-center gap-4 sm:gap-8">
+                {categories?.map((cat) => (
+                  <Link 
+                    key={cat.id} 
+                    href="/auth"
+                    className="flex flex-col items-center group"
                   >
-                    <SelectTrigger className="w-[160px] h-12 rounded-xl">
-                      <SelectValue placeholder="Sort by" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="newest">Newest</SelectItem>
-                      <SelectItem value="featured">Featured First</SelectItem>
-                      <SelectItem value="price_asc">Price: Low to High</SelectItem>
-                      <SelectItem value="price_desc">Price: High to Low</SelectItem>
-                      <SelectItem value="popular">Most Popular</SelectItem>
-                      <SelectItem value="rating">Top Rated</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <TabsContent value="products" className="mt-0">
-                <Products 
-                  location="Products" 
-                  sort={filters.sort}
-                />
-              </TabsContent>
-
-              <TabsContent value="shops" className="mt-0">
-                <Shops 
-                  location="Shops" 
-                  sort={filters.sort}
-                />
-              </TabsContent>
-            </Tabs>
+                    <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-card border-border flex items-center justify-center shadow-sm group-hover:shadow-md group-hover:border-primary/40 transition-all">
+                       <span className="text-primary font-bold">{cat.name.substring(0, 1)}</span>
+                    </div>
+                    <span className="mt-2 text-xs font-bold text-muted-foreground group-hover:text-primary">{cat.name}</span>
+                  </Link>
+                ))}
+             </div>
           </div>
-        </main>
+        </section>
 
-        <Footer />
-      </div>
-    </ProtectedRoute>
+        {/* Featured Products */}
+        <section className="py-16 container mx-auto px-4" ref={productRef}>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary/10 p-2 rounded-lg">
+                <Sparkles className="text-primary" size={24} />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black tracking-tight">Featured for You</h2>
+                <p className="text-sm text-muted-foreground">Hand-picked quality from local artisans</p>
+              </div>
+            </div>
+            <Button variant="ghost" asChild className="rounded-full">
+              <Link href="/auth">
+                View All <ChevronRight size={16} />
+              </Link>
+            </Button>
+          </div>
+          
+          <ProductGrid 
+            isLanding={true}
+            products={(featuredData?.data || []).slice(0, 5)} 
+            isLoading={isFeaturedLoading} 
+          />
+        </section>
+
+        {/* Latest Arrivals */}
+        <section className="py-16 container mx-auto px-4">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="bg-blue-100 p-2 rounded-lg">
+                <TrendingUp className="text-blue-600" size={24} />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black tracking-tight">Latest Arrivals</h2>
+                <p className="text-sm text-muted-foreground">The newest additions from your favorite shops</p>
+              </div>
+            </div>
+            <Button variant="ghost" asChild className="rounded-full">
+              <Link href="/auth">
+                View All <ChevronRight size={16} />
+              </Link>
+            </Button>
+          </div>
+          
+          <ProductGrid 
+            isLanding={true}
+            products={latestData?.data || []} 
+            isLoading={isLatestLoading} 
+          />
+        </section>
+
+        <section id="about-us">
+          <AboutUs />
+        </section>
+      </main>
+
+      <Footer />
+    </div>
   );
 }

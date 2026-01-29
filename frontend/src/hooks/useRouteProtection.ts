@@ -45,7 +45,7 @@ export const useRouteProtection = ({
           toast.error("Access Denied: Insufficient Permissions");
           hasShownToast.current = true;
         }
-        router.push("/");
+        router.push("/home");
         return;
       }
     }

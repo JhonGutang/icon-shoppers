@@ -34,7 +34,7 @@ const UnifiedNavbar = () => {
     <nav className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
+        <Link href={isAuthenticated() ? "/home" : "/"} className="flex items-center space-x-2">
           <span className="text-2xl font-bold text-green-600">Icon Shoppers</span>
         </Link>
 
