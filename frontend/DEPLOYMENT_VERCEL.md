@@ -36,7 +36,7 @@ Add the following environment variables in the **"Environment Variables"** secti
 2. Once the build is finished, your app will be live on a `*.vercel.app` domain.
 
 ## Why this configuration works
-- **`vercel.json`**: This file (already in your `frontend` folder) handles the routing fallback (SPA mode) and proxies all `/api/*` and `/storage/*` requests to Render. This avoids CORS issues and keeps internal links clean.
+- **Built-in Rewrites**: Next.js handles routing and API proxying via `next.config.ts`. This avoids conflicts with Vercel's edge network and ensures clean `/api/*` and `/storage/*` requests to Render.
 - **Relative BaseURL**: The `axiosInstance` is configured to use `/api/`, which works seamlessly with the Vercel proxy.
 
 ## Troubleshooting
