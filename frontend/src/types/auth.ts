@@ -99,6 +99,16 @@ export interface EditProfile {
     middleName?: string;
     shopOwner?: string;
     email: string;
-    address?: string,
+    address?: string;
     contactNumber?: string;
+    profile_picture?: string;
+    shop?: {
+        id: number;
+        name: string;
+        description: string;
+        logo_image: string;
+        banner_image: string;
+        shipping_fee: number;
+        slug: string;
+    };
 }

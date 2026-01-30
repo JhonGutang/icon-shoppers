@@ -24,3 +24,8 @@ export const createShop = async (data: any) => {
     const response = await axiosInstance.post('/shops', data);
     return response.data;
 }
+
+export const deleteShop = async (credentials: { password: string, shop_name: string }) => {
+    const response = await axiosInstance.delete("/shops", { data: credentials });
+    return response.data;
+};

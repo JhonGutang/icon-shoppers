@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ShopCreateRequest;
+use App\Http\Requests\ShopDeleteRequest;
 use App\Http\Requests\ShopUpdateFormRequest;
 use App\Interfaces\Services\ImageServiceInterface;
 use App\Interfaces\Services\ShopServiceInterface;
@@ -11,6 +12,7 @@ use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class ShopController extends Controller
 {
@@ -48,8 +50,12 @@ class ShopController extends Controller
         }
 
         $validatedData = $request->validated();
+
+        if (! Hash::check($validatedData['password'], $user->password)) {
+            return response()->json(['message' => 'Incorrect password confirmation.'], 422);
+        }
+
         $validatedData['owner_id'] = $user->id;
-        $validatedData['status'] = Shop::STATUS_ACTIVE;
 
         $shop = $this->shopService->createShop($validatedData);
 
@@ -65,7 +71,6 @@ class ShopController extends Controller
             $this->shopService->updateShop($validatedData, $shop->id);
         }
 
-        // Transition user to merchant role
         $user->update(['role' => User::ROLE_MERCHANT]);
 
         return response()->json([
@@ -76,11 +81,9 @@ class ShopController extends Controller
 
     public function update(ShopUpdateFormRequest $request)
     {
-        /** @var \App\Models\User $user */
         $user = Auth::user();
         $validatedData = $request->validated();
 
-        // 1. Handle User Update
         $userData = [];
         if (isset($validatedData['user_name'])) {
             $userData['name'] = $validatedData['user_name'];
@@ -102,8 +105,6 @@ class ShopController extends Controller
         if (! empty($userData)) {
             $this->userService->updateUser($userData, $user->id);
         }
-
-        // 2. Handle Shop Update (if user is a merchant)
         $shop = $user->shop;
         if ($shop) {
             $shopData = [];
@@ -165,7 +166,6 @@ class ShopController extends Controller
 
     public function logout()
     {
-        /** @var \App\Models\User $user */
         $user = Auth::user();
         $user->tokens()->delete();
 
@@ -176,7 +176,6 @@ class ShopController extends Controller
 
     public function getAnalytics()
     {
-        /** @var \App\Models\User $user */
         $user = Auth::user();
         if (! $user->hasShop()) {
             return response()->json(['message' => 'Shop not found.'], 404);
@@ -185,5 +184,39 @@ class ShopController extends Controller
         $analytics = $this->shopService->getAnalytics($user->shop->id);
 
         return response()->json($analytics);
+    }
+
+    public function destroy(ShopDeleteRequest $request)
+    {
+        $user = Auth::user();
+
+        if (! $user->hasShop()) {
+            return response()->json(['message' => 'Shop not found.'], 404);
+        }
+
+        $shop = $user->shop;
+        $validatedData = $request->validated();
+
+        if (! Hash::check($validatedData['password'], $user->password)) {
+            return response()->json(['message' => 'Incorrect password confirmation.'], 422);
+        }
+
+        if ($validatedData['shop_name'] !== $shop->name) {
+            return response()->json(['message' => 'Shop name confirmation does not match.'], 422);
+        }
+
+        if ($shop->logo_image) {
+            $this->imageService->deleteImageIfExists($shop->logo_image);
+        }
+        if ($shop->banner_image) {
+            $this->imageService->deleteImageIfExists($shop->banner_image);
+        }
+
+        $shop->delete();
+        $user->update(['role' => User::ROLE_CUSTOMER]);
+
+        return response()->json([
+            'message' => 'Shop deleted successfully',
+        ]);
     }
 }

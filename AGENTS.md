@@ -84,6 +84,7 @@ Follow this flow strictly:
 - **2026-01-26 - Unified Auth Implementation:** Shifted from separate customer/shop guards and routes to a single-account system where any user can become a merchant by creating a shop. Cleaned up legacy `shop-api` guard, separate auth pages, and redundant redirects.
 - **2026-01-26 - Cart Endpoint Consistency:** Renamed cart deletion route from `DELETE /order/{id}` to `DELETE /cart-item/{id}` for clarity. Cart-related operations should use cart-specific endpoint names. Updated frontend service (`customerService.ts`) and hooks (`useCustomerActions.ts`) accordingly.
 - **2026-01-26 - Shop Slug Auto-Generation:** Fixed issue where existing shops had null slugs causing 404 errors. Created data migration to populate slugs from shop names. Shop model's `boot()` method now ensures all new shops auto-generate URL-friendly slugs. Always verify slug generation for models with slug-based routing.
+- **2026-01-30 - Shop Creation Experience:** Implemented a dedicated shop creation flow with visual branding (logo/banner), password-protected submission, and real-time form validation. Integrated `AlertDialog` for confirmation and ensured redirection to the Seller Dashboard upon success. Verified security via backend Pest tests.
 - *(Add new entries here)*
 
 ---

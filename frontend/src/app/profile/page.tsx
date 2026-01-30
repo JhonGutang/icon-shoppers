@@ -11,6 +11,18 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useRouter } from "next/navigation";
 import { 
   User as UserIcon, 
   Store, 
@@ -23,7 +35,9 @@ import {
   ChevronRight,
   Package,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  ArrowRight,
+  ShieldCheck
 } from "lucide-react";
 import { useSnackbar } from "@/components/context/SnackbarContext";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -41,6 +55,7 @@ import { cn } from "@/lib/utils";
 import useAuthStore from "@/stores/useAuthStore";
 
 const ProfilePageContent = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const sectionParam = searchParams.get("section");
   // ... rest of lines 46-511
@@ -393,6 +408,79 @@ const ProfilePageContent = () => {
                </div>
             </div>
 
+            {/* Addresses Section */}
+            {/* ... section code ... */}
+
+            {/* Shop Recruitment Section - For Customers without a Shop */}
+            {userType !== 'merchant' && !profileData?.shop && (
+              <div className="pt-8">
+                <Card className="border-none shadow-xl bg-gradient-to-br from-green-50 to-white overflow-hidden rounded-3xl border border-green-100">
+                  <CardHeader className="pb-2 bg-transparent border-none">
+                    <div className="flex items-center gap-4 mb-2">
+                      <div className="bg-green-600 p-3 rounded-2xl text-white shadow-lg shadow-green-200">
+                        <Store size={28} />
+                      </div>
+                      <div>
+                        <CardTitle className="text-2xl font-bold text-gray-900">Start Selling on Icon Shoppers</CardTitle>
+                        <CardDescription className="text-gray-600 text-lg">Reach local customers and grow your business today.</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-4 px-8 pb-10">
+                    <div className="grid sm:grid-cols-2 gap-8 mb-10">
+                      <div className="flex items-start gap-4">
+                        <div className="mt-1 bg-green-100 p-2 rounded-full text-green-700">
+                          <CheckCircle2 size={18} />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-800">Trusted Platform</h4>
+                          <p className="text-sm text-gray-500">Secure transactions and verified local community.</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-4">
+                        <div className="mt-1 bg-green-100 p-2 rounded-full text-green-700">
+                          <ArrowRight size={18} />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-800">Easy Setup</h4>
+                          <p className="text-sm text-gray-500">Create your shop in minutes and start listing products.</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button 
+                          type="button"
+                          className="w-full sm:w-auto px-10 h-14 bg-green-600 hover:bg-green-700 text-white font-bold text-xl rounded-2xl shadow-xl shadow-green-200 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-2"
+                        >
+                          Get Started
+                          <ArrowRight size={20} />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="rounded-3xl border-none shadow-2xl">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="text-2xl font-bold">Ready to open your shop?</AlertDialogTitle>
+                          <AlertDialogDescription className="text-gray-600 text-lg">
+                            You are about to be redirected to our specialized shop creation page. Please have your shop details and images ready!
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter className="mt-6 gap-3">
+                          <AlertDialogCancel className="h-12 rounded-xl text-lg font-semibold">Maybe Later</AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={() => router.push('/create-shop')}
+                            className="h-12 rounded-xl text-lg font-bold bg-green-600 hover:bg-green-700 text-white"
+                          >
+                            Yes, Let's Go!
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
             {/* Shop Settings Section - Only for Merchants */}
             {userType === 'merchant' && (
               <Card ref={shopSectionRef} className="border-none shadow-sm overflow-hidden rounded-2xl bg-white">
@@ -414,7 +502,7 @@ const ProfilePageContent = () => {
                        <div className="flex items-center gap-6">
                           <div className="h-24 w-24 rounded-2xl overflow-hidden border bg-muted flex items-center justify-center">
                              {profileData.shop?.logo_image ? (
-                                <img src={profileData.shop.logo_image} alt="Shop Logo" className="h-full w-full object-cover" />
+                                <img src={`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${profileData.shop.logo_image}`} alt="Shop Logo" className="h-full w-full object-cover" />
                              ) : (
                                 <Store size={32} className="text-muted-foreground" />
                              )}
@@ -434,7 +522,7 @@ const ProfilePageContent = () => {
                        <Label>Shop Banner</Label>
                        <div className="relative h-24 w-full rounded-2xl overflow-hidden border bg-muted group">
                           {profileData.shop?.banner_image ? (
-                             <img src={profileData.shop.banner_image} alt="Shop Banner" className="h-full w-full object-cover" />
+                             <img src={`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${profileData.shop.banner_image}`} alt="Shop Banner" className="h-full w-full object-cover" />
                           ) : (
                              <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">No banner set</div>
                           )}

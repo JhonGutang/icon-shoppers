@@ -98,7 +98,7 @@ const UnifiedNavbar = () => {
                         <span>{isSellerMode ? "Switch to Customer Mode" : "Switch to Seller Mode"}</span>
                     </DropdownMenuItem>
                 ) : (
-                    <DropdownMenuItem onClick={() => router.push("/dashboard")}>
+                    <DropdownMenuItem onClick={() => router.push("/create-shop")}>
                         <Store className="mr-2 h-4 w-4" />
                         <span>Create Shop</span>
                     </DropdownMenuItem>
