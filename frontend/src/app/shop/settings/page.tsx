@@ -269,7 +269,7 @@ const ShopSettingsPage = () => {
                   
                   <div className="py-6 space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="confirm_name" className="text-sm font-bold">Type your shop name "<span className="text-red-600">{shopData.name}</span>" to confirm:</Label>
+                      <Label htmlFor="confirm_name" className="text-sm font-bold">Type your shop name &quot;<span className="text-red-600">{shopData.name}</span>&quot; to confirm:</Label>
                       <Input 
                         id="confirm_name" 
                         value={confirmName}

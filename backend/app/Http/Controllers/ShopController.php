@@ -8,7 +8,6 @@ use App\Http\Requests\ShopUpdateFormRequest;
 use App\Interfaces\Services\ImageServiceInterface;
 use App\Interfaces\Services\ShopServiceInterface;
 use App\Interfaces\Services\UserServiceInterface;
-use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

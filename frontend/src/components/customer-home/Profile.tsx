@@ -214,7 +214,7 @@ const Profile = () => {
                         onClick={handleRedirectToCreateShop}
                         className="h-12 rounded-xl text-lg font-bold bg-green-600 hover:bg-green-700"
                       >
-                        Yes, Let's Go!
+                        Yes, Let&apos;s Go!
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
