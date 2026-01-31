@@ -21,10 +21,13 @@ const getEcho = () => {
     const host = process.env.NEXT_PUBLIC_REVERB_HOST || "127.0.0.1";
     const cleanHost = host.replace(/^https?:\/\//, "");
 
+    const scheme = process.env.NEXT_PUBLIC_REVERB_SCHEME || "http";
+    const isHttps = scheme === "https";
+
     console.log("🔌 WebSocket Configuration:", {
         host: cleanHost,
         port: process.env.NEXT_PUBLIC_REVERB_PORT,
-        scheme: process.env.NEXT_PUBLIC_REVERB_SCHEME,
+        scheme: scheme,
         key: process.env.NEXT_PUBLIC_REVERB_APP_KEY ? "EXISTS" : "MISSING"
     });
 
@@ -32,10 +35,10 @@ const getEcho = () => {
         broadcaster: "reverb",
         key: process.env.NEXT_PUBLIC_REVERB_APP_KEY || "iconshopperskey",
         wsHost: cleanHost,
-        wsPort: process.env.NEXT_PUBLIC_REVERB_PORT ? parseInt(process.env.NEXT_PUBLIC_REVERB_PORT) : 8080,
-        wssPort: process.env.NEXT_PUBLIC_REVERB_PORT ? parseInt(process.env.NEXT_PUBLIC_REVERB_PORT) : 8080,
-        forceTLS: (process.env.NEXT_PUBLIC_REVERB_SCHEME || "http") === "https",
-        enabledTransports: (process.env.NEXT_PUBLIC_REVERB_SCHEME || "http") === "https" ? ["wss"] : ["ws"],
+        wsPort: process.env.NEXT_PUBLIC_REVERB_PORT ? parseInt(process.env.NEXT_PUBLIC_REVERB_PORT) : (isHttps ? 443 : 8080),
+        wssPort: process.env.NEXT_PUBLIC_REVERB_PORT ? parseInt(process.env.NEXT_PUBLIC_REVERB_PORT) : (isHttps ? 443 : 8080),
+        forceTLS: isHttps,
+        enabledTransports: isHttps ? ["wss"] : ["ws"],
         authorizer: (channel: any) => {
             return {
                 authorize: (socketId: string, callback: Function) => {
