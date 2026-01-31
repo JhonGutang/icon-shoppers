@@ -18,10 +18,13 @@ const getEcho = () => {
 
     const API_URL = process.env.NEXT_PUBLIC_LARAVEL_API_URL || "http://localhost:8000";
 
+    const host = process.env.NEXT_PUBLIC_REVERB_HOST || "127.0.0.1";
+    const cleanHost = host.replace(/^https?:\/\//, "");
+
     return new Echo({
         broadcaster: "reverb",
         key: process.env.NEXT_PUBLIC_REVERB_APP_KEY || "iconshopperskey",
-        wsHost: process.env.NEXT_PUBLIC_REVERB_HOST || "127.0.0.1",
+        wsHost: cleanHost,
         wsPort: process.env.NEXT_PUBLIC_REVERB_PORT ? parseInt(process.env.NEXT_PUBLIC_REVERB_PORT) : 8080,
         wssPort: process.env.NEXT_PUBLIC_REVERB_PORT ? parseInt(process.env.NEXT_PUBLIC_REVERB_PORT) : 8080,
         forceTLS: (process.env.NEXT_PUBLIC_REVERB_SCHEME || "http") === "https",
