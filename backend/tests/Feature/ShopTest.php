@@ -77,7 +77,7 @@ test('authenticated user can delete their shop', function () {
         'shop_name' => 'My Shop to Delete',
     ];
 
-    $response = $this->deleteJson('/api/shops', $data);
+    $response = $this->postJson('/api/shops/delete', $data);
 
     $response->assertStatus(200)
         ->assertJsonFragment(['message' => 'Shop deleted successfully']);
@@ -96,7 +96,7 @@ test('shop deletion fails with incorrect password', function () {
         'shop_name' => 'My Shop',
     ];
 
-    $response = $this->deleteJson('/api/shops', $data);
+    $response = $this->postJson('/api/shops/delete', $data);
 
     $response->assertStatus(422)
         ->assertJsonFragment(['message' => 'Incorrect password confirmation.']);
@@ -112,7 +112,7 @@ test('shop deletion fails with incorrect shop name confirmation', function () {
         'shop_name' => 'Wrong Shop Name',
     ];
 
-    $response = $this->deleteJson('/api/shops', $data);
+    $response = $this->postJson('/api/shops/delete', $data);
 
     $response->assertStatus(422)
         ->assertJsonFragment(['message' => 'Shop name confirmation does not match.']);
