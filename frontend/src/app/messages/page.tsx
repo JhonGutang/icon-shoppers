@@ -1,17 +1,18 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import UnifiedNavbar from "@/components/layout/UnifiedNavbar";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, Send, MoreVertical, Phone, Video, MessageSquare } from "lucide-react";
+import { Search, Send, MoreVertical, Phone, Video, MessageSquare, ChevronLeft } from "lucide-react";
 import echo from "@/libs/echo";
 import useAuthStore from "@/stores/useAuthStore";
 import * as chatService from "@/services/chatService";
+import { useRouter } from "next/navigation";
 
 const MessagingPage = () => {
-  const { id: userId, accessToken: token } = useAuthStore();
+  const router = useRouter();
+  const { id: userId, accessToken: token, isSellerMode } = useAuthStore();
   const [conversations, setConversations] = useState<any[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
@@ -116,7 +117,22 @@ const MessagingPage = () => {
 
   return (
     <div className="flex h-screen flex-col bg-gray-50 text-gray-900">
-      <UnifiedNavbar />
+      {/* Header with Back Button */}
+      <header className="bg-white border-b h-16 flex items-center px-4 shrink-0 shadow-sm z-10">
+        <div className="container mx-auto flex items-center">
+          <Button 
+            variant="ghost" 
+            onClick={() => router.push(isSellerMode ? "/shop" : "/home")}
+            className="flex items-center gap-2 hover:bg-gray-100 rounded-full pr-6"
+          >
+            <ChevronLeft size={20} />
+            <span className="font-medium">
+              {isSellerMode ? "Back to Dashboard" : "Back to Home"}
+            </span>
+          </Button>
+        </div>
+      </header>
+
       <main className="container mx-auto flex flex-1 overflow-hidden p-4 gap-4">
         {/* Sidebar - Conversation List */}
         <Card className="flex w-full max-w-sm flex-col overflow-hidden shadow-md border-none">

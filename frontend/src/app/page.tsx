@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect } from "react";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/landing-page/Navbar";
 import Hero from "@/components/landing-page/Hero";
 import AboutUs from "@/components/landing-page/About-us";
 import Footer from "@/components/landing-page/Footer";
@@ -35,7 +35,7 @@ export default function LandingPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Navbar isLanding={true} />
+      <Navbar />
       
       <main className="flex-1">
         {/* Hero Section */}
@@ -64,7 +64,7 @@ export default function LandingPage() {
         </section>
 
         {/* Featured Products */}
-        <section className="py-16 container mx-auto px-4" ref={productRef}>
+        <section id="products" className="py-16 container mx-auto px-4" ref={productRef}>
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <div className="bg-primary/10 p-2 rounded-lg">

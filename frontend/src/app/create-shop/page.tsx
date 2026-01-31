@@ -1,14 +1,14 @@
 "use client";
 
 import CreateShop from "@/components/customer-home/CreateShop";
-import UnifiedNavbar from "@/components/layout/UnifiedNavbar";
+import Navbar from "@/components/Navbar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function CreateShopPage() {
   return (
     <ProtectedRoute>
       <div className="w-full min-h-screen flex flex-col bg-gray-50">
-        <UnifiedNavbar />
+        <Navbar />
         <div className="flex-1 px-4 py-8 lg:px-20 overflow-auto">
           <CreateShop />
         </div>
