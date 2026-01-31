@@ -47,9 +47,16 @@ class MessageController extends Controller
             'sender_id' => Auth::id(),
         ]);
 
-        broadcast(new MessageSent($message))->toOthers();
-
-        \Log::info('Messaging: Broadcast sent');
+        try {
+            broadcast(new MessageSent($message))->toOthers();
+            \Log::info('Messaging: Broadcast sent');
+        } catch (\Exception $e) {
+            \Log::error('Messaging: Broadcast error', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+        }
 
         return response()->json($message);
     }
