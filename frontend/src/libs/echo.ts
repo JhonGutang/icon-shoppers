@@ -38,7 +38,7 @@ const getEcho = () => {
         wsPort: process.env.NEXT_PUBLIC_REVERB_PORT ? parseInt(process.env.NEXT_PUBLIC_REVERB_PORT) : (isHttps ? 443 : 8080),
         wssPort: process.env.NEXT_PUBLIC_REVERB_PORT ? parseInt(process.env.NEXT_PUBLIC_REVERB_PORT) : (isHttps ? 443 : 8080),
         forceTLS: isHttps,
-        enabledTransports: isHttps ? ["wss"] : ["ws"],
+        enabledTransports: ["ws", "wss"],
         authorizer: (channel: any) => {
             return {
                 authorize: (socketId: string, callback: Function) => {
