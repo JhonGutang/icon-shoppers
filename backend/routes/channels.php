@@ -9,10 +9,17 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 
 Broadcast::channel('chat.{conversationId}', function ($user, $conversationId) {
     Log::info('Channel Auth Attempt', [
-        'user_id' => $user->id,
+        'user_id' => $user?->id,
         'conversation_id' => $conversationId,
-        'channel' => "chat.{$conversationId}"
+        'channel' => "chat.{$conversationId}",
+        'driver' => config('broadcasting.default'),
+        'reverb_host' => config('broadcasting.connections.reverb.options.host'),
     ]);
+
+    if (! $user) {
+        Log::error('Channel Auth Failed: User not authenticated in callback');
+        return false;
+    }
 
     $conversation = \App\Models\Conversation::with('shop')->find($conversationId);
     if (! $conversation) {
