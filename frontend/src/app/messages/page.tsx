@@ -172,21 +172,23 @@ const MessagingPage = () => {
   // Real-time listener
   useEffect(() => {
     if (selectedConversation) {
+      console.log("%c!!!! ECHO JOIN STARTING !!!!", "color: blue; font-weight: bold; font-size: 15px;", `chat.${selectedConversation.id}`);
+      
       const channel = echo.join(`chat.${selectedConversation.id}`)
         .here((users: any) => {
-          console.log("📍 Presence: Current users in channel:", users);
+          console.log("%c📍 Presence: Current users in channel:", "color: green; font-weight: bold;", users);
           setOnlineUsers(users);
         })
         .joining((user: any) => {
-          console.log("📍 Presence: User joining:", user);
+          console.log("%c📍 Presence: User joining:", "color: green; font-weight: bold;", user);
           setOnlineUsers((prev) => [...prev, user]);
         })
         .leaving((user: any) => {
-          console.log("📍 Presence: User leaving:", user);
+          console.log("%c📍 Presence: User leaving:", "color: orange; font-weight: bold;", user);
           setOnlineUsers((prev) => prev.filter(u => u.id !== user.id));
         })
         .listen(".MessageSent", (e: any) => {
-          console.log("📩 Message received:", e);
+          console.log("%c📩 Message received:", "color: cyan; font-weight: bold;", e);
           
           // Update message cache
           queryClient.setQueryData(["messages", selectedConversation.id], (old: any) => {
@@ -215,7 +217,17 @@ const MessagingPage = () => {
           });
         });
 
+      // Bind to internal Pusher events to debug
+      (channel as any).subscription.bind("pusher:subscription_succeeded", () => {
+        console.log("%c✅ Subscription Succeeded", "color: green; font-weight: bold; font-size: 12px;");
+      });
+
+      (channel as any).subscription.bind("pusher:subscription_error", (error: any) => {
+        console.error("%c❌ Subscription Error:", "color: red; font-weight: bold; font-size: 12px;", error);
+      });
+
       return () => {
+        console.log("%c!!!! ECHO LEAVING CHANNEL !!!!", "color: orange; font-weight: bold;", `chat.${selectedConversation.id}`);
         echo.leave(`chat.${selectedConversation.id}`);
         setOnlineUsers([]);
       };
