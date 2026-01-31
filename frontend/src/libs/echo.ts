@@ -21,6 +21,13 @@ const getEcho = () => {
     const host = process.env.NEXT_PUBLIC_REVERB_HOST || "127.0.0.1";
     const cleanHost = host.replace(/^https?:\/\//, "");
 
+    console.log("🔌 WebSocket Configuration:", {
+        host: cleanHost,
+        port: process.env.NEXT_PUBLIC_REVERB_PORT,
+        scheme: process.env.NEXT_PUBLIC_REVERB_SCHEME,
+        key: process.env.NEXT_PUBLIC_REVERB_APP_KEY ? "EXISTS" : "MISSING"
+    });
+
     return new Echo({
         broadcaster: "reverb",
         key: process.env.NEXT_PUBLIC_REVERB_APP_KEY || "iconshopperskey",
