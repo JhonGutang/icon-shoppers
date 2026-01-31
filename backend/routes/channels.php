@@ -8,10 +8,12 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 
 Broadcast::channel('chat.{conversationId}', function ($user, $conversationId) {
     $conversation = \App\Models\Conversation::with('shop')->find($conversationId);
-    if (!$conversation) return false;
-    
+    if (! $conversation) {
+        return false;
+    }
+
     // Check if user is the buyer or the owner of the shop
-    $isAuthorized = (int) $user->id === (int) $conversation->buyer_id || 
+    $isAuthorized = (int) $user->id === (int) $conversation->buyer_id ||
                     (int) $user->id === (int) $conversation->shop->owner_id;
 
     if ($isAuthorized) {

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Message;
-use App\Events\MessageSent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,11 +40,11 @@ class MessageController extends Controller
         ]);
 
         $conversation->update(['last_message_at' => now()]);
-        
+
         \Log::info('Messaging: Broadcasting message', [
             'id' => $message->id,
             'conversation_id' => $conversationId,
-            'sender_id' => Auth::id()
+            'sender_id' => Auth::id(),
         ]);
 
         broadcast(new MessageSent($message))->toOthers();

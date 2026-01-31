@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ConversationController extends Controller
@@ -12,9 +11,9 @@ class ConversationController extends Controller
     public function index()
     {
         $user = Auth::user();
-        
+
         $conversations = Conversation::where('buyer_id', $user->id)
-            ->orWhereHas('shop', function($query) use ($user) {
+            ->orWhereHas('shop', function ($query) use ($user) {
                 $query->where('owner_id', $user->id);
             })
             ->with(['buyer', 'shop', 'lastMessage'])

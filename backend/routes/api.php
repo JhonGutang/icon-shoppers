@@ -15,6 +15,7 @@ require __DIR__.'/api/address.php';
 require __DIR__.'/api/chat.php';
 
 use Illuminate\Support\Facades\Broadcast;
+
 Broadcast::routes(['middleware' => ['api', 'auth:sanctum']]);
 
 Route::middleware('auth:sanctum')->group(function () {

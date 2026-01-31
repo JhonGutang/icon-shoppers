@@ -3,10 +3,8 @@
 namespace App\Events;
 
 use App\Models\Message;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -49,7 +47,7 @@ class MessageSent implements ShouldBroadcastNow
                 'body' => $this->message->body,
                 'is_read' => $this->message->is_read,
                 'created_at' => $this->message->created_at->toIso8601String(),
-            ]
+            ],
         ];
     }
 

@@ -128,7 +128,7 @@ class OrderController extends Controller
 
                 $conversation->update(['last_message_at' => now()]);
 
-                // Optional: Broadcast if needed, but since it's initial checkout, 
+                // Optional: Broadcast if needed, but since it's initial checkout,
                 // the user might not be in the chat room yet.
             }
 
