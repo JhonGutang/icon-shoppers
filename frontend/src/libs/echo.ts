@@ -63,6 +63,10 @@ const echo = getEcho();
 if (echo && typeof window !== 'undefined') {
     console.log("🔌 Initializing WebSocket connection...");
 
+    echo.connector.pusher.connection.bind("state_change", (states: any) => {
+        console.log(`📡 WebSocket State Change: ${states.previous} -> ${states.current}`);
+    });
+
     echo.connector.pusher.connection.bind("connected", () => {
         console.log("✅ WebSocket Connected: Reverb connection established.");
         const socketId = echo.socketId();
@@ -72,16 +76,16 @@ if (echo && typeof window !== 'undefined') {
         }
     });
 
-    echo.connector.pusher.connection.bind("disconnected", () => {
-        console.log("❌ WebSocket Disconnected.");
+    echo.connector.pusher.connection.bind("connecting", () => {
+        console.log("⏳ WebSocket Connecting...");
     });
 
-    echo.connector.pusher.connection.bind("error", (error: any) => {
-        console.error("⚠️ WebSocket Connection Error:", error);
+    echo.connector.pusher.connection.bind("unavailable", () => {
+        console.log("🚫 WebSocket Unavailable.");
     });
 
-    echo.connector.pusher.connection.bind("state_change", (states: any) => {
-        console.log(`📡 WebSocket State Change: ${states.previous} -> ${states.current}`);
+    echo.connector.pusher.connection.bind("failed", () => {
+        console.log("� WebSocket Failed.");
     });
 }
 
