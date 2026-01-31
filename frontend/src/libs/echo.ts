@@ -51,8 +51,23 @@ const getEcho = () => {
                         callback(false, response.data);
                     })
                     .catch((error: any) => {
-                        console.error(`❌ Channel Auth Error: ${channel.name}`, error);
-                        callback(true, error);
+                        console.error(`❌ Channel Auth Error: ${channel.name}`, {
+                            message: error.message,
+                            status: error.response?.status,
+                            statusText: error.response?.statusText,
+                            data: error.response?.data,
+                            config: {
+                                url: error.config?.url,
+                                method: error.config?.method,
+                                headers: error.config?.headers
+                            }
+                        });
+                        
+                        // Pass a more useful error object back to Pusher/Echo
+                        const authError = new Error(error.response?.data?.message || error.message || "Auth failed");
+                        (authError as any).status = error.response?.status;
+                        
+                        callback(true, authError);
                     });
                 }
             };
