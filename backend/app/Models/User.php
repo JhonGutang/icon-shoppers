@@ -123,4 +123,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(ProductRating::class);
     }
+
+    public function conversations()
+    {
+        return $this->hasMany(Conversation::class);
+    }
 }

@@ -113,6 +113,25 @@ class OrderController extends Controller
         try {
             $result = $this->orderService->checkoutOrder($userId, $products, $productIds, $data);
 
+            // Trigger initial messages from each shop
+            foreach ($result as $order) {
+                $conversation = \App\Models\Conversation::firstOrCreate([
+                    'buyer_id' => $userId,
+                    'shop_id' => $order->shop_id,
+                ]);
+
+                $message = \App\Models\Message::create([
+                    'conversation_id' => $conversation->id,
+                    'sender_id' => $order->shop->owner_id,
+                    'body' => "Thank you for your order #{$order->order_number}! We will process it shortly.",
+                ]);
+
+                $conversation->update(['last_message_at' => now()]);
+
+                // Optional: Broadcast if needed, but since it's initial checkout, 
+                // the user might not be in the chat room yet.
+            }
+
             return response()->json([
                 'message' => 'Order(s) placed successfully',
                 'orders' => $result,

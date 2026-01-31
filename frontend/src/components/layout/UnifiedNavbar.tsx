@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, ShoppingCart, User, Store, LogOut, Package, UserCircle } from "lucide-react";
+import { Search, ShoppingCart, User, Store, LogOut, Package, UserCircle, MessageSquare, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,8 +20,13 @@ import { useCartStore } from "@/stores/useCartStore";
 
 const UnifiedNavbar = () => {
   const router = useRouter();
+  const [mounted, setMounted] = React.useState(false);
   const { isAuthenticated, isSeller, isSellerMode, toggleSellerMode, clearAuth } = useAuthStore();
   const { productsInCart } = useCartStore();
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const cartCount = productsInCart.reduce((acc: number, item: any) => acc + item.quantity, 0);
 
@@ -30,11 +35,13 @@ const UnifiedNavbar = () => {
     router.push("/auth");
   };
 
+  const isAuth = mounted ? isAuthenticated() : false;
+
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link href={isAuthenticated() ? "/home" : "/"} className="flex items-center space-x-2">
+        <Link href={isAuth ? "/home" : "/"} className="flex items-center space-x-2">
           <span className="text-2xl font-bold text-green-600">Icon Shoppers</span>
         </Link>
 
@@ -52,6 +59,12 @@ const UnifiedNavbar = () => {
 
         {/* Action Icons */}
         <div className="flex items-center space-x-4">
+          {/* Messages */}
+          <Link href="/messages" className="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <MessageSquare className="h-6 w-6 text-gray-700" />
+            {/* Placeholder for unread count */}
+          </Link>
+
           {/* Cart */}
           <Link href="/cart" className="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
             <ShoppingCart className="h-6 w-6 text-gray-700" />
@@ -63,7 +76,7 @@ const UnifiedNavbar = () => {
           </Link>
 
           {/* Profile Dropdown */}
-          {isAuthenticated() ? (
+          {isAuth ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
@@ -90,6 +103,11 @@ const UnifiedNavbar = () => {
                 <DropdownMenuItem onClick={() => router.push("/profile")}>
                   <User className="mr-2 h-4 w-4" />
                   <span>My Account</span>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem onClick={() => router.push("/wishlist")}>
+                  <Heart className="mr-2 h-4 w-4" />
+                  <span>Wishlist</span>
                 </DropdownMenuItem>
 
                 {isSeller() ? (

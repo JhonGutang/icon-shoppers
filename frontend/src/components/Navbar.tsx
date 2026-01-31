@@ -2,7 +2,7 @@
 
 import React, { Suspense } from "react";
 import Link from "next/link";
-import { ShoppingCart, Heart, User, Search, Store } from "lucide-react";
+import { ShoppingCart, Heart, User, Search, Store, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SearchBar from "./SearchBar";
 import { useCartStore } from "@/stores/useCartStore";
@@ -60,9 +60,9 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
                 <Search size={22} />
               </Button>
 
-              <Link href="/wishlist">
+              <Link href="/messages">
                 <Button variant="ghost" size="icon" className="relative">
-                  <Heart size={22} />
+                  <MessageSquare size={22} />
                 </Button>
               </Link>
 

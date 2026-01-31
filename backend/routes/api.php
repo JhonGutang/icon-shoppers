@@ -12,6 +12,10 @@ require __DIR__.'/api/rating.php';
 require __DIR__.'/api/wishlist.php';
 require __DIR__.'/api/category.php';
 require __DIR__.'/api/address.php';
+require __DIR__.'/api/chat.php';
+
+use Illuminate\Support\Facades\Broadcast;
+Broadcast::routes(['middleware' => ['api', 'auth:sanctum']]);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Profile Management (Unified)
