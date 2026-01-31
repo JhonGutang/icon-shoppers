@@ -23,3 +23,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ShopController::class, 'index']); // For merchants
     Route::post('/profile', [ShopController::class, 'update']);
 });
+
+Route::get('/debug-broadcast', function () {
+    return [
+        'broadcast_connection' => config('broadcasting.default'),
+        'reverb_key' => config('broadcasting.connections.reverb.key'),
+        'reverb_host' => config('broadcasting.connections.reverb.options.host'),
+        'env_broadcast_conn' => env('BROADCAST_CONNECTION'),
+        'app_url' => config('app.url'),
+    ];
+});
