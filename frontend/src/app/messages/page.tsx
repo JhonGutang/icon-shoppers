@@ -173,9 +173,18 @@ const MessagingPage = () => {
   useEffect(() => {
     if (selectedConversation) {
       const channel = echo.join(`chat.${selectedConversation.id}`)
-        .here(setOnlineUsers)
-        .joining((user: any) => setOnlineUsers((prev) => [...prev, user]))
-        .leaving((user: any) => setOnlineUsers((prev) => prev.filter(u => u.id !== user.id)))
+        .here((users: any) => {
+          console.log("📍 Presence: Current users in channel:", users);
+          setOnlineUsers(users);
+        })
+        .joining((user: any) => {
+          console.log("📍 Presence: User joining:", user);
+          setOnlineUsers((prev) => [...prev, user]);
+        })
+        .leaving((user: any) => {
+          console.log("📍 Presence: User leaving:", user);
+          setOnlineUsers((prev) => prev.filter(u => u.id !== user.id));
+        })
         .listen(".MessageSent", (e: any) => {
           console.log("📩 Message received:", e);
           
