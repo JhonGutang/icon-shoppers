@@ -7,5 +7,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/conversations', [ConversationController::class, 'index']);
     Route::get('/conversations/{id}', [ConversationController::class, 'show']);
+    Route::get('/conversations/{id}/messages', [MessageController::class, 'index']);
     Route::post('/conversations/{id}/messages', [MessageController::class, 'store']);
 });

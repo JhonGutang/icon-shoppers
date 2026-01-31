@@ -1,56 +1,208 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, Send, MoreVertical, Phone, Video, MessageSquare, ChevronLeft } from "lucide-react";
+import { Search, Send, MoreVertical, Phone, Video, MessageSquare, ChevronLeft, Loader2 } from "lucide-react";
 import echo from "@/libs/echo";
 import useAuthStore from "@/stores/useAuthStore";
 import * as chatService from "@/services/chatService";
 import { useRouter } from "next/navigation";
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const MessagingPage = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { id: userId, accessToken: token, isSellerMode } = useAuthStore();
-  const [conversations, setConversations] = useState<any[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
-  const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [loading, setLoading] = useState(true);
   const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
   
   const scrollRef = useRef<HTMLDivElement>(null);
+  const topObserverRef = useRef<HTMLDivElement>(null);
+  const previousScrollHeightRef = useRef<number>(0);
 
+  // Fetch Conversations
+  const { data: conversations = [], isLoading: isLoadingConversations } = useQuery({
+    queryKey: ["conversations"],
+    queryFn: chatService.getConversations,
+    enabled: !!token,
+  });
+
+  // Fetch Messages (Infinite Query)
+  const {
+    data: messagesData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isLoadingMessages,
+  } = useInfiniteQuery({
+    queryKey: ["messages", selectedConversation?.id],
+    queryFn: ({ pageParam = 1 }) => chatService.getPaginatedMessages(selectedConversation.id, pageParam as number),
+    enabled: !!selectedConversation?.id,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.current_page < lastPage.last_page) {
+        return lastPage.current_page + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
+  });
+
+  const messages = messagesData?.pages.flatMap((page) => page.data).reverse() || [];
+
+  // Send Message Mutation
+  const sendMessageMutation = useMutation({
+    mutationFn: ({ conversationId, body }: { conversationId: number; body: string }) =>
+      chatService.sendMessage(conversationId, body),
+    onMutate: async (newMsg) => {
+      await queryClient.cancelQueries({ queryKey: ["messages", newMsg.conversationId] });
+      const previousMessages = queryClient.getQueryData(["messages", newMsg.conversationId]);
+
+      // Optimistic update
+      const tempId = Date.now();
+      const tempMsg = {
+        id: tempId,
+        body: newMsg.body,
+        sender_id: userId,
+        created_at: new Date().toISOString(),
+        isOptimistic: true,
+      };
+
+      queryClient.setQueryData(["messages", newMsg.conversationId], (old: any) => {
+        if (!old) return old;
+        const newPages = [...old.pages];
+        newPages[0] = {
+          ...newPages[0],
+          data: [tempMsg, ...newPages[0].data],
+        };
+        return { ...old, pages: newPages };
+      });
+
+      return { previousMessages, tempId };
+    },
+    onError: (err, newMsg, context: any) => {
+      queryClient.setQueryData(["messages", newMsg.conversationId], context.previousMessages);
+    },
+    onSuccess: (sentMsg, variables, context) => {
+      // Replace temp message with real one, but ONLY if the real one isn't already there from Echo
+      queryClient.setQueryData(["messages", variables.conversationId], (old: any) => {
+        if (!old) return old;
+        
+        const allMsgs = old.pages.flatMap((p: any) => p.data);
+        const alreadyExists = allMsgs.some((m: any) => m.id === sentMsg.id && !m.isOptimistic);
+
+        if (alreadyExists) {
+            // Echo already added it, just remove the temp one
+            return {
+                ...old,
+                pages: old.pages.map((page: any) => ({
+                    ...page,
+                    data: page.data.filter((m: any) => m.id !== context.tempId)
+                }))
+            };
+        }
+
+        const newPages = old.pages.map((page: any) => ({
+          ...page,
+          data: page.data.map((m: any) => (m.id === context.tempId ? sentMsg : m)),
+        }));
+        return { ...old, pages: newPages };
+      });
+      
+      // Update last message in conversations list
+      queryClient.setQueryData(["conversations"], (old: any) => {
+        if (!old) return old;
+        return old.map((conv: any) => 
+          conv.id === variables.conversationId 
+            ? { ...conv, last_message: sentMsg, last_message_at: sentMsg.created_at } 
+            : conv
+        );
+      });
+    },
+  });
+
+  // Infinite Scroll Observer
   useEffect(() => {
-    if (token) {
-      loadConversations();
-    }
-  }, [token]);
+    if (!topObserverRef.current || !hasNextPage || isFetchingNextPage) return;
 
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          previousScrollHeightRef.current = scrollRef.current?.scrollHeight || 0;
+          fetchNextPage();
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    observer.observe(topObserverRef.current);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  // Maintain scroll position when loading more messages
+  useEffect(() => {
+    if (scrollRef.current && previousScrollHeightRef.current > 0) {
+      const newScrollHeight = scrollRef.current.scrollHeight;
+      scrollRef.current.scrollTop = newScrollHeight - previousScrollHeightRef.current;
+      previousScrollHeightRef.current = 0;
+    }
+  }, [messagesData]);
+
+  // Initial scroll to bottom when messages finish loading
+  useEffect(() => {
+    if (selectedConversation && !isLoadingMessages && messages.length > 0) {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+    }
+  }, [selectedConversation, isLoadingMessages]);
+
+  // Scroll to bottom on new message if at bottom
+  useEffect(() => {
+    if (scrollRef.current) {
+      const isAtBottom = scrollRef.current.scrollHeight - scrollRef.current.scrollTop <= scrollRef.current.clientHeight + 150;
+      if (isAtBottom) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }
+    }
+  }, [messages.length]);
+
+  // Real-time listener
   useEffect(() => {
     if (selectedConversation) {
-      loadMessages(selectedConversation.id);
-      
       const channel = echo.join(`chat.${selectedConversation.id}`)
-        .here((users: any[]) => {
-          console.log("👥 Users currently in chat:", users);
-          setOnlineUsers(users);
-        })
-        .joining((user: any) => {
-          console.log("👋 User joined:", user);
-          setOnlineUsers((prev) => [...prev, user]);
-        })
-        .leaving((user: any) => {
-          console.log("🏃 User left:", user);
-          setOnlineUsers((prev) => prev.filter(u => u.id !== user.id));
-        })
+        .here(setOnlineUsers)
+        .joining((user: any) => setOnlineUsers((prev) => [...prev, user]))
+        .leaving((user: any) => setOnlineUsers((prev) => prev.filter(u => u.id !== user.id)))
         .listen(".MessageSent", (e: any) => {
           console.log("📩 Message received:", e);
-          setMessages((prev) => {
-            // Avoid duplicate messages if the sender just added it locally
-            if (prev.some(m => m.id === e.message.id)) return prev;
-            return [...prev, e.message];
+          
+          // Update message cache
+          queryClient.setQueryData(["messages", selectedConversation.id], (old: any) => {
+            if (!old) return old;
+            
+            // Check for duplicates (even ones currently marked as optimistic)
+            const allMsgs = old.pages.flatMap((p: any) => p.data);
+            if (allMsgs.some((m: any) => m.id === e.message.id)) return old;
+
+            const newPages = [...old.pages];
+            newPages[0] = {
+              ...newPages[0],
+              data: [e.message, ...newPages[0].data],
+            };
+            return { ...old, pages: newPages };
+          });
+
+          // Update conversations list cache
+          queryClient.setQueryData(["conversations"], (old: any) => {
+            if (!old) return old;
+            return old.map((conv: any) => 
+              conv.id === selectedConversation.id 
+                ? { ...conv, last_message: e.message, last_message_at: e.message.created_at } 
+                : conv
+            );
           });
         });
 
@@ -59,60 +211,17 @@ const MessagingPage = () => {
         setOnlineUsers([]);
       };
     }
-  }, [selectedConversation]);
+  }, [selectedConversation, queryClient]);
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  const loadConversations = async () => {
-    try {
-      const data = await chatService.getConversations();
-      setConversations(data);
-    } catch (err) {
-      console.error("Failed to fetch conversations", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadMessages = async (id: number) => {
-    try {
-      const data = await chatService.getConversationMessages(id);
-      setMessages(data.messages || []);
-    } catch (err) {
-      console.error("Failed to fetch messages", err);
-    }
-  };
-
-  const handleSendMessage = async () => {
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
     if (!newMessage.trim() || !selectedConversation) return;
 
-    const body = newMessage;
+    sendMessageMutation.mutate({
+      conversationId: selectedConversation.id,
+      body: newMessage,
+    });
     setNewMessage("");
-
-    // Optimistic update
-    const tempId = Date.now();
-    const tempMsg = {
-      id: tempId,
-      body: body,
-      sender_id: userId,
-      created_at: new Date().toISOString()
-    };
-    setMessages((prev) => [...prev, tempMsg]);
-
-    try {
-      console.log("📤 Sending message to backend...", { conversation_id: selectedConversation.id, body });
-      const sentMsg = await chatService.sendMessage(selectedConversation.id, body);
-      console.log("✅ Message sent successfully, response:", sentMsg);
-      // Replace temp message with real one from server to get correct ID/timestamps
-      setMessages((prev) => prev.map(m => m.id === tempId ? sentMsg : m));
-    } catch (err) {
-      console.error("❌ Failed to send message", err);
-      // Optional: remove temp message on failure
-    }
   };
 
   return (
@@ -147,10 +256,10 @@ const MessagingPage = () => {
             </div>
           </div>
           <div className="flex-1 overflow-y-auto bg-white">
-            {loading ? (
+            {isLoadingConversations ? (
               <div className="p-4 text-center text-muted-foreground">Loading...</div>
             ) : conversations.length > 0 ? (
-              conversations.map((conv) => (
+              conversations.map((conv: any) => (
                 <div
                   key={conv.id}
                   onClick={() => setSelectedConversation(conv)}
@@ -220,27 +329,34 @@ const MessagingPage = () => {
               </div>
 
               {/* Chat Messages */}
-              <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f0f2f5]">
-                {messages.map((msg) => (
-                  <div key={msg.id} className={`flex ${msg.sender_id === userId ? "justify-end" : "justify-start"}`}>
-                    <div className={`max-w-[70%] p-3 rounded-2xl shadow-sm text-sm ${
-                      msg.sender_id === userId 
-                        ? "bg-green-600 text-white rounded-tr-none" 
-                        : "bg-white text-gray-800 rounded-tl-none"
-                    }`}>
-                      {msg.body}
-                      <div className={`text-[10px] mt-1 ${msg.sender_id === userId ? "text-green-100" : "text-gray-400"}`}>
-                        {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f0f2f5] flex flex-col">
+                {/* Top Observer for Infinite Scroll */}
+                <div ref={topObserverRef} className="h-4 flex items-center justify-center">
+                    {isFetchingNextPage && <Loader2 className="h-4 w-4 animate-spin text-green-600" />}
+                </div>
+
+                <div className="flex-1 flex flex-col justify-end gap-4 min-h-min">
+                  {messages.map((msg: any) => (
+                    <div key={msg.id} className={`flex ${msg.sender_id === userId ? "justify-end" : "justify-start"}`}>
+                      <div className={`max-w-[70%] p-3 rounded-2xl shadow-sm text-sm ${
+                        msg.sender_id === userId 
+                          ? "bg-green-600 text-white rounded-tr-none" 
+                          : "bg-white text-gray-800 rounded-tl-none"
+                      }`}>
+                        {msg.body}
+                        <div className={`text-[10px] mt-1 ${msg.sender_id === userId ? "text-green-100" : "text-gray-400"}`}>
+                          {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
               {/* Chat Input */}
               <div className="p-4 border-t bg-white">
                 <form 
-                  onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}
+                  onSubmit={handleSendMessage}
                   className="flex gap-2"
                 >
                   <input 
@@ -249,8 +365,12 @@ const MessagingPage = () => {
                     placeholder="Type a message..." 
                     className="flex-1 bg-gray-100 border-none rounded-full px-6 h-11 outline-none focus:ring-2 focus:ring-green-500 text-sm" 
                   />
-                  <Button type="submit" className="bg-green-600 hover:bg-green-700 rounded-full h-11 w-11 p-0 flex items-center justify-center">
-                    <Send className="h-4 w-4" />
+                  <Button 
+                    type="submit" 
+                    disabled={sendMessageMutation.isPending}
+                    className="bg-green-600 hover:bg-green-700 rounded-full h-11 w-11 p-0 flex items-center justify-center"
+                  >
+                    {sendMessageMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                   </Button>
                 </form>
               </div>

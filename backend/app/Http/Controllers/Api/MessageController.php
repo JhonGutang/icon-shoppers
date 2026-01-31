@@ -11,6 +11,19 @@ use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
+    public function index($conversationId)
+    {
+        $conversation = Conversation::findOrFail($conversationId);
+        $this->authorizeAccess($conversation);
+
+        $messages = Message::where('conversation_id', $conversationId)
+            ->with('sender')
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+        return response()->json($messages);
+    }
+
     public function store(Request $request, $conversationId)
     {
         $request->validate([
