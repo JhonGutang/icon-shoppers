@@ -49,7 +49,7 @@ const Navbar = () => {
           {navLinks.map((link) => (
             <button
               key={link.id}
-              className={`text-sm font-bold transition-all hover:text-green-600 relative group ${
+              className={`text-sm font-bold cursor-pointer transition-all hover:text-green-600 relative group ${
                 scrolled ? "text-stone-600" : "text-stone-700 lg:text-white"
               }`}
               onClick={() => {

@@ -18,7 +18,7 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-sm leading-relaxed">
-              Empowering local farmers and artisans from Pinamungajan to Balamban. We bring the community&apos;s best products directly to your doorstep.
+              Empowering local artisans and small businesses from Pinamungajan to Balamban. We bring our community&apos;s finest products directly to your doorstep.
             </p>
             <div className="flex gap-4">
               <a href="#" className="bg-white/5 p-3 rounded-full hover:bg-green-600 hover:text-white transition-all">

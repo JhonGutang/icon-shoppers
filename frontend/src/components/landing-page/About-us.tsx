@@ -7,13 +7,13 @@ const AboutUs = () => {
   const features = [
     {
       icon: <Sprout className="h-8 w-8 text-green-600" />,
-      title: "Fresh from Farmers",
-      description: "Direct access to seasonal produce harvested just hours before delivery."
+      title: "Quality Selection",
+      description: "Direct access to the finest local goods, curated and delivered with care."
     },
     {
       icon: <Users className="h-8 w-8 text-green-600" />,
       title: "Community First",
-      description: "Every purchase directly supports local families in Pinamungajan and Balamban."
+      description: "Every purchase directly supports local families and small businesses in our region."
     },
     {
       icon: <Store className="h-8 w-8 text-green-600" />,

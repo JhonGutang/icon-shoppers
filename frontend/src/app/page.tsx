@@ -5,12 +5,11 @@ import Navbar from "@/components/landing-page/Navbar";
 import Hero from "@/components/landing-page/Hero";
 import AboutUs from "@/components/landing-page/About-us";
 import Footer from "@/components/landing-page/Footer";
-import { useProducts, useFeaturedProducts } from "@/hooks/queries/useProductsQuery";
+import { useProducts } from "@/hooks/queries/useProductsQuery";
 import ProductGrid from "@/components/ProductGrid";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ChevronRight, TrendingUp, Sparkles, MapPin } from "lucide-react";
-import { useCategories } from "@/hooks/queries/useCategoryQuery";
+import { ChevronRight, Sparkles } from "lucide-react";
 import useAuthStore from "@/stores/useAuthStore";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -30,9 +29,7 @@ export default function LandingPage() {
     productRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const { data: featuredData, isLoading: isFeaturedLoading } = useFeaturedProducts(1);
-  const { data: latestData, isLoading: isLatestLoading } = useProducts({ sort: 'newest', per_page: 5 });
-  const { data: categories } = useCategories();
+  const { data: productsData, isLoading: isProductsLoading } = useProducts({ per_page: 10 });
 
   return (
     <div className="flex min-h-screen flex-col bg-stone-50/50">
@@ -52,8 +49,8 @@ export default function LandingPage() {
                 <Sparkles className="text-green-700" size={32} />
               </div>
               <div>
-                <h2 className="text-3xl font-black text-stone-900 tracking-tight">Featured Marketplace</h2>
-                <p className="text-stone-500">Discover quality goods from local artisans and farmers</p>
+                <h2 className="text-3xl font-black text-stone-900 tracking-tight">Local Marketplace</h2>
+                <p className="text-stone-500">Discover authentic goods from the heart of our community</p>
               </div>
             </div>
           </div>
@@ -66,8 +63,8 @@ export default function LandingPage() {
           >
             <ProductGrid 
               isLanding={true}
-              products={(featuredData?.data || []).slice(0, 10)} 
-              isLoading={isFeaturedLoading} 
+              products={productsData?.data || []} 
+              isLoading={isProductsLoading} 
             />
             
             <div className="mt-16 text-center">

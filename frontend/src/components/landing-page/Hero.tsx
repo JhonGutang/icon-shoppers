@@ -10,7 +10,7 @@ interface HeroProps {
 
 const Hero = ({ onViewProducts }: HeroProps) => {
   return (
-    <div className="relative w-full min-h-[90vh] flex items-center overflow-hidden">
+    <div className="relative w-full min-h-screen flex items-center overflow-hidden">
       {/* Background with overlay */}
       <div className="absolute inset-0 hero-background" />
       
@@ -31,7 +31,7 @@ const Hero = ({ onViewProducts }: HeroProps) => {
             transition={{ duration: 0.6 }}
           >
             <span className="inline-block py-1 px-3 rounded-full bg-green-600/30 border border-green-500/50 text-green-200 text-sm font-medium mb-6 backdrop-blur-sm">
-              Supporting Local Produce
+              Supporting Local Sellers
             </span>
           </motion.div>
 
