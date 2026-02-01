@@ -9,10 +9,11 @@ import { useProducts, useFeaturedProducts } from "@/hooks/queries/useProductsQue
 import ProductGrid from "@/components/ProductGrid";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ChevronRight, TrendingUp, Sparkles } from "lucide-react";
+import { ChevronRight, TrendingUp, Sparkles, MapPin } from "lucide-react";
 import { useCategories } from "@/hooks/queries/useCategoryQuery";
 import useAuthStore from "@/stores/useAuthStore";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function LandingPage() {
   const { data: categories } = useCategories();
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col bg-stone-50/50">
       <Navbar />
       
       <main className="flex-1">
@@ -43,78 +44,45 @@ export default function LandingPage() {
           <Hero onViewProducts={scrollToProducts} />
         </section>
 
-        {/* Category Icons */}
-        <section className="py-12 bg-muted/30">
-          <div className="container mx-auto px-4">
-             <div className="flex flex-wrap justify-center gap-4 sm:gap-8">
-                {categories?.map((cat) => (
-                  <Link 
-                    key={cat.id} 
-                    href="/auth"
-                    className="flex flex-col items-center group"
-                  >
-                    <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-card border-border flex items-center justify-center shadow-sm group-hover:shadow-md group-hover:border-primary/40 transition-all">
-                       <span className="text-primary font-bold">{cat.name.substring(0, 1)}</span>
-                    </div>
-                    <span className="mt-2 text-xs font-bold text-muted-foreground group-hover:text-primary">{cat.name}</span>
-                  </Link>
-                ))}
-             </div>
-          </div>
-        </section>
-
-        {/* Featured Products */}
-        <section id="products" className="py-16 container mx-auto px-4" ref={productRef}>
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <div className="bg-primary/10 p-2 rounded-lg">
-                <Sparkles className="text-primary" size={24} />
+        {/* Products Section */}
+        <section id="products" className="py-28 container mx-auto px-4 sm:px-6 lg:px-8" ref={productRef}>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-12 gap-6">
+            <div className="flex items-center gap-4">
+              <div className="bg-green-100 p-4 rounded-2xl shadow-inner">
+                <Sparkles className="text-green-700" size={32} />
               </div>
               <div>
-                <h2 className="text-2xl font-black tracking-tight">Featured for You</h2>
-                <p className="text-sm text-muted-foreground">Hand-picked quality from local artisans</p>
+                <h2 className="text-3xl font-black text-stone-900 tracking-tight">Featured Marketplace</h2>
+                <p className="text-stone-500">Discover quality goods from local artisans and farmers</p>
               </div>
             </div>
-            <Button variant="ghost" asChild className="rounded-full">
-              <Link href="/auth">
-                View All <ChevronRight size={16} />
-              </Link>
-            </Button>
           </div>
           
-          <ProductGrid 
-            isLanding={true}
-            products={(featuredData?.data || []).slice(0, 5)} 
-            isLoading={isFeaturedLoading} 
-          />
-        </section>
-
-        {/* Latest Arrivals */}
-        <section className="py-16 container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <div className="bg-blue-100 p-2 rounded-lg">
-                <TrendingUp className="text-blue-600" size={24} />
-              </div>
-              <div>
-                <h2 className="text-2xl font-black tracking-tight">Latest Arrivals</h2>
-                <p className="text-sm text-muted-foreground">The newest additions from your favorite shops</p>
-              </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <ProductGrid 
+              isLanding={true}
+              products={(featuredData?.data || []).slice(0, 10)} 
+              isLoading={isFeaturedLoading} 
+            />
+            
+            <div className="mt-16 text-center">
+              <Link 
+                href="/auth"
+                className="inline-flex items-center gap-2 text-stone-900 font-bold hover:text-green-700 transition-colors group"
+              >
+                <span>Sign in to view more products</span>
+                <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
-            <Button variant="ghost" asChild className="rounded-full">
-              <Link href="/auth">
-                View All <ChevronRight size={16} />
-              </Link>
-            </Button>
-          </div>
-          
-          <ProductGrid 
-            isLanding={true}
-            products={latestData?.data || []} 
-            isLoading={isLatestLoading} 
-          />
+          </motion.div>
         </section>
 
+        {/* Our Story (About Us) Section */}
         <section id="about-us">
           <AboutUs />
         </section>

@@ -79,6 +79,13 @@
   --success: oklch(0.7 0.2 150); /* Green-like color */
   --warning: oklch(0.8 0.2 70); /* Yellow-like color */
   --info: oklch(0.7 0.15 250); /* Blue-like color */
+
+  /* Local Store Theme (Green & Brown) */
+  --store-green-light: #4CC292;
+  --store-green-dark: #0E6835;
+  --store-brown-light: #D2B48C;
+  --store-brown-dark: #8B4513;
+  --store-beige: #F5F5DC;
 }
 
 .dark {
@@ -137,13 +144,23 @@
   }
 
   .hero-background {
-    background-image: url('/hero.jpg');
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/hero.jpg');
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     @media (max-width: 640px) {
       background-position: 70% center;
     }
+  }
+
+  .glass-brown {
+    background: rgba(139, 69, 19, 0.1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(139, 69, 19, 0.2);
+  }
+
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
   }
 }
 

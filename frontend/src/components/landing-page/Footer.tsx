@@ -1,72 +1,82 @@
-import { Facebook, Instagram, Mail, Phone } from "lucide-react";
-import { Button } from "../ui/button";
-import useRedirectLink from "@/hooks/useRedirectLink";
+import { ShoppingBasket, Mail, Phone, MapPin, Facebook, Instagram, Twitter } from "lucide-react";
+import Link from "next/link";
 
 const Footer = () => {
-  const { redirectLink } = useRedirectLink();
+  const currentYear = new Date().getFullYear();
+
   return (
-    <div className="w-full border-t-2 border-green-700">
-      <div className="w-full lg:flex justify-between items-center mb-5 lg:mb-0">
-        <div className="flex justify-center lg:justify-start items-center">
-          <img
-            src="/logo.png"
-            alt=""
-            className="lg:w-[150px] lg:h-[150px] w-[70px] "
-          />
-          <div className="flex lg:px-8 px-2 gap-5">
-            <div>
-              <div className="text-sm">Email</div>
-              <div className="text-xs">iconshoppers@gmail.com</div>
+    <footer className="bg-stone-900 text-stone-300 pt-20 pb-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+          <div className="space-y-6">
+            <div className="flex items-center gap-2">
+              <div className="bg-green-600 p-2 rounded-xl">
+                <ShoppingBasket className="text-white h-6 w-6" />
+              </div>
+              <span className="text-white text-xl font-black tracking-tighter">
+                ICON<span className="text-green-500">SHOPPERS</span>
+              </span>
             </div>
-            <div>
-              <div className="text-sm">Phone Number</div>
-              <div className="text-xs">09955695397</div>
+            <p className="text-sm leading-relaxed">
+              Empowering local farmers and artisans from Pinamungajan to Balamban. We bring the community&apos;s best products directly to your doorstep.
+            </p>
+            <div className="flex gap-4">
+              <a href="#" className="bg-white/5 p-3 rounded-full hover:bg-green-600 hover:text-white transition-all">
+                <Facebook size={20} />
+              </a>
+              <a href="#" className="bg-white/5 p-3 rounded-full hover:bg-green-600 hover:text-white transition-all">
+                <Instagram size={20} />
+              </a>
+              <a href="#" className="bg-white/5 p-3 rounded-full hover:bg-green-600 hover:text-white transition-all">
+                <Twitter size={20} />
+              </a>
             </div>
+          </div>
+
+          <div>
+            <h4 className="text-white font-bold mb-6">Quick Links</h4>
+            <ul className="space-y-4 text-sm">
+              <li><Link href="/" className="hover:text-green-500 transition-colors">Home</Link></li>
+              <li><Link href="#about-us" className="hover:text-green-500 transition-colors">Our Story</Link></li>
+              <li><Link href="#products" className="hover:text-green-500 transition-colors">Marketplace</Link></li>
+              <li><Link href="/auth" className="hover:text-green-500 transition-colors">Partner with Us</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-white font-bold mb-6">Support</h4>
+            <ul className="space-y-4 text-sm">
+              <li><Link href="#" className="hover:text-green-500 transition-colors">Help Center</Link></li>
+              <li><Link href="#" className="hover:text-green-500 transition-colors">Terms of Service</Link></li>
+              <li><Link href="#" className="hover:text-green-500 transition-colors">Privacy Policy</Link></li>
+              <li><Link href="#" className="hover:text-green-500 transition-colors">Shipping Info</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-white font-bold mb-6">Contact Us</h4>
+            <ul className="space-y-4 text-sm">
+              <li className="flex items-start gap-3">
+                <MapPin size={18} className="text-green-500 shrink-0" />
+                <span>Pinamungajan, Cebu, Philippines</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Phone size={18} className="text-green-500 shrink-0" />
+                <span>+63 123 456 7890</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Mail size={18} className="text-green-500 shrink-0" />
+                <span>hello@iconshoppers.com</span>
+              </li>
+            </ul>
           </div>
         </div>
-        <div className="h-full px-10">
-          <div className="mb-4 text-center lg:text-start">
-            Join our community supporting local shops in Cebu!
-          </div>
-          <div className="flex gap-3">
-            <Button
-              className="bg-green-600"
-              onClick={() => redirectLink("/auth")}
-            >
-              Join Icon Shoppers
-            </Button>
-            <Button
-              className="bg-green-600"
-              onClick={() => redirectLink("/customer-auth")}
-            >
-              Sellers Center
-            </Button>
-          </div>
+
+        <div className="pt-8 border-t border-white/5 text-center text-xs text-stone-500">
+          <p>© {currentYear} Icon Shoppers. All rights reserved. Locally crafted with love.</p>
         </div>
       </div>
-
-      <div className="w-full text-xs lg:text-sm lg:flex border-t-4 px-10 py-2 justify-between">
-        <div className="flex gap-3 justify-center">
-          <div>Icon Shoppers</div>
-          <div>Copyright 2025</div>
-          <div>All Rights Reserved</div>
-        </div>
-
-        <div className="flex gap-3 justify-center">
-          <div>Terms and Condition</div>
-          <div>About Us</div>
-          <div>Products</div>
-        </div>
-
-        <div className="flex gap-3 justify-center">
-          <div>Socials: </div>
-          <Facebook />
-          <Instagram />
-          <Mail />
-          <Phone />
-        </div>
-      </div>
-    </div>
+    </footer>
   );
 };
 
