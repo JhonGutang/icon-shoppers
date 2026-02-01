@@ -1,8 +1,18 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Eye, EyeClosed, ShoppingCart, Store, Star, Heart, Edit, Trash2, Trophy } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { 
+  Eye, 
+  EyeClosed, 
+  ShoppingCart, 
+  Store, 
+  Star, 
+  Heart, 
+  Trash2, 
+  Trophy,
+  ArrowUpRight 
+} from "lucide-react";
 import React from "react";
 import { Product } from "@/types/product";
 import useAuthStore from "@/stores/useAuthStore";
@@ -14,6 +24,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import useProductAction from "@/hooks/useProductActions";
 import EditProduct from "@/components/shop/EditProduct";
+import { motion } from "framer-motion";
 
 interface ProductCardProps {
   product: Product;
@@ -28,9 +39,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   location,
   className,
   isLanding = false,
-  shopName,
 }) => {
-  const shopId = useAuthStore((state) => state.id);
   const role = useAuthStore((state) => state.userType);
   const token = useAuthStore((state) => state.accessToken);
   const isProductOwner = role === "merchant" && (location === "shop" || location === "profile");
@@ -93,6 +102,131 @@ const ProductCard: React.FC<ProductCardProps> = ({
     handleFeatureToggle(product);
   };
 
+  const cardContent = (
+    <Card
+      className={cn(
+        "group relative flex h-full flex-col overflow-hidden rounded-[2.5rem] border-0 bg-white p-2 transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)]",
+        className,
+        !product.is_visible && "opacity-75 grayscale-[0.5]"
+      )}
+    >
+      {/* Product Image Wrapper */}
+      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[2.2rem] bg-stone-100">
+        <img
+          src={
+            product.image
+              ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`
+              : "https://placehold.co/400x400?text=No+Image"
+          }
+          alt={product.name}
+          className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
+        />
+
+        {/* Dynamic Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+        
+        {/* Top Badges */}
+        <div className="absolute left-4 top-4 flex flex-col gap-2">
+          {Boolean(product.is_featured) && (
+            <div className="flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur-md px-3 py-1 text-[10px] font-black uppercase tracking-widest text-[#0E6835] shadow-sm">
+              <Trophy size={10} className="fill-[#0E6835]" />
+              Featured
+            </div>
+          )}
+        </div>
+
+        {/* Action Overlays (Non-Landing) */}
+        {!isLanding && (
+          <div className="absolute right-4 top-4 flex flex-col gap-2 translate-x-12 opacity-0 transition-all duration-500 group-hover:translate-x-0 group-hover:opacity-100">
+            {role !== "merchant" && (
+              <button
+                onClick={handleToggleWishlist}
+                className={cn(
+                  "flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-xl transition-all hover:scale-110",
+                  product.is_in_wishlist ? "text-red-500" : "text-stone-400 hover:text-red-500"
+                )}
+              >
+                <Heart size={18} fill={product.is_in_wishlist ? "currentColor" : "none"} />
+              </button>
+            )}
+
+            {isProductOwner && (
+              <>
+                <button
+                  onClick={onToggleVisibility}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-stone-600 shadow-xl transition-all hover:scale-110"
+                >
+                  {product.is_visible ? <Eye size={18} /> : <EyeClosed size={18} />}
+                </button>
+                <button
+                  onClick={onToggleFeatured}
+                  className={cn(
+                    "flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-xl transition-all hover:scale-110",
+                    product.is_featured ? "text-yellow-500" : "text-stone-400"
+                  )}
+                >
+                  <Trophy size={18} fill={product.is_featured ? "currentColor" : "none"} />
+                </button>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Quick View / External link Icon */}
+        <div className="absolute bottom-4 right-4 translate-y-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+          <div className="flex h-12 w-12 items-center justify-center rounded-[1.2rem] bg-[#0E6835] text-white shadow-xl shadow-green-900/30">
+            <ArrowUpRight size={22} />
+          </div>
+        </div>
+      </div>
+
+      {/* Product Information */}
+      <div className="flex flex-1 flex-col px-3 py-3">
+        <div className="mb-1.5 flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-[#0E6835]">
+            <Store size={12} />
+            <span className="line-clamp-1">{product.shop?.name || product.shop_name}</span>
+          </div>
+          {product.average_rating > 0 && (
+            <div className="flex items-center gap-1 rounded-full bg-stone-100 px-2 py-0.5">
+              <Star size={10} className="fill-[#0E6835] text-[#0E6835]" />
+              <span className="text-[10px] font-black text-stone-700">{product.average_rating}</span>
+            </div>
+          )}
+        </div>
+
+        <h3 className="line-clamp-2 text-[15px] font-bold text-stone-900 leading-tight tracking-tight">
+          {product.name}
+        </h3>
+
+        <div className="mt-auto flex items-center justify-between pt-3">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Merchant Price</span>
+            <span className="text-2xl font-black text-stone-950">
+              ₱{parseFloat(product.price).toLocaleString()}
+            </span>
+          </div>
+
+          {!isLanding && role !== "merchant" && (
+            <Button
+              onClick={handleAddToCart}
+              className="h-12 w-12 rounded-2xl bg-stone-900 text-white shadow-xl shadow-stone-900/20 transition-all hover:bg-[#0E6835] hover:scale-105"
+              size="icon"
+            >
+              <ShoppingCart size={20} />
+            </Button>
+          )}
+
+          {isLanding && (
+            <div className="h-12 w-12 rounded-2xl bg-stone-100 flex items-center justify-center text-stone-300">
+              <ShoppingCart size={20} />
+            </div>
+          )}
+        </div>
+      </div>
+    </Card>
+  );
+
   if (isLanding) {
     return (
       <div 
@@ -102,45 +236,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         }}
         className="cursor-pointer"
       >
-        <Card
-          className={cn(
-            "group relative overflow-hidden rounded-xl border border-border bg-card transition-all hover:shadow-lg hover:-translate-y-1",
-            className
-          )}
-        >
-          {/* Product Image */}
-          <div className="aspect-square w-full overflow-hidden bg-muted">
-            <img
-              src={
-                product.image
-                  ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`
-                  : "https://placehold.co/400x400?text=No+Image"
-              }
-              alt={product.name}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-            />
-          </div>
-
-          <CardContent className="p-3">
-            {/* Shop Name */}
-            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-              <Store size={12} />
-              <span className="line-clamp-1">{product.shop?.name || product.shop_name}</span>
-            </div>
-
-            {/* Product Name */}
-            <h3 className="mt-1 line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-tight">
-              {product.name}
-            </h3>
-
-            {/* Price */}
-            <div className="mt-2 flex items-center justify-between">
-              <div className="text-base font-bold text-primary">
-                ₱{parseFloat(product.price).toLocaleString()}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {cardContent}
       </div>
     );
   }
@@ -148,139 +244,29 @@ const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <div className="relative h-full flex flex-col">
       <Link href={`/products/${product.slug || product.id}`} className="flex-1">
-        <Card
-          className={cn(
-            "group relative h-full bg-card overflow-hidden rounded-xl border border-border transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col",
-            className,
-            !product.is_visible && "opacity-75 grayscale-[0.5]"
-          )}
-        >
-          {/* Wishlist Toggle / Merchant Overlay */}
-          {(role !== "merchant" && !isLanding) && (
-            <button
-              onClick={handleToggleWishlist}
-              className={cn(
-                "absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur-sm transition-all hover:scale-110",
-                product.is_in_wishlist ? "text-red-500" : "text-muted-foreground hover:text-red-500"
-              )}
-            >
-              <Heart size={18} fill={product.is_in_wishlist ? "currentColor" : "none"} />
-            </button>
-          )}
-
-          {/* Merchant Quick Actions Overlay */}
-          {isProductOwner && (
-            <div className="absolute right-3 top-3 z-10 flex flex-col gap-2">
-               <button
-                onClick={onToggleVisibility}
-                title={product.is_visible ? "Hide product" : "Show product"}
-                className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur-sm transition-all hover:scale-110 shadow-sm",
-                  product.is_visible ? "text-green-600" : "text-gray-400"
-                )}
-              >
-                {product.is_visible ? <Eye size={16} /> : <EyeClosed size={16} />}
-              </button>
-               <button
-                onClick={onToggleFeatured}
-                title={product.is_featured ? "Unfeature" : "Feature product"}
-                className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur-sm transition-all hover:scale-110 shadow-sm",
-                  product.is_featured ? "text-yellow-500" : "text-gray-400"
-                )}
-              >
-                <Trophy size={16} fill={product.is_featured ? "currentColor" : "none"} />
-              </button>
-            </div>
-          )}
-
-          {/* Product Image */}
-          <div className="aspect-square w-full overflow-hidden bg-muted relative">
-            <img
-              src={
-                product.image
-                  ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`
-                  : "https://placehold.co/400x400?text=No+Image"
-              }
-              alt={product.name}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-            />
-            
-            {/* Status Badges */}
-            <div className="absolute left-2 top-2 flex flex-col gap-1">
-              {Boolean(product.is_featured) && (
-                <div className="rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold text-yellow-900 shadow-sm">
-                  Top Featured
-                </div>
-              )}
-              {!product.is_visible && (
-                <div className="rounded-full bg-gray-800 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
-                  Hidden
-                </div>
-              )}
-            </div>
-          </div>
-
-          <CardContent className="p-3 flex flex-1 flex-col">
-            {/* Shop Name */}
-            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-              <Store size={12} />
-              <span className="line-clamp-1">{product.shop?.name || product.shop_name}</span>
-            </div>
-
-            {/* Product Name */}
-            <h3 className="mt-1 line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-tight">
-              {product.name}
-            </h3>
-
-            {/* Rating & Sales */}
-            <div className="mt-1.5 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1">
-                <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                <span className="text-xs font-medium">{product.average_rating || 0}</span>
-                <span className="text-[10px] text-muted-foreground">
-                  ({product.review_count || 0})
-                </span>
-              </div>
-              <div className="text-[10px] text-muted-foreground font-medium">
-                {product.sales_count || 0} sold
-              </div>
-            </div>
-
-            {/* Price & Primary Action */}
-            <div className="mt-auto pt-3 flex items-center justify-between">
-              <div className="text-base font-bold text-primary">
-                ₱{parseFloat(product.price).toLocaleString()}
-              </div>
-              
-              {(!isLanding && role !== "merchant") && (
-                <Button
-                  size="icon"
-                  variant="secondary"
-                  className="h-8 w-8 rounded-full shadow-sm hover:bg-primary hover:text-primary-foreground"
-                  onClick={handleAddToCart}
-                >
-                  <ShoppingCart size={16} />
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        {cardContent}
       </Link>
 
-      {/* Merchant Management Bar */}
+      {/* Merchant Management Overlay - Subtle */}
       {isProductOwner && (
-        <div className="mt-2 flex gap-2" onClick={(e) => e.stopPropagation()}>
-          <EditProduct product={product} />
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mt-4 flex gap-2 px-1" 
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex-1">
+            <EditProduct product={product} />
+          </div>
           <Button 
             variant="outline" 
             size="sm" 
-            className="h-9 w-9 rounded-xl border-gray-200 hover:border-red-200 hover:bg-red-50 text-gray-400 hover:text-red-600"
+            className="h-11 w-11 rounded-2xl border-stone-200 bg-white text-stone-400 shadow-none hover:border-red-100 hover:bg-red-50 hover:text-red-500"
             onClick={onDelete}
           >
-            <Trash2 size={14} />
+            <Trash2 size={18} />
           </Button>
-        </div>
+        </motion.div>
       )}
     </div>
   );

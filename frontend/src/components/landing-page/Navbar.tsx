@@ -34,12 +34,25 @@ const Navbar = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
-        <div className="flex items-center gap-2 cursor-pointer group" onClick={() => redirectLink('/')}>
+        <div 
+          className="flex items-center gap-2 cursor-pointer group" 
+          onClick={() => {
+            const isLandingPage = window.location.pathname === "/";
+            if (isLandingPage) {
+              const target = document.getElementById("home");
+              if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+              }
+            } else {
+              redirectLink('/');
+            }
+          }}
+        >
           <div className="bg-[#0E6835] p-2 rounded-xl group-hover:rotate-12 transition-transform">
             <ShoppingBasket className="text-white h-6 w-6" />
           </div>
           <span className={`text-xl font-black tracking-tighter transition-colors ${
-            scrolled ? "text-stone-900" : "text-white lg:text-stone-900"
+            scrolled ? "text-stone-900" : "text-stone-900"
           }`}>
             ICON<span className="text-[#0E6835]">SHOPPERS</span>
           </span>
@@ -50,7 +63,7 @@ const Navbar = () => {
             <button
               key={link.id}
               className={`text-sm font-bold cursor-pointer transition-all hover:text-green-600 relative group ${
-                scrolled ? "text-stone-600" : "text-stone-700 lg:text-white"
+                scrolled ? "text-stone-600" : "text-stone-700"
               }`}
               onClick={() => {
                 if (link.link.startsWith("#")) {
@@ -79,7 +92,7 @@ const Navbar = () => {
           <Button 
             onClick={() => setIsOpen(!isOpen)} 
             variant="ghost" 
-            className={scrolled ? "text-stone-900" : "text-white sm:text-stone-900"}
+            className="text-stone-900"
           >
             {isOpen ? <X /> : <Menu/>}
           </Button>

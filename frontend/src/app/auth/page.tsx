@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import Register from "@/components/auth/register";
 import useAuthStore from "@/stores/useAuthStore";
 import { useRouter } from "next/navigation";
+import { ShoppingBasket } from "lucide-react";
 
 
 /**
@@ -41,8 +42,14 @@ const UnifiedAuth = () => {
 
   if (!hasHydrated) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
+      <div className="flex flex-col justify-center items-center min-h-screen bg-[#fafaf9]">
+        <div className="relative">
+          <div className="animate-spin rounded-full h-24 w-24 border-t-2 border-b-2 border-[#0E6835]"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+             <ShoppingBasket className="text-[#0E6835] h-8 w-8 animate-pulse" />
+          </div>
+        </div>
+        <p className="mt-8 text-stone-400 font-bold uppercase tracking-[0.3em] text-[10px]">Preparing Marketplace...</p>
       </div>
     );
   }
@@ -53,14 +60,14 @@ const UnifiedAuth = () => {
 
   return (
     <AuthLayout>
-      <div className="mb-6 text-center">
-        <h2 className="text-2xl font-bold text-gray-800">
-          {defaultAuth === "login" ? "Welcome Back!" : "Join Icon Shoppers"}
+      <div className="mb-4">
+        <h2 className="text-2xl lg:text-3xl font-black text-stone-950 tracking-tight">
+          {defaultAuth === "login" ? "Welcome Back" : "Join the Community"}
         </h2>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-stone-400 text-sm font-light mt-1 leading-relaxed">
           {defaultAuth === "login" 
-            ? "Sign in to manage your orders and shop." 
-            : "One account to shop and sell gourmet treats."}
+            ? "Sign in to discover curated local treasures." 
+            : "One account to shop and support our local artisans."}
         </p>
       </div>
 
@@ -73,8 +80,6 @@ const UnifiedAuth = () => {
         />
       )}
     </AuthLayout>
-
-
   );
 };
 

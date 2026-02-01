@@ -2,6 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 import useRedirectLink from "@/hooks/useRedirectLink";
+import { motion } from "framer-motion";
 
 const Product = () => {
     const {redirectLink} = useRedirectLink() 
@@ -16,11 +17,22 @@ const Product = () => {
     ];
     
     return (
-        <div className="w-full lg:h-[100vh] h-[60vh] flex flex-col justify-center items-center">
-            <div className="text-2xl px-10 mb-10 text-center">
+        <div className="w-full lg:h-[100vh] h-[60vh] flex flex-col justify-center items-center overflow-hidden">
+            <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.3 }}
+                className="text-2xl px-10 mb-10 text-center"
+            >
                 Discover Trends from Well known Local Shops
-            </div>
-            <div className="px-10">
+            </motion.div>
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: false, amount: 0.2 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="px-10 w-full max-w-7xl"
+            >
                 <Carousel>
                     <CarouselContent>
                         {products.map(product => (
@@ -43,7 +55,7 @@ const Product = () => {
                     <CarouselPrevious />
                     <CarouselNext />
                 </Carousel>
-            </div>
+            </motion.div>
         </div>
     );
 };
