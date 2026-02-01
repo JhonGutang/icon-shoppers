@@ -109,33 +109,20 @@ const getEcho = () => {
 
 const echo = getEcho();
 
-// Logging and Connection Strategy
 if (echo && typeof window !== 'undefined') {
-    console.log("🔌 Initializing WebSocket connection...");
-
-    echo.connector.pusher.connection.bind("state_change", (states: any) => {
-        console.log(`📡 WebSocket State Change: ${states.previous} -> ${states.current}`);
-    });
-
     echo.connector.pusher.connection.bind("connected", () => {
-        console.log("✅ WebSocket Connected: Reverb connection established.");
         const socketId = echo.socketId();
         if (socketId) {
             axiosInstance.defaults.headers.common['X-Socket-ID'] = socketId;
-            console.log("🆔 Set X-Socket-ID header:", socketId);
         }
     });
 
-    echo.connector.pusher.connection.bind("connecting", () => {
-        console.log("⏳ WebSocket Connecting...");
-    });
-
     echo.connector.pusher.connection.bind("unavailable", () => {
-        console.log("🚫 WebSocket Unavailable.");
+        console.error("🚨 Real-time: WebSocket Unavailable.");
     });
 
     echo.connector.pusher.connection.bind("failed", () => {
-        console.log("� WebSocket Failed.");
+        console.error("🚨 Real-time: WebSocket Connection Failed.");
     });
 }
 

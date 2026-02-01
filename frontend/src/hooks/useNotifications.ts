@@ -17,7 +17,6 @@ export const useUnreadCount = () => {
   return useQuery({
     queryKey: ["notifications", "unread-count"],
     queryFn: fetchUnreadCount,
-    refetchInterval: 30000, // Refetch every 30 seconds
   });
 };
 

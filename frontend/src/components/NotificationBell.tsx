@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { Bell, Check, Loader2 } from "lucide-react";
+import { Bell, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { 
@@ -10,11 +9,11 @@ import {
   useMarkAsRead, 
   useMarkAllAsRead 
 } from "@/hooks/useNotifications";
+import { useNotificationListener } from "@/hooks/useNotificationListener";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -32,6 +31,9 @@ const NotificationBell = () => {
   const { data: notificationsData, isLoading } = useNotifications(1);
   const markAsReadMutation = useMarkAsRead();
   const markAllAsReadMutation = useMarkAllAsRead();
+  
+  // Real-time listener
+  useNotificationListener();
 
   const unreadCount = unreadData?.count || 0;
   const notifications: Notification[] = notificationsData?.data || [];

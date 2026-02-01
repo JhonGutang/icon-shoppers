@@ -5,9 +5,12 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Broadcasting\PrivateChannel;
 
-class NewMessageNotification extends Notification
+class NewMessageNotification extends Notification implements ShouldBroadcastNow
 {
     use Queueable;
 
@@ -28,7 +31,7 @@ class NewMessageNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'broadcast'];
     }
 
     /**
@@ -46,5 +49,22 @@ class NewMessageNotification extends Notification
             'message' => "You have a new message from {$this->message->sender->name}.",
             'type' => 'new_message',
         ];
+    }
+
+    /**
+     * Get the broadcast representation of the notification.
+     *
+     * @return BroadcastMessage
+     */
+    public function toBroadcast(object $notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'conversation_id' => $this->message->conversation_id,
+            'sender_id' => $this->message->sender_id,
+            'sender_name' => $this->message->sender->name,
+            'message_preview' => substr($this->message->body, 0, 50) . (strlen($this->message->body) > 50 ? '...' : ''),
+            'message' => "You have a new message from {$this->message->sender->name}.",
+            'type' => 'new_message',
+        ]);
     }
 }

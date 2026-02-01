@@ -52,20 +52,12 @@ class MessageController extends Controller
             $recipient->notify(new NewMessageNotification($message->load('sender')));
         }
 
-        \Log::info('Messaging: Broadcasting message', [
-            'id' => $message->id,
-            'conversation_id' => $conversationId,
-            'sender_id' => Auth::id(),
-        ]);
-
         try {
             broadcast(new MessageSent($message))->toOthers();
-            \Log::info('Messaging: Broadcast sent');
         } catch (\Exception $e) {
-            \Log::error('Messaging: Broadcast error', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
+            \Log::error('Real-time: Broadcast message sent failure', [
+                'message_id' => $message->id,
+                'error' => $e->getMessage()
             ]);
         }
 
