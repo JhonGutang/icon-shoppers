@@ -64,6 +64,18 @@ This document provides a comprehensive list of all API endpoints available in th
 - `POST /api/wishlist/toggle` (in use) - Toggle item in wishlist (Authenticated)
 - `DELETE /api/wishlist/{productId}` (in use) - Remove item from wishlist (Authenticated)
 
+### Chat & Messaging
+- `GET /api/conversations` (in use) - List user conversations (Authenticated)
+- `GET /api/conversations/{id}` (in use) - Get specific conversation details (Authenticated)
+- `GET /api/conversations/{id}/messages` (in use) - Fetch messages for a conversation (Authenticated)
+- `POST /api/conversations/{id}/messages` (in use) - Send a message (Authenticated)
+
+### Notifications
+- `GET /api/notifications` (in use) - List user notifications (Authenticated)
+- `GET /api/notifications/unread-count` (in use) - Get count of unread notifications (Authenticated)
+- `POST /api/notifications/{id}/read` (in use) - Mark notification as read (Authenticated)
+- `POST /api/notifications/read-all` (in use) - Mark all notifications as read (Authenticated)
+
 ---
 
 ## Endpoint Details
@@ -103,6 +115,28 @@ This document provides a comprehensive list of all API endpoints available in th
   "token": "sanctum-token"
 }
 ```
+
+### Chat & Messaging
+
+#### **GET** `/api/conversations`
+**Response:** Array of conversation objects with last message and participant details.
+
+#### **POST** `/api/conversations/{id}/messages`
+**Request Body:**
+```json
+{
+  "message": "Hello, is this product available?"
+}
+```
+**Response:** Created message object, broadcasted via WebSockets.
+
+### Notifications
+
+#### **GET** `/api/notifications`
+**Response:** Paginated list of notifications with type and data payload.
+
+#### **POST** `/api/notifications/{id}/read`
+**Response:** `{"success": true}`
 
 ### Products
 

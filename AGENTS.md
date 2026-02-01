@@ -85,6 +85,8 @@ Follow this flow strictly:
 - **2026-01-26 - Cart Endpoint Consistency:** Renamed cart deletion route from `DELETE /order/{id}` to `DELETE /cart-item/{id}` for clarity. Cart-related operations should use cart-specific endpoint names. Updated frontend service (`customerService.ts`) and hooks (`useCustomerActions.ts`) accordingly.
 - **2026-01-26 - Shop Slug Auto-Generation:** Fixed issue where existing shops had null slugs causing 404 errors. Created data migration to populate slugs from shop names. Shop model's `boot()` method now ensures all new shops auto-generate URL-friendly slugs. Always verify slug generation for models with slug-based routing.
 - **2026-01-30 - Shop Creation Experience:** Implemented a dedicated shop creation flow with visual branding (logo/banner), password-protected submission, and real-time form validation. Integrated `AlertDialog` for confirmation and ensured redirection to the Seller Dashboard upon success. Verified security via backend Pest tests.
+- **2026-01-31 - Real-time Chat & Notifications**: Implemented real-time messaging and system notifications using Laravel Reverb. Broadcasts are authorized via Sanctum on private channels. Notifications cover new messages, order placements, and status changes.
+- **2026-02-01 - Infinite Scrolling Implementation**: Migrated product, shop, and message lists to use Tanstack Query's `useInfiniteQuery` for better performance and UX. Centralized list fetching logic in `useProductsQuery` and `useShopsQuery`.
 - *(Add new entries here)*
 
 ---

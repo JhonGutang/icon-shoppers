@@ -11,18 +11,26 @@ erDiagram
     USER ||--o| CART : has
     USER ||--o{ ADDRESS : has
     USER ||--o{ PRODUCT_RATING : writes
+    USER ||--o{ CONVERSATION : participates_in
+    USER ||--o{ MESSAGE : sends
+    USER ||--o{ NOTIFICATION : receives
+    USER ||--o{ WISHLIST : has
     
     SHOP ||--o{ PRODUCT : contains
     SHOP ||--o{ ORDER : receives
+    SHOP ||--o{ CONVERSATION : has
     
     PRODUCT ||--o{ ORDER_ITEM : part_of
     PRODUCT ||--o{ CART_ITEM : part_of
     PRODUCT ||--o{ PRODUCT_RATING : rated_by
     PRODUCT ||--o{ PRODUCT_VARIANT : has
+    PRODUCT ||--o{ WISHLIST : added_to
     PRODUCT }|--|| CATEGORY : belongs_to
     
     ORDER ||--o{ ORDER_ITEM : contains
     ORDER ||--o{ PRODUCT_RATING : has
+    
+    CONVERSATION ||--o{ MESSAGE : contains
     
     CART ||--o{ CART_ITEM : contains
 ```
@@ -73,3 +81,16 @@ erDiagram
 - `id`, `name`, `slug`, `image`.
 - **Relationships:**
     - `hasMany` Products
+
+### Conversations & Messages (`conversations`, `messages`)
+- **Conversation:** `id`, `user_id`, `shop_id`, `last_message_at`.
+- **Message:** `id`, `conversation_id`, `sender_id`, `body`, `is_read`.
+
+### Notifications (`notifications`)
+- `id`, `type`, `notifiable_id`, `notifiable_type`, `data`, `read_at`.
+
+### Wishlists (`wishlists`)
+- `id`, `user_id`, `product_id`.
+
+### Product Variants (`product_variants`)
+- `id`, `product_id`, `name`, `value`, `price_override`, `stock`.

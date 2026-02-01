@@ -10,9 +10,10 @@ graph TD
     A[Guest Visitor] -->|Register/Login| B(Authenticated User)
     B -->|Browse Products| C[Customer Flow]
     B -->|Check Profile| D{Has Shop?}
-    D -->|No| E[Become a Seller / Create Shop]
+    D -->|No| E[Enter Create Shop Flow]
     D -->|Yes| F[Merchant Dashboard]
-    E -->|Success| F
+    E -->|Branding & Password Setup| G[Shop Verification]
+    G -->|Success| F
 ```
 
 ## 2. Customer Shopping Flow
@@ -44,5 +45,13 @@ The system follows a strict state machine for orders:
 - **completed:** Final state, order is finalized.
 - **cancelled:** Order was cancelled by customer or rejected by merchant.
 
-## 5. Regional Focus
+## 5. Real-time Communication & Notifications
+The system leverages **Laravel Reverb (WebSockets)** for instant updates.
+
+1. **Messaging Flow**:
+    - User/Shop sends a message $\rightarrow$ Handled by `MessageController` $\rightarrow$ Triggers `MessageSent` event $\rightarrow$ Broadcasted via private channel $\rightarrow$ Receiver sees message in real-time.
+2. **Notification Flow**:
+    - Event (Order placed/Sent message) $\rightarrow$ Handled by Notification class (e.g. `OrderPlacedNotification`) $\rightarrow$ Saved to database $\rightarrow$ Broadcasted via `BroadcastChannel` $\rightarrow$ UI updates unread count and shows alert.
+
+## 6. Local Focus
 The system is optimized for the **Pinamungajan to Balamban** region. Features like regional address selection and localized shipping rules are central to the flow.

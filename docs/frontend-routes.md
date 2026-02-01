@@ -200,13 +200,50 @@ Routes accessible by **users with the `customer` role**. Merchants can also acce
 - **Description:** Public shop storefront display
 - **Features:**
   - View shop information and branding
-  - Browse all shop products
+  - Browse all shop products with infinite scrolling
   - Filter products by category
   - View featured products
 - **Protection:** `ProtectedRoute` (requires authentication)
 - **Role Requirements:** `customer` (inherits to `merchant`)
 - **Dynamic Parameter:** `shopName` (shop slug/identifier)
 - **Layout:** `PublicLayout`
+
+#### Messages / Chat
+- **Route:** `/messages`
+- **File:** [src/app/messages/page.tsx](../src/app/messages/page.tsx)
+- **Description:** Main messaging dashboard
+- **Features:**
+  - List all active conversations
+  - Search conversations
+  - Real-time message previews
+  - Infinite scrolling for message history
+- **Protection:** `ProtectedRoute`
+- **Role Requirements:** `customer` (inherits to `merchant`)
+- **API Integration:** `useConversations`, `useMessages`
+
+#### Notifications
+- **Route:** `/notifications`
+- **File:** [src/app/notifications/page.tsx](../src/app/notifications/page.tsx)
+- **Description:** User notifications history
+- **Features:**
+  - View all system and social notifications
+  - Mark notifications as read
+  - Real-time notification updates
+- **Protection:** `ProtectedRoute`
+- **Role Requirements:** `customer` (inherits to `merchant`)
+- **API Integration:** `useNotifications`
+
+#### Create Shop
+- **Route:** `/create-shop`
+- **File:** [src/app/create-shop/page.tsx](../src/app/create-shop/page.tsx)
+- **Description:** Dedicated flow for creating a new shop
+- **Features:**
+  - Multi-step shop creation form
+  - Branding setup (logo, banner)
+  - Password-protected shop creation
+- **Protection:** `ProtectedRoute`
+- **Role Requirements:** `customer` (users who don't have a shop yet)
+- **API Integration:** `useShopMutations`
 
 #### Public Product from Shop
 - **Route:** `/:shopName/:productName`
@@ -339,6 +376,7 @@ This section lists all dynamic route patterns with their parameter definitions.
 | `/profile/:id` | `id` | number | Product ID for merchant editing |
 | `/orders/:orderNumber` | `orderNumber` | string | Order identifier |
 | `/products/:slug` | `slug` | string | Product slug for details |
+| `/messages/:id` | `id` | string | Conversation ID for chat |
 | `/:shopName` | `shopName` | string | Shop slug/identifier |
 | `/:shopName/:productName` | `shopName` | string | Shop identifier |
 | | `productName` | string | Product identifier |
@@ -399,10 +437,10 @@ Routes depend on `useAuthStore`:
 | Status | Count | Routes |
 |---|---|---|
 | **Public** | 2 | `/landing`, `/auth` |
-| **Customer Only** | 12 | Home, cart, checkout, orders, wishlist, addresses, search, product details, shop display, etc. |
+| **Customer Only** | 15 | Home, cart, checkout, orders, wishlist, addresses, search, product details, shop display, messages, notifications, create-shop etc. |
 | **Merchant Only** | 4 | Shop dashboard, orders mgmt, products mgmt, settings |
 | **Shared (Both)** | 1 | Profile |
-| **Total** | 19 | - |
+| **Total** | 22 | - |
 
 ### By Feature Area
 
