@@ -13,6 +13,7 @@ require __DIR__.'/api/wishlist.php';
 require __DIR__.'/api/category.php';
 require __DIR__.'/api/address.php';
 require __DIR__.'/api/chat.php';
+require __DIR__.'/api/notification.php';
 
 use Illuminate\Support\Facades\Broadcast;
 

@@ -3,6 +3,7 @@
 import React from "react";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ShopSidebar from "@/components/shop/ShopSidebar";
+import NotificationBell from "@/components/NotificationBell";
 import { User, Bell, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -40,10 +41,7 @@ const ShopLayout: React.FC<ShopLayoutProps> = ({ children }) => {
             <h1 className="text-sm font-medium text-gray-400">Shop Management System</h1>
             
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" className="relative text-gray-500">
-                <Bell size={20} />
-                <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-              </Button>
+              <NotificationBell />
               <div className="flex items-center gap-3">
                 <Button 
                   variant="outline" 

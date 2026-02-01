@@ -20,6 +20,8 @@ class OrderDTO
         public readonly string $payment_method,
         public readonly ?string $delivery_method,
         public readonly ?string $notes,
+        public readonly ?array $shop,
+        public readonly string $status_label,
         public readonly string $created_at
     ) {}
 
@@ -41,6 +43,11 @@ class OrderDTO
             payment_method: (string) $order->payment_method,
             delivery_method: (string) $order->delivery_method,
             notes: (string) $order->notes,
+            shop: $order->shop ? [
+                'id' => (int) $order->shop->id,
+                'name' => (string) $order->shop->name,
+            ] : null,
+            status_label: (string) str_replace('_', ' ', $order->status),
             created_at: $order->created_at->toISOString()
         );
     }
@@ -61,6 +68,8 @@ class OrderDTO
             'paymentMethod' => $this->payment_method,
             'deliveryMethod' => $this->delivery_method,
             'notes' => $this->notes,
+            'shop' => $this->shop,
+            'statusLabel' => $this->status_label,
             'createdAt' => $this->created_at,
         ];
     }

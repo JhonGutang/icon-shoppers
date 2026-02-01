@@ -9,7 +9,7 @@ class OrderItemDTO
         public readonly string $name,
         public readonly int $quantity,
         public readonly float $price,
-        public readonly float $total,
+        public readonly float $subtotal,
         public readonly ?string $image
     ) {}
 
@@ -38,7 +38,7 @@ class OrderItemDTO
             name: (string) $orderItem->product->name,
             quantity: (int) $orderItem->quantity,
             price: (float) $orderItem->price,
-            total: (float) $orderItem->total,
+            subtotal: (float) $orderItem->total,
             image: $orderItem->product->image
         );
     }
@@ -46,11 +46,11 @@ class OrderItemDTO
     public function toArray(): array
     {
         return [
-            'productId' => $this->product_id,
+            'id' => $this->product_id,
             'name' => $this->name,
             'quantity' => $this->quantity,
             'price' => $this->price,
-            'total' => $this->total,
+            'subtotal' => $this->subtotal,
             'image' => $this->image,
         ];
     }

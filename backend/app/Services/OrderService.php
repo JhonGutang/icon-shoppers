@@ -8,7 +8,11 @@ use App\Interfaces\Repositories\OrderRepositoryInterface;
 use App\Interfaces\Repositories\ProductRepositoryInterface;
 use App\Interfaces\Services\OrderServiceInterface;
 use App\Models\Product;
+use App\Models\Order;
+use App\Notifications\OrderPlacedNotification;
+use App\Notifications\OrderStatusChangedNotification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class OrderService implements OrderServiceInterface
 {
@@ -34,7 +38,12 @@ class OrderService implements OrderServiceInterface
     {
         $normalizedStatus = \App\Models\Order::normalizeStatus($status);
 
-        return $this->orderRepository->update($normalizedStatus, $orderId);
+        $order = $this->orderRepository->update($normalizedStatus, $orderId);
+
+        // Notify buyer of status update
+        $order->user->notify(new OrderStatusChangedNotification($order));
+
+        return $order;
     }
 
     public function getCustomerOrders($status, $userId, $page = 1, $perPage = 20)
@@ -103,6 +112,9 @@ class OrderService implements OrderServiceInterface
                 }
 
                 $createdOrders[] = $order;
+
+                // Notify seller of new order
+                $shop->owner->notify(new OrderPlacedNotification($order));
             }
 
             DB::commit();

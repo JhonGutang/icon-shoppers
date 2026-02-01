@@ -14,6 +14,7 @@ import {
   Package, 
   UserCircle 
 } from "lucide-react";
+import NotificationBell from "./NotificationBell";
 import { Button } from "@/components/ui/button";
 import SearchBar from "./SearchBar";
 import { useCartStore } from "@/stores/useCartStore";
@@ -95,6 +96,9 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
               <Button variant="ghost" size="icon" className="md:hidden">
                 <Search size={22} />
               </Button>
+
+              {/* Notifications */}
+              <NotificationBell />
 
               {/* Messages */}
               <Link href="/messages">

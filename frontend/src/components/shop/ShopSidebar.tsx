@@ -10,7 +10,8 @@ import {
   ChevronRight,
   Store,
   Settings,
-  MessageSquare
+  MessageSquare,
+  Bell
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,7 @@ const navigation = [
   { name: "Orders", href: "/shop/orders", icon: ShoppingBag },
   { name: "Products", href: "/shop/products", icon: Package },
   { name: "Messages", href: "/messages", icon: MessageSquare },
+  { name: "Notifications", href: "/shop/notifications", icon: Bell },
   { name: "Settings", href: "/shop/settings", icon: Settings },
 ];
 

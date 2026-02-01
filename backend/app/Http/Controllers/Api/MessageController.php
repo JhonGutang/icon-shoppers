@@ -6,6 +6,7 @@ use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Notifications\NewMessageNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,6 +41,16 @@ class MessageController extends Controller
         ]);
 
         $conversation->update(['last_message_at' => now()]);
+
+        // Notify recipient
+        $recipientId = Auth::id() === $conversation->buyer_id 
+            ? $conversation->shop->owner_id 
+            : $conversation->buyer_id;
+        
+        $recipient = \App\Models\User::find($recipientId);
+        if ($recipient) {
+            $recipient->notify(new NewMessageNotification($message->load('sender')));
+        }
 
         \Log::info('Messaging: Broadcasting message', [
             'id' => $message->id,
