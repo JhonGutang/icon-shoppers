@@ -9,6 +9,7 @@ use App\Models\Message;
 use App\Notifications\NewMessageNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class MessageController extends Controller
 {
@@ -43,10 +44,10 @@ class MessageController extends Controller
         $conversation->update(['last_message_at' => now()]);
 
         // Notify recipient
-        $recipientId = Auth::id() === $conversation->buyer_id 
-            ? $conversation->shop->owner_id 
+        $recipientId = Auth::id() === $conversation->buyer_id
+            ? $conversation->shop->owner_id
             : $conversation->buyer_id;
-        
+
         $recipient = \App\Models\User::find($recipientId);
         if ($recipient) {
             $recipient->notify(new NewMessageNotification($message->load('sender')));
@@ -55,9 +56,9 @@ class MessageController extends Controller
         try {
             broadcast(new MessageSent($message))->toOthers();
         } catch (\Exception $e) {
-            \Log::error('Real-time: Broadcast message sent failure', [
+            Log::error('Real-time: Broadcast message sent failure', [
                 'message_id' => $message->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
 

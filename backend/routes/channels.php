@@ -18,12 +18,14 @@ Broadcast::channel('chat.{conversationId}', function ($user, $conversationId) {
 
     if (! $user) {
         Log::error('Channel Auth Failed: User not authenticated in callback');
+
         return false;
     }
 
     $conversation = \App\Models\Conversation::with('shop')->find($conversationId);
     if (! $conversation) {
         Log::warning('Channel Auth Failed: Conversation not found', ['conversation_id' => $conversationId]);
+
         return false;
     }
 
@@ -33,6 +35,7 @@ Broadcast::channel('chat.{conversationId}', function ($user, $conversationId) {
 
     if ($isAuthorized) {
         Log::info('Channel Auth Success', ['user_id' => $user->id, 'conversation_id' => $conversationId]);
+
         return [
             'id' => $user->id,
             'name' => $user->name,
@@ -42,7 +45,7 @@ Broadcast::channel('chat.{conversationId}', function ($user, $conversationId) {
     Log::warning('Channel Auth Failed: User not authorized', [
         'user_id' => $user->id,
         'buyer_id' => $conversation->buyer_id,
-        'shop_owner_id' => $conversation->shop->owner_id
+        'shop_owner_id' => $conversation->shop->owner_id,
     ]);
 
     return false;

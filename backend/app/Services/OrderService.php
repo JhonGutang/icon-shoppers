@@ -7,12 +7,10 @@ use App\DTO\OrderItemDTO;
 use App\Interfaces\Repositories\OrderRepositoryInterface;
 use App\Interfaces\Repositories\ProductRepositoryInterface;
 use App\Interfaces\Services\OrderServiceInterface;
-use App\Models\Product;
 use App\Models\Order;
 use App\Notifications\OrderPlacedNotification;
 use App\Notifications\OrderStatusChangedNotification;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Notification;
 
 class OrderService implements OrderServiceInterface
 {
@@ -28,7 +26,7 @@ class OrderService implements OrderServiceInterface
 
     public function getOrders($status, $shopId, $page = 1, $perPage = 20)
     {
-        $normalizedStatus = $status !== 'ALL' ? \App\Models\Order::normalizeStatus($status) : 'ALL';
+        $normalizedStatus = $status !== 'ALL' ? Order::normalizeStatus($status) : 'ALL';
         $paginatedOrders = $this->orderRepository->all($normalizedStatus, $shopId, $page, $perPage);
 
         return OrderDTO::formatPaginatedOrders($paginatedOrders);
@@ -36,7 +34,7 @@ class OrderService implements OrderServiceInterface
 
     public function updateOrderStatus($status, $orderId)
     {
-        $normalizedStatus = \App\Models\Order::normalizeStatus($status);
+        $normalizedStatus = Order::normalizeStatus($status);
 
         $order = $this->orderRepository->update($normalizedStatus, $orderId);
 
@@ -48,7 +46,7 @@ class OrderService implements OrderServiceInterface
 
     public function getCustomerOrders($status, $userId, $page = 1, $perPage = 20)
     {
-        $normalizedStatus = $status !== 'ALL' ? \App\Models\Order::normalizeStatus($status) : 'ALL';
+        $normalizedStatus = $status !== 'ALL' ? Order::normalizeStatus($status) : 'ALL';
         $paginatedOrders = $this->orderRepository->getCustomersOrder($normalizedStatus, $userId, $page, $perPage);
 
         return OrderDTO::formatPaginatedOrders($paginatedOrders);

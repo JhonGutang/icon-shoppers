@@ -1,12 +1,13 @@
 <?php
 
+use App\Models\Conversation;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Shop;
 use App\Models\User;
+use App\Notifications\NewMessageNotification;
 use App\Notifications\OrderPlacedNotification;
 use App\Notifications\OrderStatusChangedNotification;
-use App\Notifications\NewMessageNotification;
 use Illuminate\Support\Facades\Notification;
 
 test('seller receives notification when buyer checkouts', function () {
@@ -48,10 +49,10 @@ test('recipient receives notification on new message', function () {
     $buyer = $this->actingAsCustomer();
     $seller = User::factory()->create(['role' => User::ROLE_MERCHANT]);
     $shop = Shop::factory()->create(['owner_id' => $seller->id]);
-    
-    $conversation = \App\Models\Conversation::create([
+
+    $conversation = Conversation::create([
         'buyer_id' => $buyer->id,
-        'shop_id' => $shop->id
+        'shop_id' => $shop->id,
     ]);
 
     Notification::fake();
@@ -65,7 +66,7 @@ test('recipient receives notification on new message', function () {
 
 test('user can fetch notifications and mark as read', function () {
     $user = $this->actingAsCustomer();
-    
+
     // Create a dummy notification
     $order = Order::factory()->create(['user_id' => $user->id]);
     $user->notify(new OrderStatusChangedNotification($order));

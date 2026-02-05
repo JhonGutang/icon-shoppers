@@ -3,12 +3,9 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Broadcasting\PrivateChannel;
 
 class OrderStatusChangedNotification extends Notification implements ShouldBroadcastNow
 {
@@ -52,8 +49,6 @@ class OrderStatusChangedNotification extends Notification implements ShouldBroad
 
     /**
      * Get the broadcast representation of the notification.
-     *
-     * @return BroadcastMessage
      */
     public function toBroadcast(object $notifiable): BroadcastMessage
     {

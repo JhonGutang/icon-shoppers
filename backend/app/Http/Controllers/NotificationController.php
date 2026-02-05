@@ -10,13 +10,14 @@ class NotificationController extends Controller
     public function index(Request $request)
     {
         $notifications = Auth::user()->notifications()->paginate(20);
+
         return response()->json($notifications);
     }
 
     public function unreadCount()
     {
         return response()->json([
-            'count' => Auth::user()->unreadNotifications()->count()
+            'count' => Auth::user()->unreadNotifications()->count(),
         ]);
     }
 

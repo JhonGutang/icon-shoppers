@@ -22,7 +22,7 @@ return [
     'allowed_origins' => [
         env('FRONTEND_URL', 'http://localhost:3000'),
         'http://127.0.0.1:3000',
-        'https://icon-shoppers-prod.vercel.app'
+        'https://icon-shoppers-prod.vercel.app',
     ],
 
     'allowed_origins_patterns' => [],
