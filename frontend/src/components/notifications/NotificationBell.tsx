@@ -74,10 +74,15 @@ const NotificationBell = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative group p-2 hover:bg-muted rounded-full transition-colors">
-          <Bell size={22} />
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="relative group h-10 w-10 md:w-auto md:px-3 md:gap-2 hover:bg-primary/10 text-muted-foreground hover:text-primary rounded-full transition-all duration-300 transform hover:scale-[1.02] active:scale-95"
+        >
+          <Bell size={22} className="stroke-[1.5]" />
+          <span className="hidden md:inline font-medium text-sm">Notifications</span>
           {unreadCount > 0 && (
-            <Badge className="absolute -right-0 -top-0 h-5 w-5 justify-center rounded-full p-0 text-[10px] bg-red-500 border-2 border-white">
+            <Badge className="absolute -right-0 -top-0 md:-right-1 md:-top-1 h-5 w-5 justify-center rounded-full p-0 text-[10px] bg-red-500 border-2 border-background shadow-sm animate-in zoom-in">
               {unreadCount > 99 ? '99+' : unreadCount}
             </Badge>
           )}

@@ -92,9 +92,13 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
         <div className="flex items-center gap-1 md:gap-4">
           {!isLanding && (
             <>
-              {/* Search trigger for mobile */}
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Search size={22} />
+            {/* Search trigger for mobile */}
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="md:hidden relative h-10 w-10 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-all duration-300 hover:scale-105"
+              >
+                <Search size={22} className="stroke-[1.5]" />
               </Button>
 
               {/* Notifications */}
@@ -102,17 +106,27 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
 
               {/* Messages */}
               <Link href="/messages">
-                <Button variant="ghost" size="icon" className="relative group p-2 hover:bg-muted rounded-full transition-colors">
-                  <MessageSquare size={22} />
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="relative group h-10 w-10 md:w-auto md:px-3 md:gap-2 hover:bg-primary/10 text-muted-foreground hover:text-primary rounded-full transition-all duration-300 transform hover:scale-[1.02] active:scale-95"
+                >
+                  <MessageSquare size={22} className="stroke-[1.5]" />
+                  <span className="hidden md:inline font-medium text-sm">Messages</span>
                 </Button>
               </Link>
 
               {/* Cart */}
               <Link href="/cart">
-                <Button variant="ghost" size="icon" className="relative group p-2 hover:bg-muted rounded-full transition-colors">
-                  <ShoppingCart size={22} />
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="relative group h-10 w-10 md:w-auto md:px-3 md:gap-2 hover:bg-primary/10 text-muted-foreground hover:text-primary rounded-full transition-all duration-300 transform hover:scale-[1.02] active:scale-95"
+                >
+                  <ShoppingCart size={22} className="stroke-[1.5]" />
+                  <span className="hidden md:inline font-medium text-sm">Cart</span>
                   {cartItemCount > 0 && (
-                    <Badge className="absolute -right-1 -top-1 h-5 w-5 justify-center rounded-full p-0 text-[10px] bg-red-500">
+                    <Badge className="absolute -right-1 -top-1 md:-right-1 md:-top-1 h-5 w-5 justify-center rounded-full p-0 text-[10px] bg-red-500 border-2 border-background shadow-sm animate-in zoom-in">
                       {cartItemCount}
                     </Badge>
                   )}
@@ -126,9 +140,9 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
             ) : (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full select-none outline-none">
-                    <Avatar className="h-10 w-10 border border-muted transition-transform active:scale-95">
-                      <AvatarFallback className="bg-primary/10 text-primary">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full select-none outline-none hover:ring-2 hover:ring-primary hover:ring-offset-2 transition-all duration-300">
+                    <Avatar className="h-10 w-10 border border-muted transition-transform cursor-pointer">
+                      <AvatarFallback className="bg-primary/10 text-primary font-medium">
                         <UserCircle className="h-6 w-6" />
                       </AvatarFallback>
                     </Avatar>
