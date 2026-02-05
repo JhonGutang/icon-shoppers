@@ -38,7 +38,7 @@ import {
 const ShopSettingsPage = () => {
   const { openSnackbar } = useSnackbar();
   const router = useRouter();
-  const { setSellerMode, setAuth, id, accessToken } = useAuthStore();
+  const { setSellerMode, setAuth, id, accessToken, name } = useAuthStore();
   
   const { data: profile, isLoading: loading } = useProfile();
   const updateProfileMutation = useUpdateProfile();
@@ -61,7 +61,7 @@ const ShopSettingsPage = () => {
     }, {
       onSuccess: () => {
         openSnackbar("Shop successfully deleted", "success");
-        setAuth(accessToken, 'customer', id, false);
+        setAuth(accessToken, 'customer', id, name, false);
         setSellerMode(false);
         setTimeout(() => router.push("/home"), 1500);
       },

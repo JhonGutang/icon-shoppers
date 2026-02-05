@@ -9,7 +9,7 @@ import { Button } from "@/components/shared/ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import useAuthStore from "@/stores/useAuthStore";
-import TransitionLoading from "@/components/shared/loaders/TransitionLoading";
+import RoleSwitchLoader from "@/components/shared/loaders/RoleSwitchLoader";
 
 interface ShopLayoutProps {
   children: React.ReactNode;
@@ -22,7 +22,7 @@ const ShopLayout: React.FC<ShopLayoutProps> = ({ children }) => {
 
   const handleSwitchToCustomer = async () => {
     setIsSwitching(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 2500));
     
     setSellerMode(false);
     router.push("/home");
@@ -30,7 +30,10 @@ const ShopLayout: React.FC<ShopLayoutProps> = ({ children }) => {
 
   return (
     <ProtectedRoute allowedRoles={["merchant"]} redirectTo="/">
-      {isSwitching && <TransitionLoading message="Switching to Customer Mode..." />}
+      <RoleSwitchLoader 
+        isLoading={isSwitching} 
+        targetRole="customer" 
+      />
       <div className="flex h-screen bg-gray-50/50">
         <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 md:block">
           <ShopSidebar />

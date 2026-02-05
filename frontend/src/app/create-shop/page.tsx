@@ -7,9 +7,9 @@ import ProtectedRoute from "@/components/shared/auth/ProtectedRoute";
 export default function CreateShopPage() {
   return (
     <ProtectedRoute>
-      <div className="w-full min-h-screen flex flex-col bg-gray-50">
+      <div className="w-full h-screen flex flex-col bg-stone-50/50 overflow-hidden">
         <Navbar />
-        <div className="flex-1 px-4 py-8 lg:px-20 overflow-auto">
+        <div className="flex-1 px-4 py-2 lg:px-20 overflow-hidden flex flex-col">
           <CreateShop />
         </div>
       </div>

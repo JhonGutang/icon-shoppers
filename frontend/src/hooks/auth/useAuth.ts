@@ -56,7 +56,7 @@ const useAuth = () => {
       openSnackbar("Login successful!", "success");
       
       // Store user info and set needsRoleSelection if they have a shop
-      store.setAuth(token, user.role, user.id, has_shop, has_shop);
+      store.setAuth(token, user.role, user.id, user.name, has_shop, has_shop);
 
       // Always redirect to root discovery page first
       redirectLink("/home");

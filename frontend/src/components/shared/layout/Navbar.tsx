@@ -28,7 +28,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/shared/ui/dropdown-menu";
 import { Badge } from "@/components/shared/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/shared/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/shared/ui/avatar";
+import RoleSwitchLoader from "@/components/shared/loaders/RoleSwitchLoader";
 
 interface NavbarProps {
   isLanding?: boolean;
@@ -37,6 +38,8 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
   const router = useRouter();
   const [mounted, setMounted] = React.useState(false);
+  const [isRoleSwitching, setIsRoleSwitching] = React.useState(false);
+  const [roleSwitchTarget, setRoleSwitchTarget] = React.useState<"merchant" | "customer" | null>(null);
   const productsInCart = useCartStore((state) => state.productsInCart);
   const { 
     isAuthenticated, 
@@ -45,7 +48,8 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
     toggleSellerMode, 
     clearAuth,
     userType,
-    id
+    id,
+    name
   } = useAuthStore();
   
   React.useEffect(() => {
@@ -54,9 +58,22 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
 
   const cartItemCount = productsInCart.reduce((acc, item) => acc + (item.quantity || 1), 0);
   const handleToggleMode = () => {
-    const newMode = !isSellerMode;
-    toggleSellerMode();
-    router.push(newMode ? "/shop" : "/home");
+    const target = !isSellerMode ? "merchant" : "customer";
+    setRoleSwitchTarget(target);
+    setIsRoleSwitching(true);
+    
+    // Give time for the loader and quote to be seen
+    setTimeout(() => {
+      const newMode = !isSellerMode;
+      toggleSellerMode();
+      router.push(newMode ? "/shop" : "/home");
+      
+      // longer timeout to ensure smooth transition
+      setTimeout(() => {
+        setIsRoleSwitching(false);
+        setRoleSwitchTarget(null);
+      }, 500);
+    }, 2500);
   };
 
   const isAuth = mounted ? isAuthenticated() : false;
@@ -152,8 +169,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
                   {/* ... items ... */}
                 <DropdownMenuLabel className="font-normal px-2 py-1.5">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">Account</p>
-                    <p className="text-xs leading-none text-muted-foreground">{userType}</p>
+                    <p className="text-sm font-medium leading-none">{name || "Account"}</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="-mx-2 my-2" />
@@ -171,15 +187,10 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
                   <span>Wishlist</span>
                 </DropdownMenuItem>
 
-                {isSeller() ? (
+                {isSeller() && (
                     <DropdownMenuItem className="cursor-pointer rounded-md font-semibold text-primary" onClick={handleToggleMode}>
                         <Store className="mr-2 h-4 w-4" />
                         <span>{isSellerMode ? "Switch to Customer Mode" : "Switch to Seller Mode"}</span>
-                    </DropdownMenuItem>
-                ) : (
-                    <DropdownMenuItem className="cursor-pointer rounded-md" onClick={() => router.push("/create-shop")}>
-                        <Store className="mr-2 h-4 w-4" />
-                        <span>Create Shop</span>
                     </DropdownMenuItem>
                 )}
 
@@ -193,6 +204,10 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
           )}
         </div>
       </div>
+      <RoleSwitchLoader 
+        isLoading={isRoleSwitching} 
+        targetRole={roleSwitchTarget || "customer"} 
+      />
     </nav>
   );
 };
