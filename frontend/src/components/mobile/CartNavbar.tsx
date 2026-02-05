@@ -1,6 +1,6 @@
 import { ChevronLeft } from "lucide-react";
-import { Button } from "../ui/button";
-import useRedirectLink from "@/hooks/useRedirectLink";
+import { Button } from "@/components/shared/ui/button";
+import useRedirectLink from "@/hooks/shared/useRedirectLink";
 const CartNavbar = () => {
   const {redirectLink} = useRedirectLink()
   return (

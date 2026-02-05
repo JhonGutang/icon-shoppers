@@ -1,6 +1,6 @@
 "use client";
 
-import ProtectedRoute from "@/components/ProtectedRoute";
+import ProtectedRoute from "@/components/shared/auth/ProtectedRoute";
 
 interface CustomerLayoutProps {
   children: React.ReactNode;

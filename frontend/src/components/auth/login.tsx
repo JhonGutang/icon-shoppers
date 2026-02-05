@@ -1,7 +1,7 @@
-import { Button } from "../ui/button";
-import useAuth from "@/hooks/useAuth";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import { Button } from "@/components/shared/ui/button";
+import useAuth from "@/hooks/auth/useAuth";
+import { Input } from "@/components/shared/ui/input";
+import { Label } from "@/components/shared/ui/label";
 import { motion } from "framer-motion";
 
 type LoginFormProps = {

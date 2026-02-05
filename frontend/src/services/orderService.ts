@@ -1,4 +1,4 @@
-import axiosInstance from "@/hooks/useAxios";
+import axiosInstance from "@/hooks/shared/useAxios";
 import { Order, CheckoutPayload, OrderStatus } from "@/types/order";
 import { PaginatedResponse } from "@/types/product";
 

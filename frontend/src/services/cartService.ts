@@ -1,4 +1,4 @@
-import axiosInstance from "@/hooks/useAxios";
+import axiosInstance from "@/hooks/shared/useAxios";
 
 export const cartService = {
   getCartItems: async () => {

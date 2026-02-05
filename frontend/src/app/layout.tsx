@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 
 import "./globals.css";
-import { SnackbarProvider } from "@/components/context/SnackbarContext";
-import { Toaster } from "@/components/ui/sonner";
-import QueryProvider from "@/components/QueryProvider";
-import CartInitializer from "@/components/CartInitializer";
+import { SnackbarProvider } from "@/components/shared/context/SnackbarContext";
+import { Toaster } from "@/components/shared/ui/sonner";
+import QueryProvider from "@/components/shared/providers/QueryProvider";
+import CartInitializer from "@/components/shared/providers/CartInitializer";
 import { AuthInitializer } from "@/components/auth/AuthInitializer";
-import GlobalLoader from "@/components/GlobalLoader";
-
+import GlobalLoader from "@/components/shared/loaders/GlobalLoader";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -24,7 +23,7 @@ export const metadata: Metadata = {
   },
 };
 
-import ScrollToTop from "@/components/ScrollToTop";
+import ScrollToTop from "@/components/shared/layout/ScrollToTop";
 
 export default function RootLayout({
   children,

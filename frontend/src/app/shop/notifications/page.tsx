@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import NotificationPage from "@/components/NotificationPage";
+import NotificationPage from "@/components/notifications/NotificationPage";
 
 const SellerNotifications = () => {
     return (

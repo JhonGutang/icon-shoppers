@@ -1,8 +1,8 @@
-import { useInfiniteProducts } from "@/hooks/queries/useProductsQuery";
+import { useInfiniteProducts } from "@/hooks/product/useProductsQuery";
 import { useEffect, useRef } from "react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/shared/ui/button";
 import { Loader2 } from "lucide-react";
-import ProductContainer from "../ProductContainer";
+import ProductContainer from "@/components/product/ProductContainer";
 
 interface ProductProps {
   location: string;

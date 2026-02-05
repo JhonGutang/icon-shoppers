@@ -2,19 +2,19 @@
 
 import React, { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { useProducts } from "@/hooks/queries/useProductsQuery";
-import ProductGrid from "@/components/ProductGrid";
-import Navbar from "@/components/Navbar";
-import { Slider } from "@/components/ui/slider";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useCategories } from "@/hooks/queries/useCategoryQuery";
+import { useProducts } from "@/hooks/product/useProductsQuery";
+import ProductGrid from "@/components/product/ProductGrid";
+import Navbar from "@/components/shared/layout/Navbar";
+import { Slider } from "@/components/shared/ui/slider";
+import { Checkbox } from "@/components/shared/ui/checkbox";
+import { useCategories } from "@/hooks/product/useCategoryQuery";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/shared/ui/select";
 
 const SearchResults = () => {
   const searchParams = useSearchParams();

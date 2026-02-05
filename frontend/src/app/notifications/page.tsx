@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import Navbar from "@/components/Navbar";
-import NotificationPage from "@/components/NotificationPage";
+import Navbar from "@/components/shared/layout/Navbar";
+import NotificationPage from "@/components/notifications/NotificationPage";
 import { useRouter } from "next/navigation";
 
 const CustomerNotifications = () => {

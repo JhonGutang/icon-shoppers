@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import useAuthStore from "@/stores/useAuthStore";
-import useAuth from "@/hooks/useAuth";
+import useAuth from "@/hooks/auth/useAuth";
 import { RoleSelectionDialog } from "./RoleSelectionDialog";
 
 export const AuthInitializer = () => {

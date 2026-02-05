@@ -1,4 +1,4 @@
-import axiosInstance from "@/hooks/useAxios";
+import axiosInstance from "@/hooks/shared/useAxios";
 
 export const fetchProductRatings = async(productId: number) => {
     const response = await axiosInstance.get(`/product-ratings/${productId}`)

@@ -1,16 +1,16 @@
 "use client";
 
 import React from "react";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/shared/layout/Navbar";
 import { useQuery } from "@tanstack/react-query";
 import { wishlistService } from "@/services/wishlistService";
 import { QUERY_KEYS } from "@/constants/queryKeys";
-import ProductCard from "@/components/ProductCard";
-import { Button } from "@/components/ui/button";
+import ProductCard from "@/components/product/ProductCard";
+import { Button } from "@/components/shared/ui/button";
 import { HeartOff, ShoppingBag } from "lucide-react";
 import Link from "next/link";
-import SkeletonLayer from "@/components/skeletons/SkeletonLayer";
-import WishlistSkeleton from "@/components/skeletons/WishlistSkeleton";
+import SkeletonLayer from "@/components/shared/skeletons/SkeletonLayer";
+import WishlistSkeleton from "@/components/shared/skeletons/WishlistSkeleton";
 
 const WishlistPage = () => {
   const { data: wishlistData, isLoading } = useQuery({

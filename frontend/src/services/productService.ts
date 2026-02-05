@@ -1,4 +1,4 @@
-import axiosInstance from "@/hooks/useAxios";
+import axiosInstance from "@/hooks/shared/useAxios";
 import { Product, PaginatedResponse } from "@/types/product";
 
 export interface SearchFilters {

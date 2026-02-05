@@ -2,13 +2,13 @@
 
 import React from "react";
 import { useParams } from "next/navigation";
-import { useOrderDetails } from "@/hooks/queries/useOrderQuery";
-import Navbar from "@/components/Navbar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
+import { useOrderDetails } from "@/hooks/order/useOrderQuery";
+import Navbar from "@/components/shared/layout/Navbar";
+import { Skeleton } from "@/components/shared/ui/skeleton";
+import { Badge } from "@/components/shared/ui/badge";
 import { Store, Package, MapPin, CreditCard, Calendar, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shared/ui/button";
 import { cn } from "@/lib/utils";
 
 const OrderDetailsPage = () => {

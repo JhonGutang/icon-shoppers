@@ -2,11 +2,11 @@
 
 import React from "react";
 import { Package, RefreshCcw, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import ProductCard from "@/components/ProductCard";
+import { Button } from "@/components/shared/ui/button";
+import ProductCard from "@/components/product/ProductCard";
 import CreateProduct from "@/components/profile/CreateProduct";
-import { Card } from "@/components/ui/card";
-import { useMerchantProducts } from "@/hooks/queries/useProductsQuery";
+import { Card } from "@/components/shared/ui/card";
+import { useMerchantProducts } from "@/hooks/product/useProductsQuery";
 
 const ShopProductsPage = () => {
   const { data, isLoading, isError, refetch } = useMerchantProducts();

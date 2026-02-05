@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import Image from "next/image";
-import { useIsMobile } from "../hooks/use-mobile";
+import { useIsMobile } from "@/hooks/shared/use-mobile";
 import { motion } from "framer-motion";
 import { ShoppingBasket } from "lucide-react";
 

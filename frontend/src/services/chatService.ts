@@ -1,4 +1,4 @@
-import axiosInstance from "@/hooks/useAxios";
+import axiosInstance from "@/hooks/shared/useAxios";
 
 export const getConversations = async () => {
     const response = await axiosInstance.get("/conversations");

@@ -1,8 +1,8 @@
 "use client";
 
 import CreateShop from "@/components/customer-home/CreateShop";
-import Navbar from "@/components/Navbar";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import Navbar from "@/components/shared/layout/Navbar";
+import ProtectedRoute from "@/components/shared/auth/ProtectedRoute";
 
 export default function CreateShopPage() {
   return (

@@ -1,15 +1,15 @@
 "use client";
 
 import React from "react";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import ProtectedRoute from "@/components/shared/auth/ProtectedRoute";
 import ShopSidebar from "@/components/shop/ShopSidebar";
-import NotificationBell from "@/components/NotificationBell";
+import NotificationBell from "@/components/notifications/NotificationBell";
 import { User, Bell, ChevronLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shared/ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import useAuthStore from "@/stores/useAuthStore";
-import TransitionLoading from "@/components/TransitionLoading";
+import TransitionLoading from "@/components/shared/loaders/TransitionLoading";
 
 interface ShopLayoutProps {
   children: React.ReactNode;

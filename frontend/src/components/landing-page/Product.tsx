@@ -1,7 +1,7 @@
 'use client'
-import { Card, CardContent } from "@/components/ui/card";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
-import useRedirectLink from "@/hooks/useRedirectLink";
+import { Card, CardContent } from "@/components/shared/ui/card";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/shared/ui/carousel";
+import useRedirectLink from "@/hooks/shared/useRedirectLink";
 import { motion } from "framer-motion";
 
 const Product = () => {

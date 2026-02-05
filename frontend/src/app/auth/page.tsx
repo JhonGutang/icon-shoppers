@@ -7,7 +7,7 @@ import useAuthStore from "@/stores/useAuthStore";
 import { useRouter } from "next/navigation";
 
 
-import PageLoader from "@/components/PageLoader";
+import PageLoader from "@/components/shared/loaders/PageLoader";
 
 /**
  * Unified Authentication Page

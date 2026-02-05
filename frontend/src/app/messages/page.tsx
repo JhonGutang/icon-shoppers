@@ -1,18 +1,18 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card } from "@/components/shared/ui/card";
+import { Button } from "@/components/shared/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/shared/ui/avatar";
 import { Search, Send, MoreVertical, Phone, Video, MessageSquare, ChevronLeft, Loader2 } from "lucide-react";
-import echo from "@/libs/echo";
+import echo from "@/lib/echo";
 import useAuthStore from "@/stores/useAuthStore";
 import * as chatService from "@/services/chatService";
 import { useRouter } from "next/navigation";
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-import SkeletonLayer from "@/components/skeletons/SkeletonLayer";
-import MessagesSkeleton from "@/components/skeletons/MessagesSkeleton";
+import SkeletonLayer from "@/components/shared/skeletons/SkeletonLayer";
+import MessagesSkeleton from "@/components/shared/skeletons/MessagesSkeleton";
 
 const MessagingPage = () => {
   const router = useRouter();

@@ -1,14 +1,14 @@
 
 import { ProductWithShop } from "@/types/product";
-import { Card, CardContent } from "../ui/card";
-import { Checkbox } from "../ui/checkbox";
+import { Card, CardContent } from "@/components/shared/ui/card";
+import { Checkbox } from "@/components/shared/ui/checkbox";
 import {
   MinusCircle,
   PlusCircle,
   Trash,
 } from "lucide-react";
-import { Button } from "../ui/button";
-import useCustomerActions from "@/hooks/useCustomerActions";
+import { Button } from "@/components/shared/ui/button";
+import useCustomerActions from "@/hooks/customer/useCustomerActions";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 

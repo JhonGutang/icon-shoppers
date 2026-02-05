@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/shared/layout/Navbar";
 import { addressService } from "@/services/addressService";
 import { Address, NewAddress } from "@/types/address";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/shared/ui/button";
+import { Card, CardContent } from "@/components/shared/ui/card";
 import { MapPin, Plus, Trash2, CheckCircle2, MoreVertical, Edit2 } from "lucide-react";
-import { useSnackbar } from "@/components/context/SnackbarContext";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useSnackbar } from "@/components/shared/context/SnackbarContext";
+import { Skeleton } from "@/components/shared/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -16,9 +16,9 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@/components/shared/ui/dialog";
+import { Input } from "@/components/shared/ui/input";
+import { Label } from "@/components/shared/ui/label";
 
 const AddressesPage = () => {
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -196,6 +196,6 @@ const AddressesPage = () => {
   );
 };
 
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/shared/ui/badge";
 import { cn } from "@/lib/utils";
 export default AddressesPage;

@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import useAuth from "@/hooks/useAuth";
-import { Button } from "../ui/button";
+import { Input } from "@/components/shared/ui/input";
+import { Label } from "@/components/shared/ui/label";
+import useAuth from "@/hooks/auth/useAuth";
+import { Button } from "@/components/shared/ui/button";
 import { EditProfile } from "@/types/auth";
 import { Store, ArrowRight, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -16,9 +16,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+} from "@/components/shared/ui/alert-dialog";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shared/ui/card";
+import { Separator } from "@/components/shared/ui/separator";
 
 const Profile = () => {
   const router = useRouter();

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/shared/layout/Navbar";
 import Footer from "@/components/landing-page/Footer";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ProtectedRoute from "@/components/shared/auth/ProtectedRoute";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shared/ui/tabs";
 import Products from "@/components/customer-home/Products";
 import Shops from "@/components/customer-home/Shops";
 import {
@@ -13,11 +13,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/shared/ui/select";
 import { cn } from "@/lib/utils";
-import { useInfiniteProducts } from "@/hooks/queries/useProductsQuery";
+import { useInfiniteProducts } from "@/hooks/product/useProductsQuery";
 
-import PageLoader from "@/components/PageLoader";
+import PageLoader from "@/components/shared/loaders/PageLoader";
 
 export default function Home() {
   const [filters, setFilters] = useState({

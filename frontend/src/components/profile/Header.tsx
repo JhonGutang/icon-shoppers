@@ -1,9 +1,9 @@
 import { ProfileDisplay } from "@/types/auth";
-import { Button } from "../ui/button";
+import { Button } from "@/components/shared/ui/button";
 import CreateProduct from "./CreateProduct";
-import useRedirectLink from "@/hooks/useRedirectLink";
-import useAuth from "@/hooks/useAuth";
-import EditProfile from "../EditProfile";
+import useRedirectLink from "@/hooks/shared/useRedirectLink";
+import useAuth from "@/hooks/auth/useAuth";
+import EditProfile from "@/components/profile/EditProfile";
 import { CircleUserRound } from "lucide-react";
 
 interface HeaderProps {

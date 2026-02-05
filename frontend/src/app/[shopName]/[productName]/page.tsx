@@ -3,17 +3,17 @@
 import PublicLayout from "@/layout/PublicLayout";
 import { useParams } from "next/navigation";
 import { useEffect, useState, MouseEvent } from "react";
-import useCustomerActions from "@/hooks/useCustomerActions";
-import { useProductDetails } from "@/hooks/queries/useProductsQuery";
-import useRedirectLink from "@/hooks/useRedirectLink";
+import useCustomerActions from "@/hooks/customer/useCustomerActions";
+import { useProductDetails } from "@/hooks/product/useProductsQuery";
+import useRedirectLink from "@/hooks/shared/useRedirectLink";
 import CartNavbar from "@/components/mobile/CartNavbar";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shared/ui/button";
 import {
   Loader2,
   ShoppingCart,
 } from "lucide-react";
 import { Product } from "@/types/product";
-import Feedback from "@/components/Feedback";
+import Feedback from "@/components/feedback/Feedback";
 import Details from "@/components/product/Details";
 
 const ProductPage = () => {

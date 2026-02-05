@@ -8,17 +8,17 @@ import {
   TableHead, 
   TableHeader, 
   TableRow 
-} from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useSellerOrders, useUpdateOrderStatus } from "@/hooks/queries/useOrderQuery";
+} from "@/components/shared/ui/table";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/shared/ui/card";
+import { Button } from "@/components/shared/ui/button";
+import { Badge } from "@/components/shared/ui/badge";
+import { useSellerOrders, useUpdateOrderStatus } from "@/hooks/order/useOrderQuery";
 import { OrderStatus } from "@/types/order";
 import { STATUS_OPTIONS, formatStatus, getStatusColor } from "@/lib/orderUtils";
-import { StatusButtons } from "@/components/StatusButton";
+import { StatusButtons } from "@/components/shared/common/StatusButton";
 import { toast } from "sonner";
 import { ShoppingBag, Search, Filter, RefreshCcw } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/shared/ui/input";
 
 const ShopOrdersPage = () => {
   const [statusFilter, setStatusFilter] = useState("ALL");

@@ -1,17 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shared/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import StarRating from "../Rating";
-import { useSnackbar } from "@/components/context/SnackbarContext";
+} from "@/components/shared/ui/dialog";
+import { Textarea } from "@/components/shared/ui/textarea";
+import StarRating from "@/components/shared/common/Rating";
+import { useSnackbar } from "@/components/shared/context/SnackbarContext";
 
 interface RatingModalProps {
   isOpen: boolean;

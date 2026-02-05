@@ -4,20 +4,20 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchSpecificShop } from "@/services/shopService";
 import { Product, Shop } from "@/types/product";
-import ProductCard from "@/components/ProductCard";
-import Navbar from "@/components/Navbar";
+import ProductCard from "@/components/product/ProductCard";
+import Navbar from "@/components/shared/layout/Navbar";
 import Footer from "@/components/landing-page/Footer";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import ProductContainer from "@/components/ProductContainer";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ProtectedRoute from "@/components/shared/auth/ProtectedRoute";
+import ProductContainer from "@/components/product/ProductContainer";
+import { Button } from "@/components/shared/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shared/ui/tabs";
 import { Mail, Phone, Star, MapPin, Calendar, Info, Store } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/shared/ui/badge";
 import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/shared/ui/skeleton";
 
-import SkeletonLayer from "@/components/skeletons/SkeletonLayer";
-import ShopDetailsSkeleton from "@/components/skeletons/ShopDetailsSkeleton";
+import SkeletonLayer from "@/components/shared/skeletons/SkeletonLayer";
+import ShopDetailsSkeleton from "@/components/shared/skeletons/ShopDetailsSkeleton";
 
 const ShopPage = () => {
   const { shopName } = useParams();

@@ -1,14 +1,14 @@
 "use client";
-import FallBackMessage from "@/components/FallBackMessage";
-import { Checkbox } from "@/components/ui/checkbox";
-import useCustomerActions from "@/hooks/useCustomerActions";
+import FallBackMessage from "@/components/shared/common/FallBackMessage";
+import { Checkbox } from "@/components/shared/ui/checkbox";
+import useCustomerActions from "@/hooks/customer/useCustomerActions";
 import { ProductWithShop } from "@/types/product";
-import CheckoutContainer from "@/components/CheckoutContainer";
+import CheckoutContainer from "@/components/checkout/CheckoutContainer";
 import React, { useEffect, useState } from "react";
 import CheckoutPage from "@/components/mobile/CheckoutPage";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/shared/use-mobile";
 import { useRouter } from "next/navigation";
-import { Button } from "../ui/button";
+import { Button } from "@/components/shared/ui/button";
 const Checkout = () => {
   const isMobile = useIsMobile();
   const { handleOrdersToCheckout } = useCustomerActions();

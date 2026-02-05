@@ -1,7 +1,7 @@
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import useAuth from "@/hooks/useAuth";
+import { Button } from "@/components/shared/ui/button";
+import { Input } from "@/components/shared/ui/input";
+import { Label } from "@/components/shared/ui/label";
+import useAuth from "@/hooks/auth/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useState } from "react";
 import { ChevronRight, ChevronLeft, Check, Lock, MapPin, User } from "lucide-react";

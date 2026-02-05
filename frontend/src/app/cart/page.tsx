@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useMemo } from "react";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/shared/layout/Navbar";
 import { useCartStore } from "@/stores/useCartStore";
 import { ProductInCart } from "@/types/product";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shared/ui/button";
 import { Trash2, ShoppingBag, Plus, Minus, Store } from "lucide-react";
 import Link from "next/link";
 import { cartService } from "@/services/cartService";
-import { useSnackbar } from "@/components/context/SnackbarContext";
-import SkeletonLayer from "@/components/skeletons/SkeletonLayer";
-import CartSkeleton from "@/components/skeletons/CartSkeleton";
+import { useSnackbar } from "@/components/shared/context/SnackbarContext";
+import SkeletonLayer from "@/components/shared/skeletons/SkeletonLayer";
+import CartSkeleton from "@/components/shared/skeletons/CartSkeleton";
 
 const CartPage = () => {
   const { productsInCart, removeProduct, addProduct, deleteProduct, minusQuantity, fetchCart } = useCartStore();

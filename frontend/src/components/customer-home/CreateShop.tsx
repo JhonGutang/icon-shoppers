@@ -2,13 +2,13 @@
 
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useSnackbar } from "../context/SnackbarContext";
-import { useCreateShop } from "@/hooks/mutations/useShopMutations";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSnackbar } from "@/components/shared/context/SnackbarContext";
+import { useCreateShop } from "@/hooks/shop/useShopMutations";
+import { Button } from "@/components/shared/ui/button";
+import { Input } from "@/components/shared/ui/input";
+import { Label } from "@/components/shared/ui/label";
+import { Textarea } from "@/components/shared/ui/textarea";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/shared/ui/card";
 import { Store, Loader2, ArrowRight, Camera, Image as ImageIcon, Eye, EyeOff, Lock, CheckCircle2 } from "lucide-react";
 import useAuthStore from "@/stores/useAuthStore";
 import { cn } from "@/lib/utils";

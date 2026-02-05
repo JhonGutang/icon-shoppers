@@ -10,10 +10,10 @@ import {
   Plus,
   ArrowRight
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/shared/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/shared/ui/card";
 import AnalyticsCard from "@/components/shop/AnalyticsCard";
-import { useShopAnalytics } from "@/hooks/useShopAnalytics";
+import { useShopAnalytics } from "@/hooks/shop/useShopAnalytics";
 import Link from "next/link";
 
 const ShopDashboard = () => {

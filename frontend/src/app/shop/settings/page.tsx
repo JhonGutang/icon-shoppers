@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/shared/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/shared/ui/card";
+import { Input } from "@/components/shared/ui/input";
+import { Label } from "@/components/shared/ui/label";
+import { Textarea } from "@/components/shared/ui/textarea";
+import { Separator } from "@/components/shared/ui/separator";
 import { 
   Store, 
   Camera, 
@@ -15,14 +15,14 @@ import {
   Trash2,
   AlertTriangle
 } from "lucide-react";
-import { useSnackbar } from "@/components/context/SnackbarContext";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useSnackbar } from "@/components/shared/context/SnackbarContext";
+import { Skeleton } from "@/components/shared/ui/skeleton";
 import Link from "next/link";
 import useAuthStore from "@/stores/useAuthStore";
 import { useRouter } from "next/navigation";
-import { useProfile } from "@/hooks/queries/useProfileQuery";
-import { useDeleteShop } from "@/hooks/mutations/useShopMutations";
-import { useUpdateProfile } from "@/hooks/mutations/useProfileMutations";
+import { useProfile } from "@/hooks/profile/useProfileQuery";
+import { useDeleteShop } from "@/hooks/shop/useShopMutations";
+import { useUpdateProfile } from "@/hooks/profile/useProfileMutations";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,7 +33,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "@/components/shared/ui/alert-dialog";
 
 const ShopSettingsPage = () => {
   const { openSnackbar } = useSnackbar();

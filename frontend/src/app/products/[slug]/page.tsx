@@ -2,21 +2,21 @@
 
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
-import { useProductDetails, useRelatedProducts } from "@/hooks/queries/useProductsQuery";
-import Navbar from "@/components/Navbar";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { useProductDetails, useRelatedProducts } from "@/hooks/product/useProductsQuery";
+import Navbar from "@/components/shared/layout/Navbar";
+import { Button } from "@/components/shared/ui/button";
+import { Badge } from "@/components/shared/ui/badge";
 import { ShoppingCart, Heart, Store, ShieldCheck, Truck, RotateCcw, Star, Plus, Minus } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import ProductGrid from "@/components/ProductGrid";
-import { useToggleWishlistMutation } from "@/hooks/mutations/useWishlistMutations";
+import { Skeleton } from "@/components/shared/ui/skeleton";
+import ProductGrid from "@/components/product/ProductGrid";
+import { useToggleWishlistMutation } from "@/hooks/customer/useWishlistMutations";
 import { cartService } from "@/services/cartService";
-import { useSnackbar } from "@/components/context/SnackbarContext";
+import { useSnackbar } from "@/components/shared/context/SnackbarContext";
 import { useCartStore } from "@/stores/useCartStore";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import SkeletonLayer from "@/components/skeletons/SkeletonLayer";
-import ProductDetailsSkeleton from "@/components/skeletons/ProductDetailsSkeleton";
+import SkeletonLayer from "@/components/shared/skeletons/SkeletonLayer";
+import ProductDetailsSkeleton from "@/components/shared/skeletons/ProductDetailsSkeleton";
 
 const ProductDetailsPage = () => {
   const { slug } = useParams() as { slug: string };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/shared/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -11,10 +11,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import useProductAction from "@/hooks/useProductActions";
+} from "@/components/shared/ui/dialog";
+import { Input } from "@/components/shared/ui/input";
+import { Label } from "@/components/shared/ui/label";
+import useProductAction from "@/hooks/product/useProductActions";
 import { Product, productFields } from "@/types/product";
 import { Edit } from "lucide-react";
 

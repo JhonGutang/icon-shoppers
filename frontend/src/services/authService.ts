@@ -1,4 +1,4 @@
-import axiosInstance from "@/hooks/useAxios";
+import axiosInstance from "@/hooks/shared/useAxios";
 import { Register, Login, CustomerProfile, SellerProfile } from "@/types/auth";
 
 const formatData = (data: Login) => {

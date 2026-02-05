@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "../ui/button";
-import useRedirectLink from "@/hooks/useRedirectLink";
+import { Button } from "../shared/ui/button";
+import useRedirectLink from "@/hooks/shared/useRedirectLink";
 import { useState, useEffect } from "react";
 import { Menu, X, ShoppingBasket } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";

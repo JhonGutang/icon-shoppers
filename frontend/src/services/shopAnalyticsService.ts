@@ -1,4 +1,4 @@
-import axiosInstance from "@/hooks/useAxios";
+import axiosInstance from "@/hooks/shared/useAxios";
 import { ShopAnalytics } from "@/types/shopAnalytics";
 
 export const fetchShopAnalytics = async (): Promise<ShopAnalytics> => {

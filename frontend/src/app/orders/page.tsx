@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import Navbar from "@/components/Navbar";
-import { useCustomerOrders } from "@/hooks/queries/useOrderQuery";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import Navbar from "@/components/shared/layout/Navbar";
+import { useCustomerOrders } from "@/hooks/order/useOrderQuery";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shared/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/shared/ui/card";
+import { Badge } from "@/components/shared/ui/badge";
+import { Button } from "@/components/shared/ui/button";
 import { Package, Truck, Clock, CheckCircle2, ChevronRight, Store, AlertCircle } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/shared/ui/skeleton";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 

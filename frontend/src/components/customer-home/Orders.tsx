@@ -1,10 +1,10 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import useCustomerActions from "@/hooks/useCustomerActions";
+import { Button } from "@/components/shared/ui/button";
+import { Card, CardContent } from "@/components/shared/ui/card";
+import useCustomerActions from "@/hooks/customer/useCustomerActions";
 import { ProductWithShop } from "@/types/product";
 import { useCallback, useEffect, useState } from "react";
-import { useOrders } from "@/hooks/useOrders";
+import { useOrders } from "@/hooks/order/useOrders";
 import { formatStatus, getStatusColor } from "@/lib/orderUtils";
 import { Order } from "@/types/order";
 

@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
-import { Button } from "../ui/button";
+import { Button } from "../shared/ui/button";
 import { motion, Variants, useScroll, useTransform } from "framer-motion";
-import { ShoppingBag, ArrowRight, Sparkles, Globe, Heart, ShieldCheck } from "lucide-react";
+import { ShoppingBag, Sparkles, Globe, Heart, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 

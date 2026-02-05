@@ -1,4 +1,4 @@
-import axiosInstance from "@/hooks/useAxios";
+import axiosInstance from "@/hooks/shared/useAxios";
 
 export const fetchSpecificShop = async(name: string) => {
     const response = await axiosInstance.get(`shop/${name}`);

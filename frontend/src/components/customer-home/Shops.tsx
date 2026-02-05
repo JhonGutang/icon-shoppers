@@ -1,11 +1,11 @@
 import { useRef, useEffect } from "react";
-import ShopsCard from "../ShopsCard";
-import { Skeleton } from "../ui/skeleton";
+import ShopsCard from "@/components/shop/ShopsCard";
+import { Skeleton } from "@/components/shared/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { Store, Loader2 } from "lucide-react";
-import { useInfiniteShops } from "@/hooks/queries/useShopsQuery";
-import { Button } from "../ui/button";
-import ShopContainer from "../ShopContainer";
+import { useInfiniteShops } from "@/hooks/shop/useShopsQuery";
+import { Button } from "@/components/shared/ui/button";
+import ShopContainer from "@/components/shop/ShopContainer";
 
 interface ShopProps {
   location: string;

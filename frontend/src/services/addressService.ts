@@ -1,4 +1,4 @@
-import axiosInstance from "@/hooks/useAxios";
+import axiosInstance from "@/hooks/shared/useAxios";
 import { Address, NewAddress } from "@/types/address";
 
 export const addressService = {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import StarRating from "../Rating";
+import { Button } from "@/components/shared/ui/button";
+import StarRating from "@/components/shared/common/Rating";
 import {
   Package,
   Store,
@@ -10,11 +10,11 @@ import {
   ArrowDown,
 } from "lucide-react";
 import { Product, ProductVariant } from "@/types/product";
-import useRedirectLink from "@/hooks/useRedirectLink";
+import useRedirectLink from "@/hooks/shared/useRedirectLink";
 import RatingModal from "./RatingModal";
 import { rateProduct, fetchProductRatings } from "@/services/ratingService";
 import useToken from "@/stores/useAuthStore";
-import { useSnackbar } from "../context/SnackbarContext";
+import { useSnackbar } from "@/components/shared/context/SnackbarContext";
 
 interface ProductDetailsProps {
   product?: Product;

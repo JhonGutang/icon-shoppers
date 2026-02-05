@@ -1,14 +1,14 @@
 "use client";
-import Feedback from "@/components/Feedback";
-import { Button } from "@/components/ui/button";
-import useProductAction from "@/hooks/useProductActions";
-import { useProductDetails } from "@/hooks/queries/useProductsQuery";
+import Feedback from "@/components/feedback/Feedback";
+import { Button } from "@/components/shared/ui/button";
+import useProductAction from "@/hooks/product/useProductActions";
+import { useProductDetails } from "@/hooks/product/useProductsQuery";
 import { Product } from "@/types/product";
 import { useEffect, use, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import EditProduct from "@/components/EditProduct";
+import { Card, CardContent } from "@/components/shared/ui/card";
+import EditProduct from "@/components/product/EditProduct";
 import { ChevronLeft } from "lucide-react";
-import useRedirectLink from "@/hooks/useRedirectLink";
+import useRedirectLink from "@/hooks/shared/useRedirectLink";
 import ShopLayout from "@/app/shop/layout";
 
 const ProductPage = ({ params }: { params: Promise<{ id: number }> }) => {

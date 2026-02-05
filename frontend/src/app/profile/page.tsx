@@ -2,15 +2,15 @@
 
 import React, { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/shared/layout/Navbar";
 import { addressService } from "@/services/addressService";
 import { getProfile, updateProfile } from "@/services/authService";
 import { Address, NewAddress } from "@/types/address";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/shared/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/shared/ui/card";
+import { Input } from "@/components/shared/ui/input";
+import { Label } from "@/components/shared/ui/label";
+import { Textarea } from "@/components/shared/ui/textarea";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "@/components/shared/ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import { 
   User as UserIcon, 
@@ -39,10 +39,10 @@ import {
   ArrowRight,
   ShieldCheck
 } from "lucide-react";
-import { useSnackbar } from "@/components/context/SnackbarContext";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+import { useSnackbar } from "@/components/shared/context/SnackbarContext";
+import { Skeleton } from "@/components/shared/ui/skeleton";
+import { Separator } from "@/components/shared/ui/separator";
+import { Badge } from "@/components/shared/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -50,7 +50,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from "@/components/shared/ui/dialog";
 import { cn } from "@/lib/utils";
 import useAuthStore from "@/stores/useAuthStore";
 

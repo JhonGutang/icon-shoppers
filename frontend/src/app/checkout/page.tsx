@@ -1,20 +1,20 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/shared/layout/Navbar";
 import { useCartStore } from "@/stores/useCartStore";
-import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/shared/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/shared/ui/radio-group";
+import { Label } from "@/components/shared/ui/label";
+import { Input } from "@/components/shared/ui/input";
+import { Textarea } from "@/components/shared/ui/textarea";
 import { CreditCard, Truck, MapPin, Wallet, Landmark, ChevronRight } from "lucide-react";
-import { useCheckoutMutation } from "@/hooks/mutations/useOrderMutations";
+import { useCheckoutMutation } from "@/hooks/order/useOrderMutations";
 import { addressService } from "@/services/addressService";
 import { Address } from "@/types/address";
 import { useRouter } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/shared/ui/skeleton";
+import { Badge } from "@/components/shared/ui/badge";
 import { cn } from "@/lib/utils";
 
 const CheckoutPage = () => {
