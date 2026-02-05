@@ -102,7 +102,7 @@ const SearchResults = () => {
                   {query ? `Search Results for "${query}"` : "All Products"}
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  {productsData?.meta?.total || 0} items found
+                  {productsData?.data?.length || 0} items found
                 </p>
               </div>
 

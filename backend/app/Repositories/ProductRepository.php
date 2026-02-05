@@ -27,6 +27,8 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function searchProducts($query, $filters = [], $page = 1, $perPage = self::DEFAULT_PER_PAGE)
     {
+        $query = mb_strtolower($query);
+
         $perPage = min($perPage, self::MAX_PER_PAGE);
 
         $queryBuilder = $this->model->query()
@@ -37,8 +39,8 @@ class ProductRepository implements ProductRepositoryInterface
         // Search by name or description
         if (! empty($query)) {
             $queryBuilder->where(function ($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                    ->orWhere('description', 'like', "%{$query}%");
+                $q->whereRaw('LOWER(name) LIKE ?', ["%{$query}%"])
+                    ->orWhereRaw('LOWER(description) LIKE ?', ["%{$query}%"]);
             });
         }
 
