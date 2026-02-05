@@ -10,6 +10,7 @@ use App\Notifications\NewMessageNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Models\User;
 
 class MessageController extends Controller
 {
@@ -48,9 +49,16 @@ class MessageController extends Controller
             ? $conversation->shop->owner_id
             : $conversation->buyer_id;
 
-        $recipient = \App\Models\User::find($recipientId);
+        $recipient = User::find($recipientId);
         if ($recipient) {
-            $recipient->notify(new NewMessageNotification($message->load('sender')));
+            try {
+                $recipient->notify(new NewMessageNotification($message->load('sender')));
+            } catch (\Exception $e) {
+                Log::error('Real-time: New message notification failure', [
+                    'message_id' => $message->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
 
         try {

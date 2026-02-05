@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Notifications\OrderPlacedNotification;
 use App\Notifications\OrderStatusChangedNotification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderService implements OrderServiceInterface
 {
@@ -39,7 +40,14 @@ class OrderService implements OrderServiceInterface
         $order = $this->orderRepository->update($normalizedStatus, $orderId);
 
         // Notify buyer of status update
-        $order->user->notify(new OrderStatusChangedNotification($order));
+        try {
+            $order->user->notify(new OrderStatusChangedNotification($order));
+        } catch (\Exception $e) {
+            Log::error('Real-time: Order status changed notification failure', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         return $order;
     }
@@ -112,7 +120,14 @@ class OrderService implements OrderServiceInterface
                 $createdOrders[] = $order;
 
                 // Notify seller of new order
-                $shop->owner->notify(new OrderPlacedNotification($order));
+                try {
+                    $shop->owner->notify(new OrderPlacedNotification($order));
+                } catch (\Exception $e) {
+                    Log::error('Real-time: Order placed notification failure', [
+                        'order_id' => $order->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
             }
 
             DB::commit();

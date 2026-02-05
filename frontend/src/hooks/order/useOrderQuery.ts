@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { orderService } from "@/services/orderService";
 import { QUERY_KEYS } from "@/constants/queryKeys";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -8,6 +8,24 @@ export const useCustomerOrders = (status = 'ALL', page = 1) => {
   return useQuery({
     queryKey: [...QUERY_KEYS.ORDERS.CUSTOMER(status), page],
     queryFn: () => orderService.getCustomerOrders(status, page),
+    staleTime: 1 * 60 * 1000, // 1 minute
+  });
+};
+
+export const useInfiniteCustomerOrders = (status = 'ALL', per_page = 5) => {
+  return useInfiniteQuery({
+    queryKey: [...QUERY_KEYS.ORDERS.CUSTOMER(status), 'infinite'],
+    queryFn: ({ pageParam = 1 }) => orderService.getCustomerOrders(status, pageParam, per_page),
+    getNextPageParam: (lastPage) => {
+      const currentPage = lastPage.meta?.current_page ?? lastPage.current_page;
+      const lastPageNum = lastPage.meta?.last_page ?? lastPage.last_page;
+      
+      if (currentPage < lastPageNum) {
+        return currentPage + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
     staleTime: 1 * 60 * 1000, // 1 minute
   });
 };

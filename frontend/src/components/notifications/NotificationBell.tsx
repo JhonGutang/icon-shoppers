@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Bell, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
@@ -35,6 +36,11 @@ const NotificationBell = () => {
   // Real-time listener
   useNotificationListener();
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const unreadCount = unreadData?.count || 0;
   const notifications: Notification[] = notificationsData?.data || [];
 
@@ -53,6 +59,14 @@ const NotificationBell = () => {
       router.push(`/messages?conversation_id=${conversation_id}`);
     }
   };
+
+  if (!mounted) {
+    return (
+      <Button variant="ghost" size="icon" className="relative group p-2 hover:bg-muted rounded-full transition-colors">
+        <Bell size={22} />
+      </Button>
+    );
+  }
 
   return (
     <DropdownMenu>

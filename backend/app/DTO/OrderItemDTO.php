@@ -10,7 +10,8 @@ class OrderItemDTO
         public readonly int $quantity,
         public readonly float $price,
         public readonly float $subtotal,
-        public readonly ?string $image
+        public readonly ?string $image,
+        public readonly ?string $slug
     ) {}
 
     /**
@@ -39,7 +40,8 @@ class OrderItemDTO
             quantity: (int) $orderItem->quantity,
             price: (float) $orderItem->price,
             subtotal: (float) $orderItem->total,
-            image: $orderItem->product->image
+            image: $orderItem->product->image,
+            slug: $orderItem->product->slug
         );
     }
 
@@ -52,6 +54,7 @@ class OrderItemDTO
             'price' => $this->price,
             'subtotal' => $this->subtotal,
             'image' => $this->image,
+            'slug' => $this->slug,
         ];
     }
 }

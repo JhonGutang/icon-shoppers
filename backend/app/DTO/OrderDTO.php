@@ -85,6 +85,7 @@ class OrderDTO
                     'name' => (string) $item->product->name,
                     'price' => (float) $item->product->price,
                     'image' => $item->product->image,
+                    'slug' => $item->product->slug,
                     'quantity' => (int) $item->quantity,
                     'subtotal' => (float) ($item->product->price * $item->quantity),
                 ];
@@ -96,6 +97,7 @@ class OrderDTO
                 'shop' => [
                     'id' => (int) $shop->id,
                     'name' => (string) $shop->name,
+                    'logo' => $shop->logo_image,
                 ],
                 'userName' => (string) $order->user->name,
                 'products' => $products->values()->all(),

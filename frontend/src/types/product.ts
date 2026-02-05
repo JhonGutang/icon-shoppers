@@ -57,6 +57,8 @@ export interface Shop {
   rating?: number;
   follower_count?: number;
   is_followed?: boolean;
+  logo?: string;
+  banner?: string;
   products?: Product[];
 }
 

@@ -12,7 +12,8 @@ export const useCheckoutMutation = () => {
     mutationFn: (payload: CheckoutPayload) => orderService.checkout(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.CART.ALL });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.CUSTOMER('ALL') });
+      // Invalidate all customer orders
+      queryClient.invalidateQueries({ queryKey: ['orders', 'customer'] });
       openSnackbar("Order placed successfully!", "success");
     },
     onError: (error: any) => {
@@ -29,7 +30,7 @@ export const useUpdateOrderStatusMutation = () => {
     mutationFn: ({ orderId, status }: { orderId: number; status: OrderStatus }) => 
       orderService.updateStatus(orderId, status),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS.SELLER('ALL') });
+      queryClient.invalidateQueries({ queryKey: ['orders', 'seller'] });
       openSnackbar(`Order status updated to ${variables.status.replace('_', ' ')}`, "success");
     },
     onError: (error: any) => {

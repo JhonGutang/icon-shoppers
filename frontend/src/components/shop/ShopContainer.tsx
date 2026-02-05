@@ -20,21 +20,16 @@ const ShopContainer: React.FC<ShopContainerProps> = ({
   children,
 }) => {
   return (
-    <div className="bg-white rounded-2xl p-4 sm:p-6 w-full">
+    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 w-full">
       {title && (
         <h2 className="text-2xl font-bold mb-6 text-foreground">{title}</h2>
       )}
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {isLoading ? (
-          Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="w-full sm:max-w-xs md:max-w-sm">
-              <Skeleton className="aspect-[16/9] w-full rounded-xl mb-4" />
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-1/4" />
-                <Skeleton className="h-6 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-              </div>
+          Array.from({ length: 10 }).map((_, index) => (
+            <div key={index} className="w-full">
+              <Skeleton className="aspect-[4/5] w-full rounded-[2.2rem]" />
             </div>
           ))
         ) : shops.length > 0 ? (
@@ -62,5 +57,6 @@ const ShopContainer: React.FC<ShopContainerProps> = ({
     </div>
   );
 };
+
 
 export default ShopContainer;

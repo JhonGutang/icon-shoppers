@@ -121,17 +121,21 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
             </>
           )}
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full select-none outline-none">
-                  <Avatar className="h-10 w-10 border border-muted transition-transform active:scale-95">
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      <UserCircle className="h-6 w-6" />
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 p-2" sideOffset={8}>
+            {!mounted ? (
+              <div className="h-10 w-10 rounded-full border border-muted bg-muted animate-pulse" />
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full select-none outline-none">
+                    <Avatar className="h-10 w-10 border border-muted transition-transform active:scale-95">
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        <UserCircle className="h-6 w-6" />
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 p-2" sideOffset={8}>
+                  {/* ... items ... */}
                 <DropdownMenuLabel className="font-normal px-2 py-1.5">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">Account</p>
@@ -172,6 +176,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+          )}
         </div>
       </div>
     </nav>
