@@ -9,10 +9,29 @@ import { Trash2, ShoppingBag, Plus, Minus, Store } from "lucide-react";
 import Link from "next/link";
 import { cartService } from "@/services/cartService";
 import { useSnackbar } from "@/components/context/SnackbarContext";
+import SkeletonLayer from "@/components/skeletons/SkeletonLayer";
+import CartSkeleton from "@/components/skeletons/CartSkeleton";
 
 const CartPage = () => {
-  const { productsInCart, removeProduct, addProduct, deleteProduct, minusQuantity } = useCartStore();
+  const { productsInCart, removeProduct, addProduct, deleteProduct, minusQuantity, fetchCart } = useCartStore();
   const { openSnackbar } = useSnackbar();
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  // Initialize cart on mount if not already done
+  React.useEffect(() => {
+    const initCart = async () => {
+      // If we already have products, we might still want to fetch to ensure fresh data,
+      // but to avoid flickering if we trust store, we can skip.
+      // However, usually we want to confirm with backend. 
+      // Let's mimic the pattern:
+      if (productsInCart.length === 0) {
+        await fetchCart();
+      }
+      // Add a tiny buffer if it was super fast, or just set false
+      setIsLoading(false);
+    };
+    initCart();
+  }, []);
 
   // Group items by shop
   const groupedItems = useMemo(() => {
@@ -57,12 +76,14 @@ const CartPage = () => {
   };
 
   return (
+
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
       
       <main className="container mx-auto px-4 py-8 flex-1">
         <h1 className="mb-8 text-3xl font-bold tracking-tight">Shopping Cart</h1>
 
+        <SkeletonLayer isLoading={isLoading} fallback={<CartSkeleton />}>
         {productsInCart.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
@@ -164,6 +185,7 @@ const CartPage = () => {
             </Button>
           </div>
         )}
+        </SkeletonLayer>
       </main>
     </div>
   );

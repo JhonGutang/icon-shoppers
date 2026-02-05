@@ -9,7 +9,8 @@ import ProductCard from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { HeartOff, ShoppingBag } from "lucide-react";
 import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
+import SkeletonLayer from "@/components/skeletons/SkeletonLayer";
+import WishlistSkeleton from "@/components/skeletons/WishlistSkeleton";
 
 const WishlistPage = () => {
   const { data: wishlistData, isLoading } = useQuery({
@@ -39,17 +40,8 @@ const WishlistPage = () => {
       <main className="container mx-auto px-4 py-8 flex-1">
         <h1 className="mb-8 text-3xl font-bold tracking-tight">My Wishlist</h1>
 
-        {isLoading ? (
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="space-y-3">
-                <Skeleton className="aspect-square w-full rounded-xl" />
-                <Skeleton className="h-4 w-2/3" />
-                <Skeleton className="h-4 w-1/2" />
-              </div>
-            ))}
-          </div>
-        ) : products.length > 0 ? (
+        <SkeletonLayer isLoading={isLoading} fallback={<WishlistSkeleton />}>
+        {products.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
@@ -70,6 +62,7 @@ const WishlistPage = () => {
             </Button>
           </div>
         )}
+        </SkeletonLayer>
       </main>
     </div>
   );

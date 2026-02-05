@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import QueryProvider from "@/components/QueryProvider";
 import CartInitializer from "@/components/CartInitializer";
 import { AuthInitializer } from "@/components/auth/AuthInitializer";
+import GlobalLoader from "@/components/GlobalLoader";
 
 
 const poppins = Poppins({
@@ -37,6 +38,7 @@ export default function RootLayout({
           <SnackbarProvider>
             <CartInitializer />
             <AuthInitializer />
+            <GlobalLoader />
             {children}
             <ScrollToTop />
           </SnackbarProvider>

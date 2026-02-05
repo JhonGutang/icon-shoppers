@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing-page/Footer";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Products from "@/components/customer-home/Products";
 import Shops from "@/components/customer-home/Shops";
-import { useCategories } from "@/hooks/queries/useCategoryQuery";
 import {
   Select,
   SelectContent,
@@ -15,16 +14,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { useInfiniteProducts } from "@/hooks/queries/useProductsQuery";
+
+import PageLoader from "@/components/PageLoader";
 
 export default function Home() {
-  const { data: categories } = useCategories();
   const [filters, setFilters] = useState({
     sort: "newest",
+  });
+  
+  const { isLoading: isProductsLoading } = useInfiniteProducts({ 
+    sort: filters.sort 
   });
 
   return (
     <ProtectedRoute redirectTo="/auth">
-      <div className="flex min-h-screen flex-col bg-background">
+      <PageLoader isLoading={isProductsLoading} />
+      <div className={cn("flex min-h-screen flex-col bg-background transition-opacity duration-300", isProductsLoading ? "opacity-0" : "opacity-100")}>
         <Navbar />
         
         <main className="flex-1 overflow-x-hidden">
@@ -32,8 +39,8 @@ export default function Home() {
             <Tabs defaultValue="products" className="w-full">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <TabsList className="grid w-full max-w-md grid-cols-2 h-12">
-                  <TabsTrigger value="products" className="text-lg font-bold">Explore Products</TabsTrigger>
-                  <TabsTrigger value="shops" className="text-lg font-bold">Explore Shops</TabsTrigger>
+                  <TabsTrigger value="products" className="text-lg font-bold cursor-pointer">Explore Products</TabsTrigger>
+                  <TabsTrigger value="shops" className="text-lg font-bold cursor-pointer">Explore Shops</TabsTrigger>
                 </TabsList>
 
                 <div className="flex items-center gap-2">
@@ -41,16 +48,16 @@ export default function Home() {
                     value={filters.sort} 
                     onValueChange={(val) => setFilters(prev => ({ ...prev, sort: val }))}
                   >
-                    <SelectTrigger className="w-[160px] h-12 rounded-xl">
+                    <SelectTrigger className="w-[160px] h-12 rounded-xl cursor-pointer">
                       <SelectValue placeholder="Sort by" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="newest">Newest</SelectItem>
-                      <SelectItem value="featured">Featured First</SelectItem>
-                      <SelectItem value="price_asc">Price: Low to High</SelectItem>
-                      <SelectItem value="price_desc">Price: High to Low</SelectItem>
-                      <SelectItem value="popular">Most Popular</SelectItem>
-                      <SelectItem value="rating">Top Rated</SelectItem>
+                      <SelectItem value="newest" className="cursor-pointer">Newest</SelectItem>
+                      <SelectItem value="featured" className="cursor-pointer">Featured First</SelectItem>
+                      <SelectItem value="price_asc" className="cursor-pointer">Price: Low to High</SelectItem>
+                      <SelectItem value="price_desc" className="cursor-pointer">Price: High to Low</SelectItem>
+                      <SelectItem value="popular" className="cursor-pointer">Most Popular</SelectItem>
+                      <SelectItem value="rating" className="cursor-pointer">Top Rated</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

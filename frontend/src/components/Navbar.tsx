@@ -121,8 +121,6 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
             </>
           )}
 
-          {/* User Menu */}
-          {(isAuth && !isLanding) ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full select-none outline-none">
@@ -174,16 +172,6 @@ const Navbar: React.FC<NavbarProps> = ({ isLanding = false }) => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          ) : !isLanding && (
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" className="hidden md:flex h-9" asChild>
-                <Link href="/auth">Login</Link>
-              </Button>
-              <Button className="h-9 px-4" asChild>
-                <Link href="/auth">Sign Up</Link>
-              </Button>
-            </div>
-          )}
         </div>
       </div>
     </nav>

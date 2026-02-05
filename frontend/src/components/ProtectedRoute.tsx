@@ -12,6 +12,8 @@ interface ProtectedRouteProps {
   requireAuth?: boolean;
 }
 
+import PageLoader from "@/components/PageLoader";
+
 /**
  * ProtectedRoute Component
  * In the Unified Account model:
@@ -86,11 +88,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }, [accessToken, userType, hasHydrated, allowedRoles, redirectTo, requireAuth, isLoggingOut, setLoggingOut, router]);
 
   if (!hasHydrated) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
-      </div>
-    );
+    return <PageLoader isLoading={true} />;
   }
 
   // Final check to prevent flashing unauthorized content

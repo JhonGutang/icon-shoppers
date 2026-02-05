@@ -1,12 +1,13 @@
 "use client";
 import AuthLayout from "@/layout/AuthLayout";
 import Login from "@/components/auth/login";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Register from "@/components/auth/register";
 import useAuthStore from "@/stores/useAuthStore";
 import { useRouter } from "next/navigation";
-import { ShoppingBasket } from "lucide-react";
 
+
+import PageLoader from "@/components/PageLoader";
 
 /**
  * Unified Authentication Page
@@ -41,17 +42,7 @@ const UnifiedAuth = () => {
   }, [accessToken, hasHydrated, router]);
 
   if (!hasHydrated) {
-    return (
-      <div className="flex flex-col justify-center items-center min-h-screen bg-[#fafaf9]">
-        <div className="relative">
-          <div className="animate-spin rounded-full h-24 w-24 border-t-2 border-b-2 border-[#0E6835]"></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-             <ShoppingBasket className="text-[#0E6835] h-8 w-8 animate-pulse" />
-          </div>
-        </div>
-        <p className="mt-8 text-stone-400 font-bold uppercase tracking-[0.3em] text-[10px]">Preparing Marketplace...</p>
-      </div>
-    );
+    return <PageLoader isLoading={true} />;
   }
 
   if (accessToken) {

@@ -83,15 +83,20 @@ const useAuth = () => {
 
   const handleLogout = async () => {
     try {
+      store.setLoading(true);
       await logout();
       openSnackbar("Logout successful!", "info");
     } catch (error) {
       console.error("Logout failed:", error);
       openSnackbar("Logout failed!", "error");
     } finally {
+      // Artificial delay for premium feel
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       store.clearAuth();
       store.setLoggingOut(true);
       redirectLink("/"); // Landing page for guests
+      store.setLoading(false);
     }
   };
 

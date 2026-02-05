@@ -18,7 +18,10 @@ interface TokenState {
   setNeedsRoleSelection: (needs: boolean) => void
   hasHydrated: boolean
   setHasHydrated: (hydrated: boolean) => void
-  // Add helper methods
+  isLoading: boolean
+  setLoading: (loading: boolean) => void
+  
+  // Helper methods
   isAuthenticated: () => boolean
   isCustomer: () => boolean
   isSeller: () => boolean
@@ -45,6 +48,8 @@ const useAuthStore = create<TokenState>()(
       setNeedsRoleSelection: (needs) => set({ needsRoleSelection: needs }),
       hasHydrated: false,
       setHasHydrated: (hydrated) => set({ hasHydrated: hydrated }),
+      isLoading: false,
+      setLoading: (loading) => set({ isLoading: loading }),
       
       // Helper methods
       isAuthenticated: () => !!get().accessToken,

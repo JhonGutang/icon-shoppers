@@ -142,7 +142,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <button
                 onClick={handleToggleWishlist}
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-xl transition-all hover:scale-110",
+                  "flex cursor-pointer h-10 w-10 items-center justify-center rounded-full bg-white shadow-xl transition-all hover:scale-110",
                   product.is_in_wishlist ? "text-red-500" : "text-stone-400 hover:text-red-500"
                 )}
               >
@@ -201,7 +201,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         <div className="mt-auto flex items-center justify-between pt-3">
           <div className="flex flex-col">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Merchant Price</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Price</span>
             <span className="text-2xl font-black text-stone-950">
               ₱{parseFloat(product.price).toLocaleString()}
             </span>
