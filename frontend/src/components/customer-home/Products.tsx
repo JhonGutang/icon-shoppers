@@ -7,9 +7,17 @@ import ProductContainer from "@/components/product/ProductContainer";
 interface ProductProps {
   location: string;
   sort?: string;
+  minItemWidth?: number;
+  gap?: number;
+  gridClassName?: string;
 }
 
-const Products: React.FC<ProductProps> = ({ sort = "newest" }) => {
+const Products: React.FC<ProductProps> = ({ 
+  sort = "newest",
+  minItemWidth,
+  gap,
+  gridClassName
+}) => {
   const observerTarget = useRef<HTMLDivElement>(null);
   
   const { 
@@ -45,6 +53,9 @@ const Products: React.FC<ProductProps> = ({ sort = "newest" }) => {
     <ProductContainer
       products={allProducts}
       isLoading={isLoading}
+      minItemWidth={minItemWidth}
+      gap={gap}
+      gridClassName={gridClassName}
     >
       <div ref={observerTarget} className="col-span-full py-2 flex justify-center w-full">
         {isFetchingNextPage ? (

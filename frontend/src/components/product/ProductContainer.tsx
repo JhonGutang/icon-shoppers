@@ -2,6 +2,7 @@ import React from "react";
 import ProductCard from "@/components/product/ProductCard";
 import { Product } from "@/types/product";
 import { Skeleton } from "@/components/shared/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 interface ProductContainerProps {
   products: Product[];
@@ -10,6 +11,9 @@ interface ProductContainerProps {
   shopName?: string;
   title?: string;
   children?: React.ReactNode;
+  minItemWidth?: number; // Width in px for responsive auto-fill grid
+  gap?: number; // Layout gap
+  gridClassName?: string; // Override grid classes
 }
 
 const ProductContainer: React.FC<ProductContainerProps> = ({
@@ -19,14 +23,28 @@ const ProductContainer: React.FC<ProductContainerProps> = ({
   shopName,
   title,
   children,
+  minItemWidth,
+  gap = 4,
+  gridClassName,
 }) => {
+  const gridStyle = minItemWidth 
+    ? { gridTemplateColumns: `repeat(auto-fill, minmax(${minItemWidth}px, 1fr))` } 
+    : {};
+
+  const gridClasses = minItemWidth
+    ? cn(`grid gap-${gap}`, gridClassName)
+    : cn(
+        `grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-${gap}`,
+        gridClassName
+      );
+
   return (
     <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 w-full">
       {title && (
         <h2 className="text-2xl font-bold mb-6 text-foreground">{title}</h2>
       )}
       
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div className={gridClasses} style={gridStyle}>
         {isLoading ? (
           Array.from({ length: 10 }).map((_, index) => (
             <div key={index} className="w-full">

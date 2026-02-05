@@ -67,6 +67,8 @@ export default function Home() {
                 <Products 
                   location="Products" 
                   sort={filters.sort}
+                  minItemWidth={240}
+                  gap={6}
                 />
               </TabsContent>
 
