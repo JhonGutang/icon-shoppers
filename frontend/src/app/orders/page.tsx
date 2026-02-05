@@ -37,7 +37,6 @@ const statuses = [
 
 const OrderTrackingPage = () => {
   const [activeTab, setActiveTab] = useState("ALL");
-  const [mounted, setMounted] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -51,10 +50,6 @@ const OrderTrackingPage = () => {
   } = useInfiniteCustomerOrders(activeTab, 5);
 
   const allOrders = data?.pages.flatMap(page => page.data) || [];
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -208,7 +203,7 @@ const OrderTrackingPage = () => {
                         </motion.div>
                       ))}
                     </AnimatePresence>
-                  ) : mounted && allOrders.length === 0 ? (
+                  ) : !isLoading && allOrders.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-20 text-center">
                       <div className="w-24 h-24 rounded-full bg-stone-100 flex items-center justify-center mb-6 text-stone-300">
                         <Package size={48} strokeWidth={1} />

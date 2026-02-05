@@ -290,7 +290,7 @@ const CartPage = () => {
               <ShoppingBag size={48} className="text-muted-foreground/50" />
             </div>
             <h2 className="text-2xl font-black">Your cart is lonely</h2>
-            <p className="mt-2 text-muted-foreground max-w-xs">Looks like you haven't added anything yet. Discover our latest collections!</p>
+            <p className="mt-2 text-muted-foreground max-w-xs">Looks like you haven&apos;t added anything yet. Discover our latest collections!</p>
             <Button asChild className="mt-8 rounded-full px-10 h-12 text-lg font-bold">
               <Link href="/search">
                 Start Exploring

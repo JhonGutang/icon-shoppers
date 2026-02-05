@@ -36,9 +36,12 @@ const NotificationBell = () => {
   // Real-time listener
   useNotificationListener();
 
-  const [mounted, setMounted] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  
   useEffect(() => {
-    setMounted(true);
+    // This is a standard Next.js hydration pattern for client-only rendering
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Legitimate hydration pattern
+    setIsClient(true);
   }, []);
 
   const unreadCount = unreadData?.count || 0;
@@ -60,7 +63,7 @@ const NotificationBell = () => {
     }
   };
 
-  if (!mounted) {
+  if (!isClient) {
     return (
       <Button variant="ghost" size="icon" className="relative group p-2 hover:bg-muted rounded-full transition-colors">
         <Bell size={22} />

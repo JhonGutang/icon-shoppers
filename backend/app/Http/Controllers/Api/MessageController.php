@@ -6,11 +6,11 @@ use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\User;
 use App\Notifications\NewMessageNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use App\Models\User;
 
 class MessageController extends Controller
 {
