@@ -161,14 +161,16 @@ class ProductRepository implements ProductRepositoryInterface
     public function getProductById($id)
     {
         return Product::with(['shop', 'category', 'ratings.user', 'variants'])
-            ->withAvg('ratings', 'rating')
-            ->withCount('ratings')
+            ->withAvg('ratings as average_rating', 'rating')
+            ->withCount('ratings as review_count')
             ->findOrFail($id);
     }
 
     public function getProductBySlug($slug)
     {
         return Product::with(['shop', 'category', 'ratings.user', 'variants'])
+            ->withAvg('ratings as average_rating', 'rating')
+            ->withCount('ratings as review_count')
             ->where('slug', $slug)
             ->firstOrFail();
     }

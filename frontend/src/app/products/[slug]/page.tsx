@@ -7,7 +7,6 @@ import Navbar from "@/components/shared/layout/Navbar";
 import { Button } from "@/components/shared/ui/button";
 import { Badge } from "@/components/shared/ui/badge";
 import { ShoppingCart, Heart, Store, ShieldCheck, Truck, RotateCcw, Star, Plus, Minus } from "lucide-react";
-import { Skeleton } from "@/components/shared/ui/skeleton";
 import ProductGrid from "@/components/product/ProductGrid";
 import { useToggleWishlistMutation } from "@/hooks/customer/useWishlistMutations";
 import { cartService } from "@/services/cartService";
@@ -17,6 +16,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import SkeletonLayer from "@/components/shared/skeletons/SkeletonLayer";
 import ProductDetailsSkeleton from "@/components/shared/skeletons/ProductDetailsSkeleton";
+import ProductFeedback from "@/components/product/ProductFeedback";
 
 const ProductDetailsPage = () => {
   const { slug } = useParams() as { slug: string };
@@ -182,6 +182,9 @@ const ProductDetailsPage = () => {
                     </div>
                 </div>
                 </div>
+
+                {/* Product Feedback */}
+                <ProductFeedback productId={product.id} productName={product.name} />
 
                 {/* Related Products */}
                 <section className="mt-24">

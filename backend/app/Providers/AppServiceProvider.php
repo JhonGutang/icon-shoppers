@@ -6,6 +6,7 @@ use App\Interfaces\Repositories\AddressRepositoryInterface;
 use App\Interfaces\Repositories\CartRepositoryInterface;
 use App\Interfaces\Repositories\CategoryRepositoryInterface;
 use App\Interfaces\Repositories\OrderRepositoryInterface;
+use App\Interfaces\Repositories\ProductRatingRepositoryInterface;
 use App\Interfaces\Repositories\ProductRepositoryInterface;
 use App\Interfaces\Repositories\ShopFollowerRepositoryInterface;
 use App\Interfaces\Repositories\ShopRepositoryInterface;
@@ -16,6 +17,7 @@ use App\Interfaces\Services\CartServiceInterface;
 use App\Interfaces\Services\CategoryServiceInterface;
 use App\Interfaces\Services\ImageServiceInterface;
 use App\Interfaces\Services\OrderServiceInterface;
+use App\Interfaces\Services\ProductRatingServiceInterface;
 use App\Interfaces\Services\ProductServiceInterface;
 use App\Interfaces\Services\ShopServiceInterface;
 use App\Interfaces\Services\UserServiceInterface;
@@ -24,6 +26,7 @@ use App\Repositories\AddressRepository;
 use App\Repositories\CartRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\OrderRepository;
+use App\Repositories\ProductRatingRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\ShopFollowerRepository;
 use App\Repositories\ShopRepository;
@@ -34,6 +37,7 @@ use App\Services\CartService;
 use App\Services\CategoryService;
 use App\Services\ImageService;
 use App\Services\OrderService;
+use App\Services\ProductRatingService;
 use App\Services\ProductService;
 use App\Services\ShopService;
 use App\Services\UserService;
@@ -61,6 +65,9 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(ProductServiceInterface::class, ProductService::class);
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
+
+        $this->app->bind(ProductRatingServiceInterface::class, ProductRatingService::class);
+        $this->app->bind(ProductRatingRepositoryInterface::class, ProductRatingRepository::class);
 
         $this->app->bind(WishlistServiceInterface::class, WishlistService::class);
         $this->app->bind(WishlistRepositoryInterface::class, WishlistRepository::class);

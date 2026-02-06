@@ -12,6 +12,7 @@ test('anyone can fetch product rating summary', function () {
 
     $response->assertStatus(200)
         ->assertJson([
+            'ratings' => [],
             'total' => 2,
             'average' => 4.5,
         ]);
@@ -53,7 +54,7 @@ test('customer cannot rate the same product twice', function () {
 
     $response = $this->postJson('/api/customer/product-ratings', $data);
 
-    $response->assertStatus(409); // Conflict
+    $response->assertStatus(422); // Unprocessable Entity
 });
 
 test('rating validation checks for 1-5 range', function () {
