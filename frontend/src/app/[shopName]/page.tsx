@@ -213,8 +213,8 @@ const ShopPage = () => {
                             isLoading={loading}
                             emptyMessage="This shop has no products yet."
                             shopName={shop.name}
-                            minItemWidth={240}
-                            gap={6}
+                            minItemWidth={180}
+                            gap={4}
                         />
                         </TabsContent>
 
@@ -224,8 +224,8 @@ const ShopPage = () => {
                             isLoading={loading}
                             emptyMessage="This shop has no featured products."
                             shopName={shop.name}
-                            minItemWidth={240}
-                            gap={6}
+                            minItemWidth={180}
+                            gap={4}
                         />
                         </TabsContent>
 

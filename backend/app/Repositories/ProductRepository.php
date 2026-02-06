@@ -34,7 +34,9 @@ class ProductRepository implements ProductRepositoryInterface
         $queryBuilder = $this->model->query()
             ->published()
             ->where('is_visible', true)
-            ->with(['shop', 'category', 'ratings']);
+            ->with(['shop', 'category'])
+            ->withAvg('ratings as average_rating', 'rating')
+            ->withCount('ratings as review_count');
 
         // Search by name or description
         if (! empty($query)) {
@@ -116,9 +118,10 @@ class ProductRepository implements ProductRepositoryInterface
         return $this->model
             ->published()
             ->featured()
-            ->with(['shop', 'category', 'ratings'])
-            ->withAvg('ratings', 'rating')
-            ->orderBy('ratings_avg_rating', 'desc')
+            ->with(['shop', 'category'])
+            ->withAvg('ratings as average_rating', 'rating')
+            ->withCount('ratings as review_count')
+            ->orderBy('average_rating', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
     }
 
@@ -128,7 +131,9 @@ class ProductRepository implements ProductRepositoryInterface
 
         return $this->model
             ->published()
-            ->with(['shop', 'category', 'ratings'])
+            ->with(['shop', 'category'])
+            ->withAvg('ratings as average_rating', 'rating')
+            ->withCount('ratings as review_count')
             ->orderBy('sales_count', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
     }
@@ -144,9 +149,10 @@ class ProductRepository implements ProductRepositoryInterface
                 $query->where('category_id', $product->category_id)
                     ->orWhere('shop_id', $product->shop_id);
             })
-            ->with(['shop', 'category', 'ratings'])
-            ->withAvg('ratings', 'rating')
-            ->orderBy('ratings_avg_rating', 'desc')
+            ->with(['shop', 'category'])
+            ->withAvg('ratings as average_rating', 'rating')
+            ->withCount('ratings as review_count')
+            ->orderBy('average_rating', 'desc')
             ->limit($limit)
             ->get();
     }

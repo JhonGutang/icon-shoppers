@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import useProductAction from "@/hooks/product/useProductActions";
 import EditProduct from "@/components/shop/EditProduct";
 import { motion } from "framer-motion";
+import BaseCard from "@/components/shared/BaseCard";
 
 interface ProductCardProps {
   product: Product;
@@ -102,129 +103,121 @@ const ProductCard: React.FC<ProductCardProps> = ({
     handleFeatureToggle(product);
   };
 
-  const cardContent = (
-    <Card
-      className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-[2.5rem] border-0 bg-white p-2 transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)]",
-        className,
-        !product.is_visible && "opacity-75 grayscale-[0.5]"
+  const imageUrl = product.image
+    ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`
+    : "https://placehold.co/400x400?text=No+Image";
+
+  const badges = (
+    <>
+      {Boolean(product.is_featured) && (
+        <div className="flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur-md px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-[#0E6835] shadow-sm">
+          <Trophy size={9} className="fill-[#0E6835]" />
+          Featured
+        </div>
       )}
-    >
-      {/* Product Image Wrapper */}
-      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[2.2rem] bg-stone-100">
-        <img
-          src={
-            product.image
-              ? `${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/storage/${product.image}`
-              : "https://placehold.co/400x400?text=No+Image"
-          }
-          alt={product.name}
-          className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
-        />
+    </>
+  );
 
-        {/* Dynamic Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-        
-        {/* Top Badges */}
-        <div className="absolute left-4 top-4 flex flex-col gap-2">
-          {Boolean(product.is_featured) && (
-            <div className="flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur-md px-3 py-1 text-[10px] font-black uppercase tracking-widest text-[#0E6835] shadow-sm">
-              <Trophy size={10} className="fill-[#0E6835]" />
-              Featured
-            </div>
+  const actions = !isLanding && (
+    <>
+      {role !== "merchant" && (
+        <button
+          onClick={handleToggleWishlist}
+          className={cn(
+            "flex cursor-pointer h-9 w-9 items-center justify-center rounded-full bg-white shadow-xl transition-all hover:scale-110",
+            product.is_in_wishlist ? "text-red-500" : "text-stone-400 hover:text-red-500"
           )}
-        </div>
+        >
+          <Heart size={16} fill={product.is_in_wishlist ? "currentColor" : "none"} />
+        </button>
+      )}
 
-        {/* Action Overlays (Non-Landing) */}
-        {!isLanding && (
-          <div className="absolute right-4 top-4 flex flex-col gap-2 translate-x-12 opacity-0 transition-all duration-500 group-hover:translate-x-0 group-hover:opacity-100">
-            {role !== "merchant" && (
-              <button
-                onClick={handleToggleWishlist}
-                className={cn(
-                  "flex cursor-pointer h-10 w-10 items-center justify-center rounded-full bg-white shadow-xl transition-all hover:scale-110",
-                  product.is_in_wishlist ? "text-red-500" : "text-stone-400 hover:text-red-500"
-                )}
-              >
-                <Heart size={18} fill={product.is_in_wishlist ? "currentColor" : "none"} />
-              </button>
+      {isProductOwner && (
+        <>
+          <button
+            onClick={onToggleVisibility}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-stone-600 shadow-xl transition-all hover:scale-110"
+          >
+            {product.is_visible ? <Eye size={16} /> : <EyeClosed size={16} />}
+          </button>
+          <button
+            onClick={onToggleFeatured}
+            className={cn(
+              "flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-xl transition-all hover:scale-110",
+              product.is_featured ? "text-yellow-500" : "text-stone-400"
             )}
+          >
+            <Trophy size={16} fill={product.is_featured ? "currentColor" : "none"} />
+          </button>
+        </>
+      )}
+    </>
+  );
 
-            {isProductOwner && (
-              <>
-                <button
-                  onClick={onToggleVisibility}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-stone-600 shadow-xl transition-all hover:scale-110"
-                >
-                  {product.is_visible ? <Eye size={18} /> : <EyeClosed size={18} />}
-                </button>
-                <button
-                  onClick={onToggleFeatured}
-                  className={cn(
-                    "flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-xl transition-all hover:scale-110",
-                    product.is_featured ? "text-yellow-500" : "text-stone-400"
-                  )}
-                >
-                  <Trophy size={18} fill={product.is_featured ? "currentColor" : "none"} />
-                </button>
-              </>
-            )}
-          </div>
-        )}
-
-        {/* Quick View / External link Icon */}
-        <div className="absolute bottom-4 right-4 translate-y-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-          <div className="flex h-12 w-12 items-center justify-center rounded-[1.2rem] bg-[#0E6835] text-white shadow-xl shadow-green-900/30">
-            <ArrowUpRight size={22} />
-          </div>
+  const info = (
+    <>
+      <div className="mb-1 flex items-center justify-between">
+        <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-[#0E6835]">
+          <Store size={10} />
+          <span className="line-clamp-1">{product.shop?.name || product.shop_name}</span>
         </div>
-      </div>
-
-      {/* Product Information */}
-      <div className="flex flex-1 flex-col px-3 py-3">
-        <div className="mb-1.5 flex items-center justify-between">
-          <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-[#0E6835]">
-            <Store size={12} />
-            <span className="line-clamp-1">{product.shop?.name || product.shop_name}</span>
-          </div>
-          {product.average_rating > 0 && (
-            <div className="flex items-center gap-1 rounded-full bg-stone-100 px-2 py-0.5">
-              <Star size={10} className="fill-[#0E6835] text-[#0E6835]" />
-              <span className="text-[10px] font-black text-stone-700">{product.average_rating}</span>
-            </div>
-          )}
-        </div>
-
-        <h3 className="line-clamp-2 text-[15px] font-bold text-stone-900 leading-tight tracking-tight">
-          {product.name}
-        </h3>
-
-        <div className="mt-auto flex items-center justify-between pt-3">
-          <div className="flex flex-col">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Price</span>
-            <span className="text-2xl font-black text-stone-950">
-              ₱{parseFloat(product.price).toLocaleString()}
+        {product.average_rating > 0 && (
+          <div className="flex items-center gap-1 rounded-full bg-stone-100 px-1.5 py-0.5">
+            <Star size={9} className="fill-[#0E6835] text-[#0E6835]" />
+            <span className="text-[9px] font-black text-stone-700">
+              {Number(product.average_rating).toFixed(1)}
+              {product.review_count > 0 && (
+                <span className="ml-1 text-stone-400 font-medium">({product.review_count})</span>
+              )}
             </span>
           </div>
-
-          {!isLanding && role !== "merchant" && (
-            <Button
-              onClick={handleAddToCart}
-              className="h-12 w-12 rounded-2xl bg-stone-900 text-white shadow-xl shadow-stone-900/20 transition-all hover:bg-[#0E6835] hover:scale-105"
-              size="icon"
-            >
-              <ShoppingCart size={20} />
-            </Button>
-          )}
-
-          {isLanding && (
-            <div className="h-12 w-12 rounded-2xl bg-stone-100 flex items-center justify-center text-stone-300">
-              <ShoppingCart size={20} />
-            </div>
-          )}
-        </div>
+        )}
       </div>
-    </Card>
+
+      <h3 className="line-clamp-2 text-sm font-bold text-stone-900 leading-tight tracking-tight">
+        {product.name}
+      </h3>
+    </>
+  );
+
+  const footer = (
+    <div className="flex items-center justify-between">
+      <div className="flex flex-col">
+        <span className="text-[9px] font-bold uppercase tracking-widest text-stone-400">Price</span>
+        <span className="text-lg font-black text-stone-950">
+          ₱{parseFloat(product.price).toLocaleString()}
+        </span>
+      </div>
+
+      {!isLanding && role !== "merchant" && (
+        <Button
+          onClick={handleAddToCart}
+          className="h-10 w-10 rounded-xl bg-stone-900 text-white shadow-xl shadow-stone-900/20 transition-all hover:bg-[#0E6835] hover:scale-105"
+          size="icon"
+        >
+          <ShoppingCart size={18} />
+        </Button>
+      )}
+
+      {isLanding && (
+        <div className="h-10 w-10 rounded-xl bg-stone-100 flex items-center justify-center text-stone-300">
+          <ShoppingCart size={18} />
+        </div>
+      )}
+    </div>
+  );
+
+  const cardContent = (
+    <BaseCard
+      image={imageUrl}
+      imageAlt={product.name}
+      badges={badges}
+      actions={actions}
+      info={info}
+      footer={footer}
+      className={className}
+      isGrayscale={!product.is_visible}
+    />
   );
 
   if (isLanding) {

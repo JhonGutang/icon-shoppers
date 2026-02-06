@@ -331,9 +331,6 @@ const MessagingPage = () => {
                   <h2 className="font-bold text-stone-800 tracking-tight">
                     Inbox
                   </h2>
-                  <span className="text-xs font-medium text-[#0E6835] bg-stone-100 px-2 py-1 rounded-full">
-                    {conversations.length} Active
-                  </span>
                 </div>
                 <div className="relative group">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 h-4 w-4 group-focus-within:text-[#0E6835] transition-colors" />

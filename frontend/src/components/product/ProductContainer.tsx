@@ -34,12 +34,12 @@ const ProductContainer: React.FC<ProductContainerProps> = ({
   const gridClasses = minItemWidth
     ? cn(`grid gap-${gap}`, gridClassName)
     : cn(
-        `grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-${gap}`,
+        `grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-${gap}`,
         gridClassName
       );
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 w-full">
+    <div className="w-full">
       {title && (
         <h2 className="text-2xl font-bold mb-6 text-foreground">{title}</h2>
       )}

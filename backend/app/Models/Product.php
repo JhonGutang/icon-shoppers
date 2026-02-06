@@ -39,7 +39,7 @@ class Product extends Model
         'is_featured' => 'boolean',
     ];
 
-    protected $appends = ['is_in_wishlist'];
+    protected $appends = ['is_in_wishlist', 'average_rating', 'review_count'];
 
     protected static function boot()
     {
@@ -94,6 +94,11 @@ class Product extends Model
     public function getAverageRatingAttribute()
     {
         return $this->ratings()->avg('rating') ?? 0;
+    }
+
+    public function getReviewCountAttribute()
+    {
+        return $this->ratings()->count();
     }
 
     public function scopePublished($query)

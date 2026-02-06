@@ -215,10 +215,15 @@ const ProductDetailsPage = () => {
                           <Badge className="bg-[#0E6835] hover:bg-[#0E6835]/90 rounded-full px-5 py-1.5 text-[10px] font-black uppercase tracking-widest border-0">
                             {product.category?.name || "Premium Selection"}
                           </Badge>
-                          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-stone-200 text-stone-900 text-[10px] font-black uppercase tracking-widest shadow-sm">
-                            <Star size={12} className="fill-[#0E6835] text-[#0E6835]" />
-                            {product.average_rating || "No Reviews"}
-                          </div>
+                          {product.average_rating > 0 && (
+                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-stone-200 text-stone-900 text-[10px] font-black uppercase tracking-widest shadow-sm">
+                              <Star size={12} className="fill-[#0E6835] text-[#0E6835]" />
+                              {Number(product.average_rating).toFixed(1)}
+                              {product.review_count > 0 && (
+                                <span className="text-stone-400 font-medium lowercase">({product.review_count} reviews)</span>
+                              )}
+                            </div>
+                          )}
                         </div>
 
                         <div className="space-y-2">
