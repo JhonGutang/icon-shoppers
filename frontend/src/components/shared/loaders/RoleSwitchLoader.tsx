@@ -155,11 +155,11 @@ export default function RoleSwitchLoader({ isLoading = true, targetRole = "custo
                 transition={{ delay: 0.4 }}
                 className="relative mt-2 px-8"
               >
-                <span className="absolute left-0 top-0 text-4xl text-[#0E6835]/20 font-serif">"</span>
+                <span className="absolute left-0 top-0 text-4xl text-[#0E6835]/20 font-serif">&quot;</span>
                 <p className="text-stone-600 font-medium italic relative z-10 px-2 min-h-[48px] flex items-center justify-center">
                   {quote}
                 </p>
-                <span className="absolute right-0 bottom-0 text-4xl text-[#0E6835]/20 font-serif h-4 overflow-hidden flex items-end">"</span>
+                <span className="absolute right-0 bottom-0 text-4xl text-[#0E6835]/20 font-serif h-4 overflow-hidden flex items-end">&quot;</span>
               </motion.div>
 
               <motion.div 

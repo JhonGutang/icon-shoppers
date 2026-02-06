@@ -90,7 +90,7 @@ const ProductFeedback: React.FC<ProductFeedbackProps> = ({
               {rating.feedback && (
                 <div className="mt-4">
                   <p className="text-stone-600 leading-relaxed font-light text-sm tracking-tight italic">
-                    "{rating.feedback}"
+                    &quot;{rating.feedback}&quot;
                   </p>
                 </div>
               )}

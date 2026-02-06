@@ -340,7 +340,7 @@ const ProductDetailsPage = () => {
                         <div className="space-y-4">
                           <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0E6835]">Description</h5>
                           <p className="text-stone-900 font-light leading-relaxed italic text-lg">
-                            "{product.description || "Every stitch and surface tells a story of local craftsmanship, reflecting the soul of our community and the dedication of our artisans."}"
+                            &quot;{product.description || "Every stitch and surface tells a story of local craftsmanship, reflecting the soul of our community and the dedication of our artisans."}&quot;
                           </p>
                         </div>
                       </div>

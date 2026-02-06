@@ -599,7 +599,7 @@ const ProfilePageContent = () => {
                                 onClick={() => router.push('/create-shop')}
                                 className="w-full h-12 rounded-xl text-xs uppercase tracking-widest font-black bg-[#0E6835] hover:bg-[#0E6835]/90 text-white"
                               >
-                                Yes, Let's Go!
+                                Yes, Let&apos;s Go!
                               </AlertDialogAction>
                               <AlertDialogCancel className="w-full h-12 rounded-xl border-stone-200 text-stone-500 font-bold mt-0">Maybe Later</AlertDialogCancel>
                             </AlertDialogFooter>
