@@ -374,20 +374,7 @@ const OrderCard = ({ order }: { order: Order }) => {
                 </Link>
               </Button>
               
-              <AnimatePresence>
-                {(order.status as string).toUpperCase() === 'ORDERED' && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    className="flex-1 sm:flex-none"
-                  >
-                    <Button variant="ghost" className="w-full h-12 rounded-2xl text-rose-500 hover:bg-rose-50 hover:text-rose-600 font-bold px-8">
-                       Cancel
-                    </Button>
-                  </motion.div>
-                )}
-                
+              <AnimatePresence>  
                 {(order.status as string).toUpperCase() === 'DELIVERED' && (
                    <motion.div
                      initial={{ opacity: 0, scale: 0.9 }}

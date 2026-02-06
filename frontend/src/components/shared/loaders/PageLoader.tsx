@@ -3,6 +3,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Star } from "lucide-react";
+import { useScrollLock } from "@/hooks/shared/useScrollLock";
 
 interface PageLoaderProps {
   isLoading?: boolean;
@@ -15,16 +16,7 @@ export default function PageLoader({ isLoading = true }: PageLoaderProps) {
     setIsMounted(true);
   }, []);
 
-  React.useEffect(() => {
-    if (isLoading) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isLoading]);
+  useScrollLock(isLoading);
 
   if (!isMounted) return null;
 

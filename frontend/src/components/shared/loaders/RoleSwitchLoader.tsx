@@ -3,7 +3,8 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Star, Store, User } from "lucide-react";
+import { ShoppingBag, Star, Store } from "lucide-react";
+import { useScrollLock } from "@/hooks/shared/useScrollLock";
 
 interface RoleSwitchLoaderProps {
   isLoading?: boolean;
@@ -39,16 +40,7 @@ export default function RoleSwitchLoader({ isLoading = true, targetRole = "custo
     }
   }, [targetRole, isLoading]);
 
-  React.useEffect(() => {
-    if (isLoading) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isLoading]);
+  useScrollLock(isLoading);
 
   if (!isMounted) return null;
 
