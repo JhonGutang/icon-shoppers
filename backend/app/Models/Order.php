@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -10,7 +9,6 @@ class Order extends Model
 {
     use HasFactory;
 
-    // Updated status constants to match unified flow
     const STATUS_ORDERED = 'ordered';
 
     const STATUS_APPROVED = 'approved';
@@ -81,7 +79,7 @@ class Order extends Model
 
         static::creating(function ($order) {
             if (empty($order->order_number)) {
-                $order->order_number = 'ORD-'.strtoupper(Str::random(10));
+                $order->order_number = 'ORD-' . strtoupper(Str::random(10));
             }
         });
     }

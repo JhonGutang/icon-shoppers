@@ -1,0 +1,333 @@
+{
+	"folders": [
+		{
+			"name": "🏠 Root",
+			"path": "."
+		},
+		{
+			"name": "🎨 Frontend",
+			"path": "./frontend"
+		},
+		{
+			"name": "⚙️ Backend",
+			"path": "./backend"
+		},
+		{
+			"name": "📚 Documentation",
+			"path": "./docs"
+		}
+	],
+	"settings": {
+		// Editor Settings
+		"editor.formatOnSave": true,
+		"editor.codeActionsOnSave": {
+			"source.fixAll.eslint": "explicit",
+			"source.organizeImports": "explicit"
+		},
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.tabSize": 2,
+		"editor.insertSpaces": true,
+		"editor.rulers": [80, 120],
+		"editor.wordWrap": "on",
+		"editor.bracketPairColorization.enabled": true,
+		"editor.guides.bracketPairs": true,
+		
+		// File Settings
+		"files.exclude": {
+			"**/.git": true,
+			"**/.DS_Store": true,
+			"**/node_modules": true,
+			"**/.next": true,
+			"**/vendor": true,
+			"**/*.tsbuildinfo": true
+		},
+		"files.watcherExclude": {
+			"**/node_modules/**": true,
+			"**/.next/**": true,
+			"**/vendor/**": true
+		},
+		"files.eol": "\n",
+		"files.trimTrailingWhitespace": true,
+		"files.insertFinalNewline": true,
+		
+		// Search Settings
+		"search.exclude": {
+			"**/node_modules": true,
+			"**/vendor": true,
+			"**/.next": true,
+			"**/dist": true,
+			"**/build": true,
+			"**/*.lock": true
+		},
+		
+		// TypeScript Settings
+		"typescript.tsdk": "frontend/node_modules/typescript/lib",
+		"typescript.enablePromptUseWorkspaceTsdk": true,
+		"typescript.preferences.importModuleSpecifier": "non-relative",
+		
+		// ESLint Settings
+		"eslint.workingDirectories": [
+			"./frontend"
+		],
+		"eslint.validate": [
+			"javascript",
+			"javascriptreact",
+			"typescript",
+			"typescriptreact"
+		],
+		
+		// PHP Settings
+		"php.validate.enable": true,
+		"php.suggest.basic": true,
+		"[php]": {
+			"editor.defaultFormatter": "bmewburn.vscode-intelephense-client",
+			"editor.tabSize": 4
+		},
+		
+		// Language-specific Settings
+		"[javascript]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[typescript]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[typescriptreact]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[json]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[jsonc]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[markdown]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode",
+			"editor.wordWrap": "on"
+		},
+		
+		// Git Settings
+		"git.ignoreLimitWarning": true,
+		"git.autofetch": true,
+		
+		// Terminal Settings
+		"terminal.integrated.cwd": "${workspaceFolder}",
+		"terminal.integrated.defaultProfile.windows": "Git Bash",
+		
+		// Emmet Settings
+		"emmet.includeLanguages": {
+			"typescript": "typescriptreact",
+			"javascript": "javascriptreact"
+		}
+	},
+	"extensions": {
+		"recommendations": [
+			// Frontend Development
+			"esbenp.prettier-vscode",
+			"dbaeumer.vscode-eslint",
+			"bradlc.vscode-tailwindcss",
+			"dsznajder.es7-react-js-snippets",
+			
+			// Backend Development
+			"bmewburn.vscode-intelephense-client",
+			"onecentlin.laravel-blade",
+			"amiralizadeh9480.laravel-extra-intellisense",
+			
+			// General Development
+			"eamodio.gitlens",
+			"christian-kohler.path-intellisense",
+			"wayou.vscode-todo-highlight",
+			"gruntfuggly.todo-tree",
+			"usernamehw.errorlens",
+			"streetsidesoftware.code-spell-checker",
+			
+			// Testing
+			"vitest.explorer",
+			
+			// Utilities
+			"EditorConfig.EditorConfig",
+			"mikestead.dotenv"
+		]
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"name": "Next.js: debug server-side",
+				"type": "node-terminal",
+				"request": "launch",
+				"command": "npm run dev",
+				"cwd": "${workspaceFolder}/frontend",
+				"serverReadyAction": {
+					"pattern": "started server on .+, url: (https?://.+)",
+					"uriFormat": "%s",
+					"action": "debugWithChrome"
+				}
+			},
+			{
+				"name": "Next.js: debug client-side",
+				"type": "chrome",
+				"request": "launch",
+				"url": "http://localhost:3000",
+				"webRoot": "${workspaceFolder}/frontend"
+			},
+			{
+				"name": "Next.js: debug full stack",
+				"type": "node-terminal",
+				"request": "launch",
+				"command": "npm run dev",
+				"cwd": "${workspaceFolder}/frontend",
+				"console": "integratedTerminal",
+				"serverReadyAction": {
+					"pattern": "started server on .+, url: (https?://.+)",
+					"uriFormat": "%s",
+					"action": "debugWithChrome"
+				}
+			},
+			{
+				"name": "Listen for Xdebug (Laravel)",
+				"type": "php",
+				"request": "launch",
+				"port": 9003,
+				"pathMappings": {
+					"/var/www/html": "${workspaceFolder}/backend"
+				}
+			}
+		],
+		"compounds": []
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "Frontend: Install Dependencies",
+				"type": "shell",
+				"command": "npm install",
+				"options": {
+					"cwd": "${workspaceFolder}/frontend"
+				},
+				"problemMatcher": []
+			},
+			{
+				"label": "Frontend: Dev Server",
+				"type": "shell",
+				"command": "npm run dev",
+				"options": {
+					"cwd": "${workspaceFolder}/frontend"
+				},
+				"isBackground": true,
+				"problemMatcher": {
+					"pattern": {
+						"regexp": ".",
+						"file": 1,
+						"location": 2,
+						"message": 3
+					},
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": ".",
+						"endsPattern": "."
+					}
+				}
+			},
+			{
+				"label": "Frontend: Build",
+				"type": "shell",
+				"command": "npm run build",
+				"options": {
+					"cwd": "${workspaceFolder}/frontend"
+				},
+				"problemMatcher": []
+			},
+			{
+				"label": "Frontend: Type Check",
+				"type": "shell",
+				"command": "npm run type-check",
+				"options": {
+					"cwd": "${workspaceFolder}/frontend"
+				},
+				"problemMatcher": []
+			},
+			{
+				"label": "Frontend: Lint",
+				"type": "shell",
+				"command": "npm run lint",
+				"options": {
+					"cwd": "${workspaceFolder}/frontend"
+				},
+				"problemMatcher": []
+			},
+			{
+				"label": "Frontend: Test",
+				"type": "shell",
+				"command": "npm run test",
+				"options": {
+					"cwd": "${workspaceFolder}/frontend"
+				},
+				"problemMatcher": []
+			},
+			{
+				"label": "Backend: Install Dependencies",
+				"type": "shell",
+				"command": "composer install",
+				"options": {
+					"cwd": "${workspaceFolder}/backend"
+				},
+				"problemMatcher": []
+			},
+			{
+				"label": "Backend: Serve",
+				"type": "shell",
+				"command": "php artisan serve",
+				"options": {
+					"cwd": "${workspaceFolder}/backend"
+				},
+				"isBackground": true,
+				"problemMatcher": []
+			},
+			{
+				"label": "Backend: Lint",
+				"type": "shell",
+				"command": "composer lint",
+				"options": {
+					"cwd": "${workspaceFolder}/backend"
+				},
+				"problemMatcher": []
+			},
+			{
+				"label": "Backend: Test",
+				"type": "shell",
+				"command": "php artisan test",
+				"options": {
+					"cwd": "${workspaceFolder}/backend"
+				},
+				"problemMatcher": []
+			},
+			{
+				"label": "Backend: Migrate",
+				"type": "shell",
+				"command": "php artisan migrate",
+				"options": {
+					"cwd": "${workspaceFolder}/backend"
+				},
+				"problemMatcher": []
+			},
+			{
+				"label": "Backend: Migrate Fresh",
+				"type": "shell",
+				"command": "php artisan migrate:fresh --seed",
+				"options": {
+					"cwd": "${workspaceFolder}/backend"
+				},
+				"problemMatcher": []
+			},
+			{
+				"label": "Start All Servers",
+				"dependsOn": [
+					"Frontend: Dev Server",
+					"Backend: Serve"
+				],
+				"problemMatcher": []
+			}
+		]
+	}
+}

@@ -42,7 +42,11 @@ class OrderRepository implements OrderRepositoryInterface
         ])
             ->where('user_id', $userId)
             ->when($status && $status !== 'ALL', function ($query) use ($status) {
-                $query->where('status', $status);
+                if ($status === 'completed') {
+                    $query->whereIn('status', ['completed', 'received']);
+                } else {
+                    $query->where('status', $status);
+                }
             })
             ->orderBy('created_at', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);

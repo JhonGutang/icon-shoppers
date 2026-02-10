@@ -1,10 +1,14 @@
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
-import { orderService } from "@/services/orderService";
 import { QUERY_KEYS } from "@/constants/queryKeys";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { orderService } from "@/services/orderService";
 import { OrderStatus } from "@/types/order";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
-export const useCustomerOrders = (status = 'ALL', page = 1) => {
+export const useCustomerOrders = (status = "ALL", page = 1) => {
   return useQuery({
     queryKey: [...QUERY_KEYS.ORDERS.CUSTOMER(status), page],
     queryFn: () => orderService.getCustomerOrders(status, page),
@@ -12,14 +16,15 @@ export const useCustomerOrders = (status = 'ALL', page = 1) => {
   });
 };
 
-export const useInfiniteCustomerOrders = (status = 'ALL', per_page = 5) => {
+export const useInfiniteCustomerOrders = (status = "ALL", per_page = 5) => {
   return useInfiniteQuery({
-    queryKey: [...QUERY_KEYS.ORDERS.CUSTOMER(status), 'infinite'],
-    queryFn: ({ pageParam = 1 }) => orderService.getCustomerOrders(status, pageParam, per_page),
+    queryKey: [...QUERY_KEYS.ORDERS.CUSTOMER(status), "infinite"],
+    queryFn: ({ pageParam = 1 }) =>
+      orderService.getCustomerOrders(status, pageParam, per_page),
     getNextPageParam: (lastPage) => {
       const currentPage = lastPage.meta?.current_page ?? lastPage.current_page;
       const lastPageNum = lastPage.meta?.last_page ?? lastPage.last_page;
-      
+
       if (currentPage < lastPageNum) {
         return currentPage + 1;
       }
@@ -39,7 +44,7 @@ export const useOrderDetails = (orderNumber: string) => {
   });
 };
 
-export const useSellerOrders = (status = 'ALL', page = 1) => {
+export const useSellerOrders = (status = "ALL", page = 1) => {
   return useQuery({
     queryKey: [...QUERY_KEYS.ORDERS.SELLER(status), page],
     queryFn: () => orderService.getSellerOrders(status, page),
@@ -49,13 +54,17 @@ export const useSellerOrders = (status = 'ALL', page = 1) => {
 
 export const useUpdateOrderStatus = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: ({ orderId, status }: { orderId: number; status: OrderStatus }) => 
-      orderService.updateStatus(orderId, status),
+    mutationFn: ({
+      orderId,
+      status,
+    }: {
+      orderId: number;
+      status: OrderStatus;
+    }) => orderService.updateStatus(orderId, status),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['orders', 'seller'] });
-      queryClient.invalidateQueries({ queryKey: ['orders', 'details'] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
   });
 };

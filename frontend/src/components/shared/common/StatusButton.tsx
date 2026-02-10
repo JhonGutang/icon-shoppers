@@ -1,13 +1,17 @@
-import { Button } from "@/components/shared/ui/button"
-import { Check, X, Truck, Package, PlayCircle } from "lucide-react"
+import { Button } from "@/components/shared/ui/button";
+import { Check, Clock3, Package, PlayCircle, Truck, X } from "lucide-react";
 
 interface StatusButtonsProps {
-  onStatusUpdate?: (status: string) => void
-  status?: string
-  isCustomer?: boolean
+  onStatusUpdate?: (status: string) => void;
+  status?: string;
+  isCustomer?: boolean;
 }
 
-export function StatusButtons({ onStatusUpdate, status, isCustomer = false }: StatusButtonsProps) {
+export function StatusButtons({
+  onStatusUpdate,
+  status,
+  isCustomer = false,
+}: StatusButtonsProps) {
   const currentStatus = status?.toLowerCase();
 
   const handleUpdate = (newStatus: string) => {
@@ -15,38 +19,38 @@ export function StatusButtons({ onStatusUpdate, status, isCustomer = false }: St
   };
 
   if (isCustomer) {
-    if (currentStatus === 'delivering' || currentStatus === 'shipped') {
+    if (currentStatus === "delivering" || currentStatus === "shipped") {
       return (
-        <Button 
-          variant="default" 
-          onClick={() => handleUpdate('received')}
+        <Button
+          variant="default"
+          onClick={() => handleUpdate("received")}
           className="bg-green-600 hover:bg-green-700 text-white"
         >
           <Package className="mr-1 h-4 w-4" />
           Mark as Received
         </Button>
-      )
+      );
     }
     return null;
   }
 
   // Merchant Actions
   switch (currentStatus) {
-    case 'ordered':
-    case 'pending':
+    case "ordered":
+    case "pending":
       return (
         <div className="flex gap-2">
-          <Button 
-            variant="default" 
-            onClick={() => handleUpdate('approved')}
+          <Button
+            variant="default"
+            onClick={() => handleUpdate("approved")}
             className="bg-blue-600 hover:bg-blue-700 text-white"
           >
             <PlayCircle className="mr-1 h-4 w-4" />
             Approve
           </Button>
-          <Button 
-            variant="destructive" 
-            onClick={() => handleUpdate('rejected')}
+          <Button
+            variant="destructive"
+            onClick={() => handleUpdate("rejected")}
             className="bg-red-600 hover:bg-red-700 text-white"
           >
             <X className="mr-1 h-4 w-4" />
@@ -54,47 +58,60 @@ export function StatusButtons({ onStatusUpdate, status, isCustomer = false }: St
           </Button>
         </div>
       );
-    case 'approved':
+    case "approved":
       return (
-        <Button 
-          variant="default" 
-          onClick={() => handleUpdate('processing')}
+        <Button
+          variant="default"
+          onClick={() => handleUpdate("processing")}
           className="bg-blue-600 hover:bg-blue-700 text-white"
         >
           <PlayCircle className="mr-1 h-4 w-4" />
           Process
         </Button>
       );
-    case 'processing':
+    case "processing":
       return (
-        <Button 
-          variant="default" 
-          onClick={() => handleUpdate('delivering')}
+        <Button
+          variant="default"
+          onClick={() => handleUpdate("delivering")}
           className="bg-indigo-600 hover:bg-indigo-700 text-white"
         >
           <Truck className="mr-1 h-4 w-4" />
           Ship Order
         </Button>
       );
-    case 'delivering':
-    case 'shipped':
+    case "delivering":
+    case "shipped":
       return (
-        <div className="flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-md font-medium">
-          <Truck className="h-4 w-4" />
-          <span>In Transit / Shipped</span>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => handleUpdate("delivered")}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white"
+          >
+            <Truck className="mr-1 h-3 w-3" />
+            Mark as Delivered
+          </Button>
         </div>
       );
-    case 'delivered':
-    case 'received':
-    case 'completed':
+    case "delivered":
+      return (
+        <div className="flex items-center gap-1 px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-md font-medium">
+          <Clock3 className="h-4 w-4" />
+          <span>Waiting for Confirmation</span>
+        </div>
+      );
+    case "received":
+    case "completed":
       return (
         <div className="flex items-center gap-1 px-3 py-1.5 bg-green-100 text-green-700 rounded-md font-medium">
           <Check className="h-4 w-4" />
           <span>Completed</span>
         </div>
       );
-    case 'rejected':
-    case 'cancelled':
+    case "rejected":
+    case "cancelled":
       return (
         <div className="flex items-center justify-center gap-1 px-3 py-1.5 bg-red-100 text-red-700 rounded-md font-medium">
           <X className="h-4 w-4" />
