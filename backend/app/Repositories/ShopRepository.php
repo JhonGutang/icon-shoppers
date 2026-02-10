@@ -47,11 +47,11 @@ class ShopRepository implements ShopRepositoryInterface
 
     public function getSpecificShop($shopSlug)
     {
-        return Shop::with(['products' => function($query) {
-                $query->withAvg('ratings as average_rating', 'rating')
-                      ->withCount('ratings as review_count')
-                      ->with('category');
-            }])
+        return Shop::with(['products' => function ($query) {
+            $query->withAvg('ratings as average_rating', 'rating')
+                ->withCount('ratings as review_count')
+                ->with('category');
+        }])
             ->where('slug', $shopSlug)
             ->where('status', Shop::STATUS_ACTIVE)
             ->first();

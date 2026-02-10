@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductRatingRequest;
 use App\Http\Requests\UpdateProductRatingRequest;
 use App\Interfaces\Services\ProductRatingServiceInterface;
-use Illuminate\Http\Request;
 
 class ProductRatingController extends Controller
 {

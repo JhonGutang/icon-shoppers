@@ -28,12 +28,14 @@ class ProductRatingRepository implements ProductRatingRepositoryInterface
     {
         $rating = $this->findById($id);
         $rating->update($data);
+
         return $rating;
     }
 
     public function delete(int $id)
     {
         $rating = $this->findById($id);
+
         return $rating->delete();
     }
 

@@ -29,7 +29,7 @@ class ProductRatingService implements ProductRatingServiceInterface
     public function submitRating(array $data)
     {
         $userId = Auth::id();
-        
+
         // Check if user already rated this product
         $existing = $this->ratingRepository->getByProductId($data['product_id'])
             ->where('user_id', $userId)
