@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 import { Card } from "@/components/shared/ui/card";
 import { Button } from "@/components/shared/ui/button";
 import {
@@ -19,6 +21,7 @@ import {
   Loader2,
   Sparkles,
   CheckCheck,
+  SmilePlus,
 } from "lucide-react";
 import echo from "@/lib/echo";
 import useAuthStore from "@/stores/useAuthStore";
@@ -42,10 +45,12 @@ const MessagingPage = () => {
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
   const [newMessage, setNewMessage] = useState("");
   const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const topObserverRef = useRef<HTMLDivElement>(null);
   const previousScrollHeightRef = useRef<number>(0);
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
 
   // Fetch Conversations
   const { data: conversations = [], isLoading: isLoadingConversations } =
@@ -230,6 +235,11 @@ const MessagingPage = () => {
     }
   }, [messages.length]);
 
+
+  const handleEmojiSelect = useCallback((emoji: { native: string }) => {
+    setNewMessage((prev) => prev + emoji.native);
+  }, []);
+
   // Real-time listener
   useEffect(() => {
     if (selectedConversation) {
@@ -295,6 +305,7 @@ const MessagingPage = () => {
       body: newMessage,
     });
     setNewMessage("");
+    setShowEmojiPicker(false);
   };
 
   return (
@@ -520,6 +531,26 @@ const MessagingPage = () => {
                           placeholder="Write a message..."
                           className="w-full bg-stone-50 border border-stone-200 rounded-2xl px-5 py-3 outline-none focus:ring-2 focus:ring-[#0E6835]/20 focus:border-[#0E6835] text-sm text-stone-800 placeholder:text-stone-400 transition-all shadow-sm"
                         />
+                      </div>
+                      <div ref={emojiPickerRef} className="relative">
+                        {showEmojiPicker && (
+                          <div className="absolute bottom-14 right-0 z-50">
+                            <Picker
+                              data={data}
+                              onEmojiSelect={handleEmojiSelect}
+                              theme="light"
+                              previewPosition="none"
+                              skinTonePosition="none"
+                            />
+                          </div>
+                        )}
+                        <Button
+                          type="button"
+                          onClick={() => setShowEmojiPicker((v) => !v)}
+                          className="rounded-full h-11 w-11 p-0 flex items-center justify-center bg-stone-100 hover:bg-stone-200 text-stone-500 hover:text-stone-700 transition-all shadow-sm"
+                        >
+                          <SmilePlus className="h-5 w-5" />
+                        </Button>
                       </div>
                       <Button
                         type="submit"
